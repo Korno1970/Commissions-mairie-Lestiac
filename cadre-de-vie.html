@@ -196,6 +196,23 @@ img,svg{max-width:100%}
 .eng-text strong{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--navy);display:block;margin-bottom:2px}
 .eng-text span{font-size:12px;color:var(--soft);line-height:1.4;display:block}
 
+/* ── PRIORITÉ URGENTE ── */
+.proj-card.urgent{
+  border-left:4px solid var(--terra);
+  background:linear-gradient(135deg,#fff9f7 0%,#fff 100%);
+}
+.priority-banner{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--terra);color:white;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;
+  padding:2px 8px;border-radius:20px;margin-bottom:6px;
+}
+.priority-select{
+  font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid #ddd;
+  background:white;cursor:pointer;
+}
+
 /* ── PROJETS ── */
 .proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .proj-card{background:white;border-radius:var(--r);box-shadow:var(--sh);padding:14px;border-left:5px solid var(--teal);position:relative;transition:transform .15s,box-shadow .15s}
@@ -618,7 +635,7 @@ body.is-admin .admin-inline{display:inline-flex}
       <button class="tab" onclick="filterProj('moyen',this)">Moyen terme</button>
       <button class="tab" onclick="filterProj('long',this)">Long terme</button>
     </div>
-    <button class="btn btn-terra btn-sm admin-inline" onclick="openModal('m-proj')">+ Ajouter</button>
+    <button class="btn btn-terra btn-sm" onclick="openAddProj()">+ Ajouter</button>
   </div>
   <div class="proj-grid" id="proj-grid"></div>
 </div>
@@ -686,21 +703,21 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="notice n-teal"><span>ℹ️</span><div>La commission regroupe deux sous-commissions. Tous les membres sont participants — certains interviennent sur les deux thématiques.</div></div>
   <div class="card">
     <div class="card-head"><h2>Travaux · Voirie · Bâti · Urbanisme</h2></div>
-    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Sous-commission(s)</th><th class="admin-only">Contact</th></tr></thead><tbody>
-      <tr><td><strong>Sylvain Kornowski</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td class="admin-only" contenteditable="false" id="contact-sylvain" onclick="makeEditable(this)" style="cursor:text;min-width:140px">Cliquer…</td></tr>
-      <tr><td><strong>Roger Carteau</strong></td><td>Travaux · Voirie · Bâti · Urba</td><td class="admin-only" contenteditable="false" id="contact-roger" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Corinne Eeckeman</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td class="admin-only" contenteditable="false" id="contact-corinne" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Vivien Bomont</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td class="admin-only" contenteditable="false" id="contact-vivien" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Lalie</strong></td><td>Travaux · Voirie · Bâti · Urba</td><td class="admin-only" contenteditable="false" id="contact-lalie" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
+    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Sous-commission(s)</th><th>E-mail</th></tr></thead><tbody>
+      <tr><td><strong>Sylvain Kornowski</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td><input type="email" class="form-control member-email" id="email-Sylvain" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Sylvain',this.value)"></td></tr>
+      <tr><td><strong>Roger Carteau</strong></td><td>Travaux · Voirie · Bâti · Urba</td><td><input type="email" class="form-control member-email" id="email-Roger" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Roger',this.value)"></td></tr>
+      <tr><td><strong>Corinne Eeckeman</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td><input type="email" class="form-control member-email" id="email-Corinne" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Corinne',this.value)"></td></tr>
+      <tr><td><strong>Vivien Bomont</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td><input type="email" class="form-control member-email" id="email-Vivien" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Vivien',this.value)"></td></tr>
+      <tr><td><strong>Lalie</strong></td><td>Travaux · Voirie · Bâti · Urba</td><td><input type="email" class="form-control member-email" id="email-Lalie" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Lalie',this.value)"></td></tr>
     </tbody></table></div></div>
   </div>
   <div class="card">
     <div class="card-head purple"><h2>Vie Associative · Culture · Patrimoine</h2></div>
-    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Sous-commission(s)</th><th class="admin-only">Contact</th></tr></thead><tbody>
-      <tr><td><strong>Anthony Benoît</strong></td><td>Vie asso · Culture · Patrimoine</td><td class="admin-only" contenteditable="false" id="contact-anthony" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Claire Gaston</strong></td><td>Vie asso · Culture · Patrimoine</td><td class="admin-only" contenteditable="false" id="contact-claire" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Corinne Eeckeman</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td>—</td></tr>
-      <tr><td><strong>Vivien Bomont</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td>—</td></tr>
+    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Sous-commission(s)</th><th>E-mail</th></tr></thead><tbody>
+      <tr><td><strong>Anthony Benoît</strong></td><td>Vie asso · Culture · Patrimoine</td><td><input type="email" class="form-control member-email" id="email-Anthony" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Anthony',this.value)"></td></tr>
+      <tr><td><strong>Claire Gaston</strong></td><td>Vie asso · Culture · Patrimoine</td><td><input type="email" class="form-control member-email" id="email-Claire" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Claire',this.value)"></td></tr>
+      <tr><td><strong>Corinne Eeckeman</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td style="font-size:11px;color:var(--soft)">↑ saisie ci-dessus</td></tr>
+      <tr><td><strong>Vivien Bomont</strong></td><td>Travaux · Voirie · Bâti · Urba &amp; Vie asso · Culture · Patrimoine</td><td style="font-size:11px;color:var(--soft)">↑ saisie ci-dessus</td></tr>
     </tbody></table></div></div>
   </div>
 </div>
@@ -893,6 +910,11 @@ body.is-admin .admin-inline{display:inline-flex}
         <div class="form-group"><label class="form-label">Budget</label><input type="text" id="p-budget" class="form-control" placeholder="500–1 000 €"></div>
         <div class="form-group"><label class="form-label">Subventions</label><input type="text" id="p-subs" class="form-control" placeholder="DETR, Région…"></div>
       </div>
+      <div class="form-group"><label class="form-label">Inter-commission (optionnel)</label><select id="p-shared" class="form-control" multiple style="height:auto">
+        <option value="">— Aucune —</option>
+        <option value="scolaire">Affaires scolaires</option>
+        <option value="admin">Administration générale</option>
+      </select><div style="font-size:11px;color:var(--soft);margin-top:3px">Ctrl+clic pour sélectionner plusieurs</div></div>
     </div>
     <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-proj')">Annuler</button><button class="btn btn-teal" onclick="saveProj()">Ajouter</button></div>
   </div>
@@ -975,9 +997,11 @@ const DEFAULT_TASKS = {
   ]
 };
 
-// ═══════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════
+// Responsables de commission — peuvent modifier la priorité
+const SUPER_ADMINS = ['Sylvain','Corinne','Catherine'];
+function isSuperAdmin(){ const me=getCurrentUser(); return isAdmin||SUPER_ADMINS.includes(me); }
+
+
 let isAdmin = false;
 let currentThread = null;
 let fbApp = null, fbDb = null;
@@ -1015,6 +1039,11 @@ function initFirebase(config){
       localData.log      = data.log ? Object.values(data.log).sort((a,b)=>b.ts-a.ts) : [];
       localData.cr       = data.cr ? Object.values(data.cr).sort((a,b)=>b.ts-a.ts) : [];
       localData.budget   = data.budget || null;
+      // Sync emails membres
+      if(data.member_emails){
+        localStorage.setItem('cdv_member_emails', JSON.stringify(data.member_emails));
+        loadMemberEmailFields();
+      }
       renderAll();
       // Also read global budget
       onValue(ref(fbDb,'finances/global'),(snap2)=>{const gb=snap2.val();if(gb&&document.getElementById('budget-global-display'))document.getElementById('budget-global-display').textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`});
@@ -1528,33 +1557,44 @@ function renderMemberChips(projId, membersArr){
 
 function renderProjects(){
   const grid=document.getElementById('proj-grid');
-  const projs=getProjects();
+  let projs=getProjects();
   grid.innerHTML='';
   if(!projs||projs.length===0){ grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>'; return; }
+  // Urgents en tête
+  projs=[...projs.filter(p=>p.priority==='urgent'),...projs.filter(p=>p.priority!=='urgent')];
   const hLabel={court:'Court terme · 2026',moyen:'Moyen terme · 2027',long:'Long terme · 2028+'};
   const hBadge={court:'h-court',moyen:'h-moyen',long:'h-long'};
   const aColor={env:'',vie:'purple',gouv:'navy',inter:'terra'};
   const sLabel={'s-lancer':'À lancer','s-cours':'En cours','s-attente':'En attente','s-fait':'Réalisé'};
   const me=getCurrentUser();
+  const canPrio=isSuperAdmin();
 
   projs.forEach(p=>{
     const members=getMembersArr(p);
     const joined=me&&members.includes(me);
+    const isUrgent=p.priority==='urgent';
     const card=document.createElement('div');
-    card.className=`proj-card ${aColor[p.axe]||''}`;
+    card.className=`proj-card ${aColor[p.axe]||''}${isUrgent?' urgent':''}`;
     card.dataset.horizon=p.horizon; card.dataset.id=p.id;
+    // badge inter-commission
+    const interBadge=p.sharedWith&&p.sharedWith.length?`<span style="display:inline-flex;align-items:center;gap:4px;background:#e8ecf5;color:var(--navy);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px">↔ ${p.sharedWith.map(s=>({scolaire:'Affaires scolaires',admin:'Admin. générale'})[s]||s).join(', ')}</span>`:'';
     card.innerHTML=`
-      <span class="proj-horizon ${hBadge[p.horizon]}">${hLabel[p.horizon]}</span>
+      ${isUrgent?`<div class="priority-banner">🔴 Prioritaire</div>`:''}
+      <span class="proj-horizon ${hBadge[p.horizon]}">${hLabel[p.horizon]}</span>${interBadge}
       ${isAdmin?`<button class="btn-icon" style="position:absolute;top:10px;right:8px" onclick="event.stopPropagation();deleteProj('${p.id}')" title="Supprimer">🗑</button>`:''}
-      <div class="proj-title" style="cursor:pointer" onclick="openProjDetail('${p.id}')">${p.title}</div>
+      <div class="proj-title" style="cursor:pointer;margin-top:6px" onclick="openProjDetail('${p.id}')">${p.title}</div>
       <div class="proj-desc" style="cursor:pointer" onclick="openProjDetail('${p.id}')">${p.desc}</div>
-      <div class="proj-meta">
+      <div class="proj-meta" style="flex-wrap:wrap;gap:6px">
         <span class="status-pill ${p.status}">${sLabel[p.status]||p.status}</span>
         ${isAdmin?`<select class="form-control" style="padding:2px 6px;font-size:11px;width:auto" onchange="changeStatus('${p.id}',this.value)">
           <option value="s-lancer"${p.status==='s-lancer'?' selected':''}>À lancer</option>
           <option value="s-cours"${p.status==='s-cours'?' selected':''}>En cours</option>
           <option value="s-attente"${p.status==='s-attente'?' selected':''}>En attente</option>
           <option value="s-fait"${p.status==='s-fait'?' selected':''}>Réalisé</option>
+        </select>`:''}
+        ${canPrio?`<select class="priority-select" title="Priorité" onchange="changePriority('${p.id}',this.value)">
+          <option value="normal"${!isUrgent?' selected':''}>⬜ Normal</option>
+          <option value="urgent"${isUrgent?' selected':''}>🔴 Urgent</option>
         </select>`:''}
       </div>
       <div style="margin-top:10px">
@@ -1593,15 +1633,25 @@ function saveProj(){
     members:[],
     budget:document.getElementById('p-budget').value.trim(),
     subs:document.getElementById('p-subs').value.trim(),
-    source:'Ajouté manuellement'
+    source:'Ajouté manuellement',
+    priority:'normal',
+    sharedWith: Array.from(document.getElementById('p-shared').selectedOptions).map(o=>o.value).filter(Boolean)
   };
   const arr=getProjects(); arr.push(p); writeProjects(arr);
   logAction('Nouveau projet','« '+title+' »');
   closeModal('m-proj');
   ['p-title','p-desc','p-budget','p-subs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-shared').selectedIndex=-1;
   if(!fbConnected) renderAll();
 }
 window.saveProj=saveProj;
+
+function openAddProj(){
+  const me = getCurrentUser();
+  if(!me && !isAdmin){ openIdModal(); return; }
+  openModal('m-proj');
+}
+window.openAddProj=openAddProj;
 
 function deleteProj(id){
   if(!confirm('Supprimer ce projet ?'))return;
@@ -1611,7 +1661,12 @@ function deleteProj(id){
 }
 window.deleteProj=deleteProj;
 
-function changeStatus(id,val){
+function changePriority(id,val){
+  const arr=getProjects(), p=arr.find(x=>x.id===id);
+  if(p){ p.priority=val; writeProjects(arr); logAction('Priorité modifiée','«'+p.title+'» → '+val); }
+  if(!fbConnected) renderAll();
+}
+window.changePriority=changePriority;
   const arr=getProjects(), p=arr.find(x=>x.id===id);
   if(p){ p.status=val; writeProjects(arr); logAction('Statut modifié','«'+p.title+'» → '+val); }
   if(!fbConnected) renderAll();
@@ -1706,13 +1761,26 @@ function saveReunion(){
   };
   const arr=getReunions(); arr.push(r); writeReunions(arr);
   logAction('Réunion planifiée','«'+title+'»'+(r.date?' le '+new Date(r.date).toLocaleDateString('fr-FR'):''));
+  sendConvocation(r);
   closeModal('m-reunion');
   ['r-title','r-date','r-tags','r-notes'].forEach(id=>document.getElementById(id).value='');
   if(!fbConnected) renderAll();
 }
 window.saveReunion=saveReunion;
 
-function deleteReunion(i){
+function sendConvocation(r){
+  const ejs=getEjsConfig();
+  if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template) return; // silencieux si pas configuré
+  emailjs.init(ejs.pubkey);
+  const emails = getAllMemberEmails();
+  if(!emails.length) return;
+  const dateStr = r.date ? new Date(r.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : 'Date à fixer';
+  const body = `Bonjour,\n\nVous êtes convoqué·e à la réunion suivante :\n\n📋 ${r.title}\n📅 ${dateStr}${r.heure?' à '+r.heure:''}\n📍 ${r.lieu||'Mairie de Lestiac'}\n${r.participants?'👥 Participants : '+r.participants+'\n':''}${r.notes?'\nOrdre du jour :\n'+r.notes+'\n':''}\nBonne journée,\nCommission Cadre de Vie — Lestiac 2026·2032`;
+  Promise.all(emails.map(to=>emailjs.send(ejs.service,ejs.template,{to_email:to,subject:'[Convocation] '+r.title,message:body,from_name:'Commission Cadre de Vie — Lestiac',date:r.date||''})))
+    .then(()=>{ logAction('Convocation envoyée','«'+r.title+'» → '+emails.length+' membre(s)'); })
+    .catch(e=>console.warn('Convocation non envoyée :',e));
+}
+window.sendConvocation=sendConvocation;
   if(!confirm('Supprimer cette réunion ?'))return;
   const arr=getReunions(); arr.splice(i,1); writeReunions(arr);
   if(!fbConnected) renderAll();
@@ -1905,8 +1973,36 @@ function emailThread(){
 window.emailThread=emailThread;
 
 // ═══════════════════════════════════════════
-//  MEMBRES — champs éditables
+//  MEMBRES — e-mails
 // ═══════════════════════════════════════════
+const MEMBER_NAMES = ['Sylvain','Roger','Corinne','Vivien','Lalie','Anthony','Claire'];
+
+function getMemberEmails(){
+  try{ return JSON.parse(localStorage.getItem('cdv_member_emails'))||{}; }catch{ return {}; }
+}
+function saveMemberEmail(name, email){
+  const emails = getMemberEmails();
+  emails[name] = email.trim();
+  localStorage.setItem('cdv_member_emails', JSON.stringify(emails));
+  if(fbDb) fbSet('cdv/member_emails', emails);
+}
+window.saveMemberEmail=saveMemberEmail;
+
+function loadMemberEmailFields(){
+  const emails = getMemberEmails();
+  MEMBER_NAMES.forEach(n=>{
+    const el = document.getElementById('email-'+n);
+    if(el && emails[n]) el.value = emails[n];
+  });
+}
+
+function getAllMemberEmails(){
+  const emails = getMemberEmails();
+  return MEMBER_NAMES.map(n=>emails[n]).filter(Boolean);
+}
+
+// ═══════════════════════════════════════════
+//  MEMBRES — champs éditables (legacy)
 function makeEditable(el){
   if(!isAdmin)return;
   el.contentEditable='true'; el.style.background='#fffde7';
@@ -1972,6 +2068,7 @@ window.exportJSON=exportJSON;
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   updateIdentityBtn();
+  loadMemberEmailFields();
   const cfg=getFbConfig()||FB_PRESET;
   if(cfg) initFirebase(cfg);
   else { showFbNotice(false); renderAll(); }
