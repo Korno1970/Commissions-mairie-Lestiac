@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1B2F5E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cadre de Vie">
+<title>Commission Cadre de Vie — Lestiac 2026·2032</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+:root{
+  --teal:#1A6B5A;--teal-d:#134d40;--teal-p:#e8f5f1;
+  --navy:#1B2F5E;--navy-p:#e8ecf5;
+  --accent:#1A6B5A;--accent-p:#e8f5f1; /* vert teal CDV */
+  --purple:#5c2d6e;--purple-p:#f2eaf7;
+  --terra:#c0613a;--gold:#f0a500;
+  --light:#f5f7f4;--mid:#dde5e2;--text:#1e2822;--soft:#5a6b65;
+  --r:6px;--sh:0 2px 14px rgba(26,107,90,.10);--sh-lg:0 8px 32px rgba(26,107,90,.15);
+  --topbar-h:56px;--safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{font-family:'Barlow',sans-serif;background:var(--light);color:var(--text);font-size:15px;min-height:100%;overscroll-behavior:none}
+button{font-family:'Barlow',sans-serif;cursor:pointer}
+
+/* TOPBAR */
+#topbar{background:var(--navy);height:var(--topbar-h);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:fixed;top:0;left:0;right:0;z-index:900;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.tb-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.tb-logo{background:var(--accent);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:1.5px;padding:3px 8px;border-radius:4px;text-transform:uppercase;flex-shrink:0}
+.tb-title{color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-sub{color:rgba(255,255,255,.5);font-size:10px;margin-top:1px}
+.tb-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.tb-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:white;border-radius:20px;padding:5px 11px;font-size:11px;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap}
+.tb-btn:hover{background:rgba(255,255,255,.16)}
+.tb-btn .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--gold)}
+#btn-mode.admin .dot{background:var(--terra)}
+#btn-identity.identified .dot{background:#6be0a0}
+
+/* LAYOUT */
+#app{display:grid;grid-template-columns:220px 1fr;padding-top:var(--topbar-h);min-height:100vh}
+
+/* SIDEBAR */
+#sidebar{background:var(--navy);color:white;padding:16px 0 80px;position:sticky;top:var(--topbar-h);height:calc(100vh - var(--topbar-h));overflow-y:auto}
+.nav-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.38);padding:14px 16px 5px;display:block}
+.nav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:9px 16px;background:none;border:none;color:rgba(255,255,255,.78);font-size:13.5px;text-align:left;transition:background .15s,color .15s}
+.nav-btn:hover{background:rgba(255,255,255,.09);color:white}
+.nav-btn.active{background:rgba(255,255,255,.17);color:white;font-weight:600}
+.nav-btn .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.nav-divider{border:none;border-top:1px solid rgba(255,255,255,.1);margin:8px 16px}
+.commission-box{margin:12px;background:rgba(255,255,255,.08);border-radius:6px;padding:10px}
+.commission-box-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.5px;color:white;margin-bottom:6px}
+.commission-box-sub{font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.5px;margin-bottom:5px}
+.mbadges{display:flex;flex-wrap:wrap;gap:4px}
+.mbadge{font-size:10.5px;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.9)}
+
+/* BOTTOM NAV */
+#bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:900;background:var(--navy);border-top:1px solid rgba(255,255,255,.1);padding-bottom:var(--safe-b);box-shadow:0 -2px 10px rgba(0,0,0,.2)}
+#bottom-nav .bn-items{display:flex;justify-content:space-around}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;gap:3px;background:none;border:none;color:rgba(255,255,255,.6);font-size:10px;font-weight:600;cursor:pointer;transition:color .15s}
+.bn-item .bn-icon{font-size:20px;line-height:1}
+.bn-item.active,.bn-item:hover{color:white;background:rgba(255,255,255,.08)}
+
+/* MAIN */
+#main{padding:22px 24px 100px;min-width:0}
+.ph{margin-bottom:20px;padding-bottom:12px;border-bottom:3px solid var(--accent)}
+.ph h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:var(--navy)}
+.ph p{color:var(--soft);font-size:13px;margin-top:3px}
+.page{display:none}.page.active{display:block}
+
+/* CARDS */
+.card{background:white;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:16px;overflow:hidden}
+.card-head{background:var(--accent);color:white;padding:11px 18px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card-head h2{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.5px}
+.card-head.navy{background:var(--navy)}.card-head.terra{background:var(--terra)}.card-head.teal{background:var(--teal)}.card-head.purple{background:var(--purple)}.card-head.gold{background:var(--gold)}
+.card-body{padding:18px}
+
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:white;border-radius:var(--r);box-shadow:var(--sh);padding:12px 16px;border-top:3px solid var(--accent)}
+.stat.navy{border-top-color:var(--navy)}.stat.terra{border-top-color:var(--terra)}.stat.teal{border-top-color:var(--teal)}
+.stat-n{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--navy);line-height:1}
+.stat-l{font-size:11px;color:var(--soft);margin-top:2px}
+
+/* NOTICES */
+.notice{padding:11px 14px;border-radius:var(--r);font-size:13px;margin-bottom:14px;display:flex;align-items:flex-start;gap:9px;line-height:1.5}
+.n-accent{background:var(--accent-p);border-left:4px solid var(--accent);color:var(--teal-d)}
+.n-navy{background:var(--navy-p);border-left:4px solid var(--navy);color:var(--navy)}
+.n-terra{background:#fde8e0;border-left:4px solid var(--terra);color:var(--terra)}
+.n-gold{background:#fff8e1;border-left:4px solid var(--gold);color:#7a5800}
+.n-teal{background:var(--teal-p);border-left:4px solid var(--teal);color:var(--teal-d)}
+
+/* PROJETS */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.proj-card{background:white;border-radius:var(--r);box-shadow:var(--sh);padding:14px;border-left:5px solid var(--accent);position:relative;transition:transform .15s,box-shadow .15s}
+.proj-card:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
+.proj-card.navy{border-left-color:var(--navy)}.proj-card.purple{border-left-color:var(--purple)}.proj-card.terra{border-left-color:var(--terra)}
+.proj-card.urgent{border-left-color:var(--terra);background:linear-gradient(135deg,#fff9f7 0%,#fff 100%)}
+.priority-banner{display:inline-flex;align-items:center;gap:5px;background:var(--terra);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:6px}
+.priority-select{font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid #ddd;background:white;cursor:pointer}
+.proj-horizon{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:7px}
+.h-court{background:#fde8e0;color:var(--terra)}.h-moyen{background:var(--accent-p);color:var(--teal-d)}.h-long{background:var(--navy-p);color:var(--navy)}
+.proj-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--navy);margin-bottom:5px;cursor:pointer}
+.proj-desc{font-size:12.5px;color:var(--soft);line-height:1.5;margin-bottom:8px;cursor:pointer}
+.proj-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px}
+.status-pill{padding:2px 8px;border-radius:20px;font-weight:600;font-size:11px}
+.s-lancer{background:#fff3e0;color:#b35c00}.s-cours{background:#e3f2fd;color:#1565c0}
+.s-attente{background:var(--purple-p);color:var(--purple)}.s-fait{background:#e8f5e9;color:#2e7d32}
+.proj-budget{font-size:11px;color:var(--soft);margin-top:6px}
+.proj-source{font-size:10.5px;color:var(--soft);margin-top:4px;font-style:italic}
+
+/* MEMBER CHIPS */
+.member-chips-proj{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.mchip{display:inline-flex;align-items:center;gap:3px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:600;border:1.5px solid var(--mid);background:white;color:var(--soft);cursor:pointer;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent}
+.mchip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-p)}
+.mchip.active{background:var(--teal);border-color:var(--teal);color:white}
+.mchip.active.is-me{background:var(--terra);border-color:var(--terra)}
+.mchip .chip-check{font-size:10px;opacity:0;max-width:0;overflow:hidden;transition:all .15s}
+.mchip.active .chip-check{opacity:1;max-width:14px}
+.btn-join{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px dashed var(--accent);background:transparent;color:var(--accent);cursor:pointer;transition:all .15s}
+.btn-join:hover{background:var(--accent-p)}
+.btn-join.joined{border-color:var(--terra);color:var(--terra);border-style:solid}
+.members-zone-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--soft);margin-bottom:5px}
+
+/* TABS */
+.tab-bar{display:flex;gap:2px;border-bottom:2px solid var(--mid);margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{padding:8px 14px;border:none;background:none;font-size:13px;font-weight:500;color:var(--soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.tab:hover:not(.active){color:var(--text)}
+
+/* TASKS */
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:10px 6px;border-bottom:1px solid var(--mid);cursor:pointer;border-radius:4px;transition:background .1s;-webkit-tap-highlight-color:transparent}
+.task-item:last-child{border-bottom:none}
+.task-item:hover{background:var(--accent-p)}
+.task-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:2px;cursor:pointer}
+.task-label{font-size:13.5px;line-height:1.5;flex:1}
+.task-item.done .task-label{text-decoration:line-through;color:var(--soft)}
+.task-tag{font-size:9.5px;font-weight:700;letter-spacing:.8px;padding:1px 6px;border-radius:20px;flex-shrink:0;margin-top:4px}
+.tt-env{background:var(--teal-p);color:var(--teal-d)}.tt-vie{background:var(--purple-p);color:var(--purple)}.tt-gouv{background:var(--navy-p);color:var(--navy)}
+.add-task-row{display:flex;gap:6px;margin-top:10px;border-top:1px dashed var(--mid);padding-top:10px;flex-wrap:wrap}
+.add-task-row input{flex:1;min-width:140px;padding:8px 12px;border:1.5px solid var(--mid);border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:13px}
+.add-task-row input:focus{outline:none;border-color:var(--accent)}
+.add-task-row select{padding:8px 8px;border:1.5px solid var(--mid);border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:12px;cursor:pointer;color:var(--text)}
+
+/* MEETINGS */
+.meeting-list{display:flex;flex-direction:column;gap:10px}
+.meeting-card{background:white;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;display:grid;grid-template-columns:70px 1fr}
+.m-date-col{background:var(--accent);color:white;padding:16px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.m-date-col.empty{background:var(--mid);color:var(--soft)}
+.m-day{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;line-height:1}
+.m-month{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-top:1px}
+.m-year{font-size:9px;opacity:.7}
+.m-body{padding:14px 16px}
+.m-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--navy);margin-bottom:3px}
+.m-meta{font-size:12px;color:var(--soft);margin-bottom:6px}
+.m-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px}
+.mtag{background:var(--accent-p);color:var(--teal-d);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:600}
+.m-parts{font-size:11.5px;color:var(--soft)}
+.m-notes{font-size:12px;background:var(--light);padding:7px 10px;border-radius:4px;margin-top:6px;line-height:1.5}
+.m-actions{padding:10px 14px;border-top:1px solid var(--mid);display:flex;gap:6px;flex-wrap:wrap;align-items:center;grid-column:1/-1}
+
+/* CR */
+.cr-list{display:flex;flex-direction:column;gap:12px}
+.cr-card{background:white;border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;border-left:4px solid var(--accent)}
+.cr-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.cr-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;color:var(--navy)}
+.cr-meta{font-size:11.5px;color:var(--soft);margin-bottom:10px}
+.cr-body{font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap;background:var(--light);padding:12px;border-radius:4px;max-height:200px;overflow-y:auto}
+
+/* LOG */
+.log-item{padding:8px 12px;border-bottom:1px solid var(--mid);font-size:12.5px;line-height:1.5}
+.log-time{float:right;font-size:11px;color:var(--soft)}
+
+/* COMMENTS */
+.comment-item{background:var(--light);border-radius:4px;padding:8px 12px;font-size:12.5px;line-height:1.5}
+.comment-who{font-weight:700;color:var(--navy)}
+.comment-time{font-size:11px;color:var(--soft);margin-left:8px}
+
+/* FORMS */
+.form-group{margin-bottom:12px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--soft);margin-bottom:5px;letter-spacing:.3px}
+.form-control{width:100%;padding:9px 12px;border:1.5px solid var(--mid);border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);background:white;transition:border-color .15s}
+.form-control:focus{outline:none;border-color:var(--accent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+textarea.form-control{resize:vertical;min-height:80px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:20px;font-weight:600;font-size:13px;border:none;cursor:pointer;transition:all .15s;font-family:'Barlow',sans-serif}
+.btn-teal{background:var(--teal);color:white}.btn-teal:hover{background:var(--teal-d)}
+.btn-navy{background:var(--navy);color:white}
+.btn-terra{background:var(--terra);color:white}
+.btn-ghost{background:transparent;border:1.5px solid var(--mid);color:var(--text)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-ghost-red{background:transparent;border:1.5px solid #f5c6cb;color:#a00}
+.btn-accent{background:var(--accent);color:white}
+.btn-sm{padding:5px 13px;font-size:12px}
+.btn-cal{background:#4285F4;color:white;font-size:11px;padding:4px 10px}
+.btn-apple{background:#555;color:white;font-size:11px;padding:4px 10px}
+.btn-icon{background:none;border:none;font-size:16px;padding:2px 5px;cursor:pointer;opacity:.5;transition:opacity .15s}
+.btn-icon:hover{opacity:1}
+
+/* ADMIN */
+.admin-only{display:none}
+body.is-admin .admin-only{display:block}
+.admin-inline{display:none}
+body.is-admin .admin-inline{display:inline-flex}
+
+/* OVERLAY / MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:10px;width:90vw;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-head{background:var(--accent);color:white;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:10px 10px 0 0}
+.modal-head h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px}
+.modal-close{background:none;border:none;color:white;font-size:20px;cursor:pointer;opacity:.7;padding:0 4px}
+.modal-close:hover{opacity:1}
+.modal-body{padding:20px}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--mid);display:flex;justify-content:flex-end;gap:8px;align-items:center}
+
+/* FINANCES */
+.fin-bar-wrap{background:var(--light);border-radius:20px;height:12px;overflow:hidden;margin-bottom:6px}
+.fin-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--teal),var(--navy));transition:width .6s;width:0%}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--navy);z-index:5000;display:none;align-items:center;justify-content:center}
+#gate.show{display:flex}
+.gate-card{background:white;border-radius:12px;padding:32px;width:340px;max-width:90vw;text-align:center}
+.gate-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--navy);margin-bottom:4px}
+.gate-sub{font-size:12px;color:var(--soft);margin-bottom:20px}
+.gate-err{color:#a00;font-size:13px;margin-top:10px;display:none}
+
+/* IDENTITY MODAL */
+#id-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#id-modal-bg.open{opacity:1;pointer-events:all}
+#id-modal{background:white;border-radius:12px;padding:28px 32px;width:340px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+#id-modal h3{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--navy);margin-bottom:4px}
+#id-modal p{font-size:12.5px;color:var(--soft);margin-bottom:16px}
+#id-chips-pick{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+.id-pick-btn{padding:8px 16px;border-radius:20px;border:2px solid var(--mid);background:white;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:all .15s}
+.id-pick-btn:hover,.id-pick-btn.selected{background:var(--teal);border-color:var(--teal);color:white}
+
+/* FB BANNER */
+#fb-banner{display:none;position:fixed;top:var(--topbar-h);left:0;right:0;z-index:800;padding:8px 16px;font-size:12px;font-weight:600;text-align:center}
+#fb-banner.connecting{display:block;background:#fff8e1;color:#7a5800}
+#fb-banner.ok{display:block;background:#e8f5e9;color:#2e7d32;animation:fadeout 2s 1.5s forwards}
+#fb-banner.err{display:block;background:#fde8e0;color:#a00}
+@keyframes fadeout{to{opacity:0;pointer-events:none}}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:36px 16px;color:var(--soft)}
+.empty-state .ei{font-size:34px;margin-bottom:8px}
+.empty-state p{font-size:13.5px}
+
+/* CONFIG CARD */
+.config-card{background:#fffde7;border:2px solid var(--gold);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.config-card h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px}
+.config-fields{display:grid;gap:8px}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{background:var(--navy);color:white;padding:8px 12px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.5px}
+.dtable td{padding:8px 12px;border-bottom:1px solid var(--mid)}
+.dtable tr:hover td{background:var(--accent-p)}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--mid);border-radius:3px}
+
+@media(max-width:768px){
+  :root{--topbar-h:52px}
+  #app{grid-template-columns:1fr}
+  #sidebar{display:none}
+  #bottom-nav{display:block}
+  #main{padding:16px 14px 90px}
+  .tb-sub{display:none}.tb-logo{display:none}
+  .stat-row{grid-template-columns:repeat(3,1fr)}
+  .proj-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .meeting-card{grid-template-columns:60px 1fr}
+}
+@media print{
+  #topbar,#sidebar,#gate,#bottom-nav,#id-modal-bg,.admin-only,.admin-inline,#fb-banner{display:none!important}
+  #app{grid-template-columns:1fr;padding-top:0}
+  #main{padding:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ADMIN GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">🔐 Accès Administration</div>
+    <div class="gate-sub">Commission Cadre de Vie · S. Kornowski</div>
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <input type="password" id="gate-pwd" class="form-control" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-navy" style="width:100%" onclick="doLogin()">Accéder →</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="closeGate()">Annuler</button>
+    <div class="gate-err" id="gate-err">Mot de passe incorrect.</div>
+  </div>
+</div>
+
+<!-- IDENTITY MODAL -->
+<div id="id-modal-bg">
+  <div id="id-modal">
+    <h3>Qui êtes-vous ?</h3>
+    <p>Choisissez votre prénom — mémorisé sur cet appareil.</p>
+    <div id="id-chips-pick">
+      <button class="id-pick-btn" onclick="pickIdentity('Sylvain')">Sylvain</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Roger')">Roger</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Corinne')">Corinne</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Vivien')">Vivien</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Lalie')">Lalie</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Anthony')">Anthony</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Claire')">Claire</button>
+    </div>
+    <div style="margin-bottom:14px">
+      <p style="font-size:12px;color:var(--soft);margin-bottom:8px">Autre prénom :</p>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="id-custom-name" class="form-control" placeholder="Votre prénom…" style="flex:1" onkeydown="if(event.key==='Enter')pickCustomIdentity()">
+        <button class="btn btn-accent btn-sm" onclick="pickCustomIdentity()">OK</button>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="closeIdModal()">Annuler</button>
+  </div>
+</div>
+
+<!-- FB BANNER -->
+<div id="fb-banner">⏳ Connexion Firebase…</div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">Lestiac 2026</div>
+    <div>
+      <div class="tb-title">Commission Cadre de Vie</div>
+      <div class="tb-sub">Mandat 2026–2032 · S. Kornowski</div>
+    </div>
+  </div>
+  <div class="tb-actions">
+    <button id="btn-identity" class="tb-btn" onclick="openIdModal()">
+      <span class="dot"></span><span id="identity-label">M'identifier</span>
+    </button>
+    <button id="btn-mode" class="tb-btn" onclick="requestAdmin()">
+      <span class="dot" style="background:#6be0a0"></span><span id="mode-label">Participants</span>
+    </button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <span class="nav-label">Navigation</span>
+  <button class="nav-btn active" data-page="bord"     onclick="nav('bord',this)"><span class="ni">🏠</span>Tableau de bord</button>
+  <button class="nav-btn"        data-page="projets"  onclick="nav('projets',this)"><span class="ni">📋</span>Projets</button>
+  <button class="nav-btn"        data-page="reunions" onclick="nav('reunions',this)"><span class="ni">📅</span>Réunions</button>
+  <button class="nav-btn"        data-page="cr"       onclick="nav('cr',this)"><span class="ni">📄</span>Comptes rendus</button>
+  <button class="nav-btn"        data-page="taches"   onclick="nav('taches',this)"><span class="ni">✅</span>Tâches</button>
+  <button class="nav-btn"        data-page="finances" onclick="nav('finances',this)"><span class="ni">💶</span>Finances</button>
+  <button class="nav-btn"        data-page="membres"  onclick="nav('membres',this)"><span class="ni">👥</span>Membres</button>
+  <hr class="nav-divider">
+  <span class="nav-label">Admin</span>
+  <button class="nav-btn admin-only" data-page="journal" onclick="nav('journal',this)"><span class="ni">📝</span>Journal</button>
+  <button class="nav-btn admin-only" data-page="admin"   onclick="nav('admin',this)"><span class="ni">⚙️</span>Paramètres</button>
+  <div id="nav-locked" style="padding:8px 16px;font-size:12px;color:rgba(255,255,255,.35);font-style:italic">🔒 Accès réservé</div>
+  <hr class="nav-divider">
+  <div class="commission-box">
+    <div class="commission-box-title">COMMISSION</div>
+    <div class="commission-box-sub">TRAVAUX · VOIRIE · BÂTI · URBA</div>
+    <div class="mbadges" style="margin-bottom:6px">
+      <span class="mbadge">Sylvain</span><span class="mbadge">Roger</span>
+      <span class="mbadge">Corinne</span><span class="mbadge">Vivien</span><span class="mbadge">Lalie</span>
+    </div>
+    <div class="commission-box-sub">VIE ASS. · CULTURE · PATRIMOINE</div>
+    <div class="mbadges">
+      <span class="mbadge">Anthony</span><span class="mbadge">Claire</span>
+      <span class="mbadge">Corinne</span><span class="mbadge">Vivien</span>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- ▓ BORD ▓ -->
+<div class="page active" id="page-bord">
+  <div class="ph"><h1>Tableau de bord</h1><p>Commission Cadre de Vie · Lestiac 2026–2032</p></div>
+  <div class="stat-row">
+    <div class="stat terra"><div class="stat-n" id="s-ct">—</div><div class="stat-l">Court terme</div></div>
+    <div class="stat"><div class="stat-n" id="s-mt">—</div><div class="stat-l">Moyen terme</div></div>
+    <div class="stat navy"><div class="stat-n" id="s-lt">—</div><div class="stat-l">Long terme</div></div>
+    <div class="stat teal"><div class="stat-n" id="s-rdv">—</div><div class="stat-l">Réunions</div></div>
+    <div class="stat"><div class="stat-n" id="s-tasks">—</div><div class="stat-l">Tâches ✓</div></div>
+    <div class="stat"><div class="stat-n" id="s-cr">—</div><div class="stat-l">CR publiés</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>🌿 Axes du programme — Cadre de Vie</h2></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <div style="background:var(--teal-p);border-left:4px solid var(--teal);border-radius:6px;padding:12px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--teal-d);margin-bottom:4px">Environnement & Bâti</div>
+          <div style="font-size:12px;color:var(--soft)">LED · Voirie · PMR · Mobilités douces · D10 · Stationnement</div>
+        </div>
+        <div style="background:var(--purple-p);border-left:4px solid var(--purple);border-radius:6px;padding:12px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--purple);margin-bottom:4px">Vie du village</div>
+          <div style="font-size:12px;color:var(--soft)">Marché local · Associations · Festival · Patrimoine · Intergénérationnel</div>
+        </div>
+        <div style="background:var(--navy-p);border-left:4px solid var(--navy);border-radius:6px;padding:12px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px">Gouvernance</div>
+          <div style="font-size:12px;color:var(--soft)">Concertation citoyenne · CMJ · Esplanade · TAC</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="fb-notice-bord" class="notice n-gold" style="display:none"><span>🔥</span><div>Firebase non configuré — données locales uniquement. <span class="admin-inline"><a href="#" onclick="nav('admin',null);return false" style="color:inherit;text-decoration:underline">Configurer →</a></span></div></div>
+</div>
+
+<!-- ▓ PROJETS ▓ -->
+<div class="page" id="page-projets">
+  <div class="ph"><h1>Projets</h1><p>Court, moyen et long terme</p></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div class="tab-bar" style="border:none;margin:0">
+      <button class="tab active" onclick="filterProj('tous',this)">Tous</button>
+      <button class="tab" onclick="filterProj('court',this)">Court terme</button>
+      <button class="tab" onclick="filterProj('moyen',this)">Moyen terme</button>
+      <button class="tab" onclick="filterProj('long',this)">Long terme</button>
+    </div>
+    <button class="btn btn-terra btn-sm" onclick="openAddProj()">+ Ajouter</button>
+  </div>
+  <div class="proj-grid" id="proj-grid"></div>
+</div>
+
+<!-- ▓ RÉUNIONS ▓ -->
+<div class="page" id="page-reunions">
+  <div class="ph"><h1>Réunions</h1><p>Planification au fil de l'eau</p></div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-ghost btn-sm" onclick="exportAllIcal()">📅 Export iCal</button>
+    <button class="btn btn-terra btn-sm" onclick="openModal('m-reunion')">+ Planifier une réunion</button>
+  </div>
+  <div class="notice n-gold"><span>📅</span><div>Date vide = à fixer. Chaque réunion s'exporte vers Google ou Apple Calendrier. Une convocation est envoyée automatiquement aux membres si EmailJS est configuré.</div></div>
+  <div class="meeting-list" id="reunion-list"></div>
+  <div class="empty-state" id="reunion-empty"><div class="ei">📅</div><p>Aucune réunion planifiée.</p></div>
+</div>
+
+<!-- ▓ COMPTES RENDUS ▓ -->
+<div class="page" id="page-cr">
+  <div class="ph"><h1>Comptes rendus</h1><p>Publication et envoi automatique aux membres</p></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+    <button class="btn btn-accent btn-sm" onclick="openModal('m-cr')">+ Publier un CR</button>
+  </div>
+  <div class="notice n-teal"><span>📧</span><div>Après publication, le CR est automatiquement envoyé par e-mail à tous les membres. Configurez EmailJS dans les Paramètres.</div></div>
+  <div class="cr-list" id="cr-list"></div>
+  <div class="empty-state" id="cr-empty"><div class="ei">📄</div><p>Aucun compte rendu publié.</p></div>
+</div>
+
+<!-- ▓ TÂCHES ▓ -->
+<div class="page" id="page-taches">
+  <div class="ph"><h1>Tâches</h1><p>Cochez au fur et à mesure</p></div>
+  <div class="card"><div class="card-head terra"><h2>🟠 Court terme — 2026</h2></div><div class="card-body"><div id="tasks-court"></div><div class="add-task-row admin-only"><input type="text" id="new-task-court" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('court')"><select id="new-task-court-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-terra btn-sm" onclick="addTask('court')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head"><h2>🔵 Moyen terme — 2027</h2></div><div class="card-body"><div id="tasks-moyen"></div><div class="add-task-row admin-only"><input type="text" id="new-task-moyen" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('moyen')"><select id="new-task-moyen-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-teal btn-sm" onclick="addTask('moyen')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head navy"><h2>🔷 Long terme — 2028+</h2></div><div class="card-body"><div id="tasks-long"></div><div class="add-task-row admin-only"><input type="text" id="new-task-long" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('long')"><select id="new-task-long-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-navy btn-sm" onclick="addTask('long')">Ajouter</button></div></div></div>
+</div>
+
+<!-- ▓ FINANCES ▓ -->
+<div class="page" id="page-finances">
+  <div class="ph"><h1>💶 Finances</h1><p>Budget de la commission</p></div>
+  <div class="notice n-gold"><span>💶</span><div>Les données sont saisies par le responsable Finances.</div></div>
+  <div style="background:white;border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;border-left:4px solid var(--gold);margin-bottom:14px">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--navy);margin-bottom:4px">Budget alloué — Commission Cadre de Vie</div>
+    <div style="font-size:12px;color:var(--soft);margin-bottom:10px" id="fin-annee">Exercice 2026</div>
+    <div class="fin-bar-wrap"><div id="fin-bar" class="fin-bar"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--soft)"><span id="fin-consomme">0 € consommé</span><span id="fin-total">Budget : à renseigner</span></div>
+  </div>
+  <div id="fin-lignes"></div>
+  <div class="card admin-only">
+    <div class="card-head teal"><h2>✏️ Mettre à jour le budget</h2></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group"><label class="form-label">Budget total alloué (€)</label><input type="number" id="fin-total-input" class="form-control" placeholder="5000"></div>
+        <div class="form-group"><label class="form-label">Montant consommé (€)</label><input type="number" id="fin-consomme-input" class="form-control" placeholder="1200"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Commentaire</label><textarea id="fin-comment" class="form-control" rows="2" placeholder="Ex: Devis LED, frais concertation…"></textarea></div>
+      <button class="btn btn-teal btn-sm" onclick="saveBudget()">Enregistrer</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-head navy"><h2>🔗 Budget global de la commune</h2></div>
+    <div class="card-body"><div id="budget-global-display" style="font-size:13px;color:var(--soft);font-style:italic">Aucune donnée globale synchronisée.</div></div>
+  </div>
+</div>
+
+<!-- ▓ MEMBRES ▓ -->
+<div class="page" id="page-membres">
+  <div class="ph"><h1>Membres</h1><p>Commission Cadre de Vie — responsable : Sylvain Kornowski</p></div>
+  <div class="notice n-teal"><span>ℹ️</span><div>La commission regroupe deux sous-commissions. Les e-mails sont utilisés pour les convocations automatiques.</div></div>
+  <div class="card">
+    <div class="card-head"><h2>Travaux · Voirie · Bâti · Urbanisme</h2></div>
+    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Rôle</th><th>E-mail</th></tr></thead><tbody>
+      <tr><td><strong>Sylvain Kornowski</strong></td><td>Responsable commission</td><td><input type="email" class="form-control" id="email-Sylvain" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Sylvain',this.value)"></td></tr>
+      <tr><td><strong>Roger Carteau</strong></td><td>Travaux · Voirie · Bâti</td><td><input type="email" class="form-control" id="email-Roger" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Roger',this.value)"></td></tr>
+      <tr><td><strong>Corinne Eeckeman</strong></td><td>Travaux &amp; Vie associative</td><td><input type="email" class="form-control" id="email-Corinne" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Corinne',this.value)"></td></tr>
+      <tr><td><strong>Vivien Bomont</strong></td><td>Travaux &amp; Vie associative</td><td><input type="email" class="form-control" id="email-Vivien" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Vivien',this.value)"></td></tr>
+      <tr><td><strong>Lalie</strong></td><td>Travaux · Voirie</td><td><input type="email" class="form-control" id="email-Lalie" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Lalie',this.value)"></td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="card">
+    <div class="card-head purple"><h2>Vie Associative · Culture · Patrimoine</h2></div>
+    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Rôle</th><th>E-mail</th></tr></thead><tbody>
+      <tr><td><strong>Anthony Benoît</strong></td><td>Vie asso · Culture · Patrimoine</td><td><input type="email" class="form-control" id="email-Anthony" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Anthony',this.value)"></td></tr>
+      <tr><td><strong>Claire Gaston</strong></td><td>Vie asso · Culture · Patrimoine</td><td><input type="email" class="form-control" id="email-Claire" placeholder="prenom@…" style="font-size:12px;padding:3px 6px" onblur="saveMemberEmail('Claire',this.value)"></td></tr>
+      <tr><td><strong>Corinne Eeckeman</strong></td><td>Travaux &amp; Vie associative</td><td style="font-size:11px;color:var(--soft)">↑ saisie ci-dessus</td></tr>
+      <tr><td><strong>Vivien Bomont</strong></td><td>Travaux &amp; Vie associative</td><td style="font-size:11px;color:var(--soft)">↑ saisie ci-dessus</td></tr>
+    </tbody></table></div></div>
+  </div>
+</div>
+
+<!-- ▓ JOURNAL ▓ -->
+<div class="page admin-only" id="page-journal">
+  <div class="ph"><h1>Journal des modifications</h1><p>Toutes les actions enregistrées</p></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn btn-ghost-red btn-sm" onclick="clearLog()">🗑 Vider le journal</button></div>
+  <div id="log-list"></div>
+</div>
+
+<!-- ▓ PARAMÈTRES ▓ -->
+<div class="page admin-only" id="page-admin">
+  <div class="ph"><h1>⚙️ Paramètres</h1><p>Configuration Firebase et EmailJS</p></div>
+  <div class="config-card">
+    <h3>🔥 Firebase</h3>
+    <div id="fb-config-status" style="font-size:12px;color:var(--soft);margin-bottom:10px">Non configuré</div>
+    <div class="config-fields">
+      <div class="form-group"><label class="form-label">API Key</label><input type="text" id="fb-apiKey" class="form-control" placeholder="AIzaSy…"></div>
+      <div class="form-group"><label class="form-label">Database URL</label><input type="text" id="fb-databaseURL" class="form-control" placeholder="https://…firebasedatabase.app"></div>
+      <div class="form-group"><label class="form-label">Project ID</label><input type="text" id="fb-projectId" class="form-control" placeholder="mon-projet"></div>
+    </div>
+    <button class="btn btn-teal btn-sm" onclick="saveFbConfig()">Connecter Firebase</button>
+  </div>
+  <div class="config-card">
+    <h3>📧 EmailJS</h3>
+    <div id="ejs-status" style="font-size:12px;color:var(--soft);margin-bottom:10px"></div>
+    <div class="config-fields">
+      <div class="form-group"><label class="form-label">Public Key</label><input type="text" id="ejs-pubkey" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Service ID</label><input type="text" id="ejs-service" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Template ID</label><input type="text" id="ejs-template" class="form-control"></div>
+      <div class="form-group"><label class="form-label">E-mails membres (séparés par virgule)</label><input type="text" id="ejs-emails" class="form-control" placeholder="a@b.fr, c@d.fr"></div>
+    </div>
+    <button class="btn btn-teal btn-sm" onclick="saveEmailJS()">Enregistrer EmailJS</button>
+  </div>
+  <div class="card">
+    <div class="card-head navy"><h2>🔐 Mot de passe admin</h2></div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nouveau mot de passe</label><input type="password" id="new-pwd" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Confirmer</label><input type="password" id="new-pwd2" class="form-control"></div>
+      </div>
+      <button class="btn btn-terra btn-sm" onclick="changePwd()">Changer</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>💾 Exports</h2></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn btn-navy btn-sm" onclick="exportJSON()">⬇️ Backup JSON</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Imprimer</button>
+    </div>
+  </div>
+  <div class="card"><div class="card-head"><h2>🚪 Session</h2></div><div class="card-body"><button class="btn btn-ghost-red btn-sm" onclick="logout()">Se déconnecter</button></div></div>
+</div>
+
+</main>
+</div><!-- #app -->
+
+<!-- BOTTOM NAV -->
+<div id="bottom-nav">
+  <div class="bn-items">
+    <button class="bn-item active" data-page="bord"     onclick="nav('bord',this)"><span class="bn-icon">🏠</span>Accueil</button>
+    <button class="bn-item" data-page="projets"         onclick="nav('projets',this)"><span class="bn-icon">📋</span>Projets</button>
+    <button class="bn-item" data-page="cr"              onclick="nav('cr',this)"><span class="bn-icon">📄</span>CR</button>
+    <button class="bn-item" data-page="taches"          onclick="nav('taches',this)"><span class="bn-icon">✅</span>Tâches</button>
+    <button class="bn-item" data-page="membres"         onclick="nav('membres',this)"><span class="bn-icon">👥</span>Membres</button>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="m-reunion" onclick="closeOverlay(event,'m-reunion')">
+  <div class="modal"><div class="modal-head"><h3>Planifier une réunion</h3><button class="modal-close" onclick="closeModal('m-reunion')">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Titre</label><input type="text" id="r-title" class="form-control" placeholder="Ex : Point D10"></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Date (vide = à fixer)</label><input type="date" id="r-date" class="form-control"></div><div class="form-group"><label class="form-label">Heure</label><input type="time" id="r-heure" class="form-control" value="18:30"></div></div>
+    <div class="form-group"><label class="form-label">Lieu</label><input type="text" id="r-lieu" class="form-control" value="Mairie de Lestiac"></div>
+    <div class="form-group"><label class="form-label">Participants</label><input type="text" id="r-parts" class="form-control" value="Sylvain, Roger, Corinne, Vivien, Lalie"></div>
+    <div class="form-group"><label class="form-label">Thèmes</label><input type="text" id="r-tags" class="form-control" placeholder="Voirie, LED, D10…"></div>
+    <div class="form-group"><label class="form-label">Ordre du jour</label><textarea id="r-notes" class="form-control" placeholder="Points à aborder…"></textarea></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-reunion')">Annuler</button><button class="btn btn-accent" onclick="saveReunion()">Enregistrer</button></div></div>
+</div>
+
+<div class="overlay" id="m-proj" onclick="closeOverlay(event,'m-proj')">
+  <div class="modal"><div class="modal-head"><h3>Ajouter un projet</h3><button class="modal-close" onclick="closeModal('m-proj')">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Titre</label><input type="text" id="p-title" class="form-control" placeholder="Intitulé du projet"></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Horizon</label><select id="p-horizon" class="form-control"><option value="court">Court terme (2026)</option><option value="moyen">Moyen terme (2027)</option><option value="long">Long terme (2028+)</option></select></div><div class="form-group"><label class="form-label">Statut</label><select id="p-status" class="form-control"><option value="s-lancer">À lancer</option><option value="s-cours">En cours</option><option value="s-attente">En attente</option><option value="s-fait">Réalisé</option></select></div></div>
+    <div class="form-group"><label class="form-label">Axe</label><select id="p-axe" class="form-control"><option value="env">🌿 Environnement</option><option value="vie">🎭 Vie du village</option><option value="gouv">🗳 Gouvernance</option></select></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea id="p-desc" class="form-control" placeholder="Décrire…"></textarea></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Budget</label><input type="text" id="p-budget" class="form-control" placeholder="500–1 000 €"></div><div class="form-group"><label class="form-label">Subventions</label><input type="text" id="p-subs" class="form-control" placeholder="DETR, Région…"></div></div>
+    <div class="form-group"><label class="form-label">Inter-commission (optionnel)</label><select id="p-shared" class="form-control" multiple style="height:auto"><option value="">— Aucune —</option><option value="scolaire">Affaires scolaires</option><option value="admin">Administration générale</option></select><div style="font-size:11px;color:var(--soft);margin-top:3px">Ctrl+clic pour plusieurs</div></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-proj')">Annuler</button><button class="btn btn-accent" onclick="saveProj()">Ajouter</button></div></div>
+</div>
+
+<div class="overlay" id="m-cr" onclick="closeOverlay(event,'m-cr')">
+  <div class="modal"><div class="modal-head"><h3>Publier un compte rendu</h3><button class="modal-close" onclick="closeModal('m-cr')">✕</button></div>
+  <div class="modal-body">
+    <div class="notice n-teal"><span>📧</span><div>Ce CR sera publié et envoyé automatiquement par e-mail à tous les membres.</div></div>
+    <div class="form-group"><label class="form-label">Titre / Objet</label><input type="text" id="cr-title" class="form-control" placeholder="Ex : CR Réunion Commission CDV — 15 avril 2026"></div>
+    <div class="form-group"><label class="form-label">Date de la réunion</label><input type="date" id="cr-date" class="form-control"></div>
+    <div class="form-group"><label class="form-label">Contenu du CR</label><textarea id="cr-body" class="form-control" rows="10" placeholder="Ordre du jour, participants, décisions, actions…"></textarea></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-cr')">Annuler</button><button class="btn btn-accent" onclick="publishCR()">📤 Publier &amp; Envoyer</button></div></div>
+</div>
+
+<!-- MODAL DÉTAIL PROJET -->
+<div class="overlay" id="m-proj-detail" onclick="closeOverlay(event,'m-proj-detail')">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-head" id="proj-detail-head">
+      <h3 id="proj-detail-title">Projet</h3><button class="modal-close" onclick="closeModal('m-proj-detail')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="proj-detail-meta" style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap"></div>
+      <div id="proj-detail-desc" style="font-size:13.5px;color:var(--soft);line-height:1.6;margin-bottom:14px"></div>
+      <div style="font-size:12px;color:var(--soft);margin-bottom:14px" id="proj-detail-budget"></div>
+      <div style="margin-bottom:16px">
+        <div class="members-zone-label" style="margin-bottom:6px">👥 Participants</div>
+        <div class="member-chips-proj" id="proj-detail-chips"></div>
+        <button class="btn-join" id="proj-detail-join" onclick="joinFromDetail()">+ Rejoindre</button>
+      </div>
+      <div style="margin-bottom:14px">
+        <div class="members-zone-label" style="margin-bottom:8px">📝 Notes collaboratives</div>
+        <textarea id="proj-detail-notes" class="form-control" rows="4" placeholder="Notes, liens, informations…" oninput="autoSaveNotes()"></textarea>
+        <div style="font-size:11px;color:var(--soft);margin-top:4px" id="proj-notes-status"></div>
+      </div>
+      <div>
+        <div class="members-zone-label" style="margin-bottom:8px">💬 Commentaires</div>
+        <div id="proj-detail-comments" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;max-height:180px;overflow-y:auto"></div>
+        <div style="display:flex;gap:8px"><input type="text" id="proj-comment-input" class="form-control" placeholder="Ajouter un commentaire…" onkeydown="if(event.key==='Enter')addComment()" style="flex:1"><button class="btn btn-accent btn-sm" onclick="addComment()">Envoyer</button></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <div style="font-size:11px;color:var(--soft);flex:1" id="proj-detail-source"></div>
+      <button class="btn btn-ghost" onclick="closeModal('m-proj-detail')">Fermer</button>
+      <button class="btn btn-ghost-red btn-sm admin-only" onclick="deleteProjFromDetail()">🗑 Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ JAVASCRIPT ════ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const COMMISSION = 'cdv';
+const FB_PRESET = {
+  apiKey:      "AIzaSyBkIqarLb7CmCwuricfLv3iBwQ1IcGKHm4",
+  authDomain:  "mairie-lestiac-2026.firebaseapp.com",
+  databaseURL: "https://mairie-lestiac-2026-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:   "mairie-lestiac-2026"
+};
+const K_PWD   = 'cdv_pwd';
+const K_USER  = 'lestiac_user';
+const K_FB    = 'lestiac_fb';
+const K_LOCAL = 'cdv_local_v1';
+const K_EJS   = 'cdv_emailjs';
+const K_EMAILS= 'cdv_member_emails';
+
+const SUPER_ADMINS = ['Sylvain','Corinne','Catherine'];
+const ALL_MEMBERS  = ['Sylvain','Roger','Corinne','Vivien','Lalie','Anthony','Claire'];
+
+const DEFAULT_PROJECTS = [
+  {id:'p1',horizon:'court',axe:'env',title:'Végétalisation cour de l\'école',desc:'Espaces plus frais et agréables. Plantation, ombrage, jardin pédagogique. Implique enfants, parents et enseignants.',members:['Lalie','Corinne'],budget:'300–600 €',subs:'CAF, Région, Département',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:['scolaire']},
+  {id:'p2',horizon:'court',axe:'env',title:'Rénovation bâtiments scolaires',desc:'Rénover pour un environnement plus sain et écoresponsable. Diagnostic, priorisation, financement.',members:['Sylvain','Roger'],budget:'À chiffrer',subs:'DETR, DSIL',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p3',horizon:'court',axe:'env',title:'Transition éclairage 100% LED',desc:'Remplacement des points lumineux (éclairage public + bâtiments communaux). Sobriété énergétique.',members:['Vivien','Roger'],budget:'À chiffrer',subs:'Fonds Vert, DETR',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p4',horizon:'court',axe:'env',title:'Sécurité route de Bordeaux (D10)',desc:'Amélioration de la D10 avec les services du Département. Concertation citoyenne sur les aménagements.',members:['Sylvain','Roger','Vivien'],budget:'À définir',subs:'Département 33',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p5',horizon:'court',axe:'env',title:'Repenser le stationnement',desc:'Étudier la création de zones pour désengorger certains quartiers. Cartographie, diagnostic.',members:['Sylvain','Lalie'],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p6',horizon:'court',axe:'vie',title:'Marché local place Victor Hugo',desc:'Marché de producteurs locaux place Victor Hugo. Format, fréquence et organisation à définir.',members:['Anthony','Claire','Vivien'],budget:'200–500 €',subs:'CDC, Département, Leader',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p7',horizon:'court',axe:'vie',title:'Soutien aux associations',desc:'Actualiser les subventions communales et co-construire un calendrier partagé des événements.',members:['Anthony','Claire'],budget:'Budget communal',subs:'—',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p8',horizon:'court',axe:'gouv',title:'Concertation citoyenne — Nom esplanade',desc:'Première concertation : choix du nom de l\'esplanade école/salle des fêtes.',members:['Sylvain','Anthony'],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p9',horizon:'moyen',axe:'env',title:'Table d\'orientation des hauteurs',desc:'Aménager les hauteurs du village pour valoriser le site et le patrimoine naturel.',members:['Sylvain','Vivien'],budget:'5 000–15 000 €',subs:'Département, Leader',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p10',horizon:'moyen',axe:'vie',title:'Festival sur Garonne',desc:'Festival au bord du fleuve : nature, convivialité, traditions. Format et budget à définir.',members:['Anthony','Claire'],budget:'À définir',subs:'DRAC, Département, Région',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p11',horizon:'moyen',axe:'vie',title:'Valorisation patrimoine bâti',desc:'Préserver et valoriser l\'église, le lavoir, le bâti ancien via du mécénat.',members:['Anthony','Claire'],budget:'Mécénat',subs:'DRAC, Fondation du Patrimoine',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p12',horizon:'moyen',axe:'vie',title:'Ateliers intergénérationnels',desc:'Ateliers réguliers (lecture, jeux, échanges, numérique) pour renforcer les liens entre générations.',members:['Anthony','Corinne','Lalie'],budget:'100–300 €/an',subs:'CAF, Département',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p13',horizon:'moyen',axe:'gouv',title:'Conseil Municipal des Jeunes',desc:'Créer un CMJ et le dispositif « Argent de poche » pour la participation citoyenne des jeunes.',members:['Sylvain','Anthony'],budget:'500–1 000 €',subs:'CAF, Région, FDVA',status:'s-lancer',source:'Programme officiel',priority:'normal',sharedWith:[]},
+  {id:'p14',horizon:'long',axe:'env',title:'Accessibilité PMR voiries & bâtiments',desc:'Audit et plan de mise en conformité PMR pour les bâtiments communaux et voiries.',members:['Sylvain','Roger','Vivien'],budget:'À évaluer',subs:'DETR, DSIL',status:'s-lancer',source:'Mandat',priority:'normal',sharedWith:[]},
+  {id:'p15',horizon:'long',axe:'env',title:'Mobilités douces — plan vélo',desc:'Itinéraires cyclables sécurisés, stationnements vélos. Lien avec projets intercommunaux.',members:['Vivien','Lalie'],budget:'À chiffrer',subs:'Région, DSIL, CDC',status:'s-lancer',source:'Mandat',priority:'normal',sharedWith:[]},
+];
+
+const DEFAULT_TASKS = {
+  court:[
+    {id:'t1',text:'[Sylvain] Convoquer la 1ère réunion de commission',tag:'tt-gouv',done:false},
+    {id:'t2',text:'[Sylvain + Roger] Diagnostic voiries et bâtiments communaux prioritaires',tag:'tt-env',done:false},
+    {id:'t3',text:'[Vivien + Roger] Devis réfection éclairage LED',tag:'tt-env',done:false},
+    {id:'t4',text:'[Lalie + Corinne] Contact direction de l\'école — végétalisation',tag:'tt-env',done:false},
+    {id:'t5',text:'[Sylvain + Roger] Solliciter le Département 33 pour la D10',tag:'tt-env',done:false},
+    {id:'t6',text:'[Sylvain] Organiser la concertation citoyenne sur le nom de l\'esplanade',tag:'tt-gouv',done:false},
+    {id:'t7',text:'[Anthony + Claire] Tour des associations — recueil des besoins subventions',tag:'tt-vie',done:false},
+    {id:'t8',text:'[Anthony] Démarches pour le marché local place Victor Hugo',tag:'tt-vie',done:false},
+  ],
+  moyen:[
+    {id:'t9',text:'[Sylvain + Roger] Dossier DETR (voirie / accessibilité)',tag:'tt-env',done:false},
+    {id:'t10',text:'[Vivien] Audit éclairage public — recensement points à moderniser',tag:'tt-env',done:false},
+    {id:'t11',text:'[Sylvain] Concertation citoyenne D10 — réunion publique',tag:'tt-gouv',done:false},
+    {id:'t12',text:'[Anthony + Claire] Format et budget Festival sur Garonne',tag:'tt-vie',done:false},
+    {id:'t13',text:'[Anthony] Contact Fondation du Patrimoine (église, lavoir)',tag:'tt-vie',done:false},
+    {id:'t14',text:'[Sylvain] Lancer la réflexion CMJ — contact ANACEJ',tag:'tt-gouv',done:false},
+  ],
+  long:[
+    {id:'t15',text:'[Sylvain + Roger] Faisabilité accessibilité PMR — rapport CM',tag:'tt-env',done:false},
+    {id:'t16',text:'[Vivien + Lalie] Étude mobilités douces — vélo et stationnements',tag:'tt-env',done:false},
+    {id:'t17',text:'[Sylvain] Réunions PLU intercommunal (CDC Convergence Garonne)',tag:'tt-gouv',done:false},
+  ]
+};
+
+// ── STATE ──
+let isAdmin=false, fbApp=null, fbDb=null, fbConnected=false;
+let currentThread=null, _currentProjId=null, _notesTimer=null, _pendingJoin=null;
+let localData={projects:null,tasks:null,reunions:null,log:[],cr:[],budget:null};
+
+// ── LOCAL HELPERS ──
+function getLocal(){try{return JSON.parse(localStorage.getItem(K_LOCAL))||{};}catch{return{}}}
+function saveLocal(d){localStorage.setItem(K_LOCAL,JSON.stringify(d))}
+function getPwd(){return localStorage.getItem(K_PWD)||'lestiac2026'}
+function getCurrentUser(){return localStorage.getItem(K_USER)||null}
+function getFbConfig(){try{return JSON.parse(localStorage.getItem(K_FB))||null;}catch{return null}}
+function getEjsConfig(){try{return JSON.parse(localStorage.getItem(K_EJS))||null;}catch{return null}}
+function isSuperAdmin(){const me=getCurrentUser();return isAdmin||SUPER_ADMINS.includes(me)}
+
+// ── MEMBER EMAILS ──
+function getMemberEmails(){try{return JSON.parse(localStorage.getItem(K_EMAILS))||{};}catch{return{}}}
+function saveMemberEmail(name,email){const e=getMemberEmails();e[name]=email.trim();localStorage.setItem(K_EMAILS,JSON.stringify(e));if(fbDb)fbSet(COMMISSION+'/member_emails',e)}
+window.saveMemberEmail=saveMemberEmail;
+function loadMemberEmailFields(){const e=getMemberEmails();ALL_MEMBERS.forEach(n=>{const el=document.getElementById('email-'+n);if(el&&e[n])el.value=e[n]})}
+function getAllMemberEmails(){const e=getMemberEmails();return ALL_MEMBERS.map(n=>e[n]).filter(Boolean)}
+
+// ── FIREBASE ──
+function initFirebase(config){
+  if(!config||!config.apiKey||!config.databaseURL)return;
+  try{
+    fbApp=initializeApp(config,'cdv-'+Date.now());
+    fbDb=getDatabase(fbApp);
+    fbConnected=true;
+    setBanner('connecting','⏳ Connexion Firebase…');
+    onValue(ref(fbDb,COMMISSION),(snap)=>{
+      setBanner('ok','✅ Connecté');
+      const data=snap.val()||{};
+      localData.projects=data.projects?Object.values(data.projects):null;
+      localData.tasks=data.tasks||null;
+      localData.reunions=data.reunions?Object.values(data.reunions):null;
+      localData.log=data.log?Object.values(data.log).sort((a,b)=>b.ts-a.ts):[];
+      localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
+      localData.budget=data.budget||null;
+      if(data.member_emails){localStorage.setItem(K_EMAILS,JSON.stringify(data.member_emails));loadMemberEmailFields()}
+      renderAll();
+      onValue(ref(fbDb,'finances/global'),(snap2)=>{
+        const gb=snap2.val();
+        if(gb){const el=document.getElementById('budget-global-display');if(el)el.textContent='Budget global commune : '+(gb.total||'—')+' € · Consommé : '+(gb.consomme||'—')+' €'}
+      });
+    },(err)=>{setBanner('err','❌ '+err.message);fbConnected=false});
+    document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
+  }catch(e){setBanner('err','❌ Config invalide')}
+}
+function fbSet(path,val){if(!fbDb)return;set(ref(fbDb,path),val).catch(e=>console.error(e))}
+function fbPush(path,val){if(!fbDb)return;push(ref(fbDb,path),val).catch(e=>console.error(e))}
+function fbRemove(path){if(!fbDb)return;remove(ref(fbDb,path)).catch(e=>console.error(e))}
+function setBanner(type,msg){const b=document.getElementById('fb-banner');b.className=type;b.textContent=msg;if(type==='ok')setTimeout(()=>{b.style.display='none'},4000)}
+
+// ── DATA ACCESS ──
+function getProjects(){if(localData.projects)return localData.projects;return getLocal().projects||[...DEFAULT_PROJECTS]}
+function getTasks(){if(localData.tasks)return localData.tasks;const l=getLocal();return l.tasks||JSON.parse(JSON.stringify(DEFAULT_TASKS))}
+function getReunions(){if(localData.reunions)return localData.reunions;return getLocal().reunions||[]}
+function getCRs(){return localData.cr||(getLocal().cr||[])}
+function getLog(){return localData.log||(getLocal().log||[])}
+function getBudget(){return localData.budget||(getLocal().budget||null)}
+
+function writeProjects(arr){const obj={};arr.forEach(p=>{obj[p.id]=p});if(fbDb)fbSet(COMMISSION+'/projects',obj);else{const d=getLocal();d.projects=arr;saveLocal(d)}}
+function writeTasks(t){if(fbDb)fbSet(COMMISSION+'/tasks',t);else{const d=getLocal();d.tasks=t;saveLocal(d)}}
+function writeReunions(arr){const obj={};arr.forEach((r,i)=>{obj[r.id||('r'+i)]=r});if(fbDb)fbSet(COMMISSION+'/reunions',obj);else{const d=getLocal();d.reunions=arr;saveLocal(d)}}
+function writeLog(e){if(fbDb)fbPush(COMMISSION+'/log',e);else{const d=getLocal();if(!d.log)d.log=[];d.log.unshift(e);saveLocal(d);localData.log=d.log;renderLog()}}
+function writeCR(cr){if(fbDb)fbPush(COMMISSION+'/cr',cr);else{const d=getLocal();if(!d.cr)d.cr=[];d.cr.unshift(cr);saveLocal(d);localData.cr=d.cr;renderCRs()}}
+function writeBudget(b){if(fbDb)fbSet(COMMISSION+'/budget',b);else{const d=getLocal();d.budget=b;saveLocal(d);localData.budget=b}}
+function logAction(action,detail){const who=getCurrentUser()||'Anonyme';writeLog({who,action,detail,ts:Date.now(),time:new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})})}
+
+// ── NAV ──
+function nav(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn,[data-page]').forEach(b=>b.classList.remove('active'));
+  const pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  document.querySelectorAll('[data-page="'+id+'"]').forEach(b=>b.classList.add('active'));
+  if(btn)btn.classList.add('active');
+  if(id==='journal')renderLog();
+  if(id==='finances')renderFinances();
+}
+window.nav=nav;
+
+// ── AUTH ──
+function requestAdmin(){if(isAdmin){logout();return}document.getElementById('gate').classList.add('show');setTimeout(()=>document.getElementById('gate-pwd').focus(),100)}
+window.requestAdmin=requestAdmin;
+function doLogin(){
+  const pwd=document.getElementById('gate-pwd').value;
+  if(pwd===getPwd()){
+    isAdmin=true;document.body.classList.add('is-admin');
+    document.getElementById('gate').classList.remove('show');
+    document.getElementById('gate-err').style.display='none';
+    document.getElementById('gate-pwd').value='';
+    document.getElementById('btn-mode').classList.add('admin');
+    document.getElementById('mode-label').textContent='Admin';
+    document.getElementById('nav-locked').style.display='none';
+    const cfg=getFbConfig()||FB_PRESET;
+    ['apiKey','databaseURL','projectId'].forEach(k=>{const el=document.getElementById('fb-'+k);if(el&&cfg[k])el.value=cfg[k]});
+    const ejs=getEjsConfig();
+    if(ejs){['pubkey','service','template'].forEach(k=>{const el=document.getElementById('ejs-'+k);if(el&&ejs[k])el.value=ejs[k]});if(ejs.emails)document.getElementById('ejs-emails').value=ejs.emails}
+    if(!fbConnected)initFirebase(cfg);
+    renderAll();
+  }else{document.getElementById('gate-err').style.display='block'}
+}
+window.doLogin=doLogin;
+function closeGate(){document.getElementById('gate').classList.remove('show');document.getElementById('gate-pwd').value='';document.getElementById('gate-err').style.display='none'}
+window.closeGate=closeGate;
+function logout(){isAdmin=false;document.body.classList.remove('is-admin');document.getElementById('btn-mode').classList.remove('admin');document.getElementById('mode-label').textContent='Participants';document.getElementById('nav-locked').style.display='';nav('bord',document.querySelector('[data-page="bord"]'));renderAll()}
+window.logout=logout;
+
+// ── IDENTITY ──
+function openIdModal(){const me=getCurrentUser();document.querySelectorAll('.id-pick-btn').forEach(b=>b.classList.toggle('selected',b.textContent.trim()===me));document.getElementById('id-modal-bg').classList.add('open')}
+window.openIdModal=openIdModal;
+function closeIdModal(){document.getElementById('id-modal-bg').classList.remove('open');_pendingJoin=null}
+window.closeIdModal=closeIdModal;
+function pickIdentity(name){localStorage.setItem(K_USER,name);closeIdModal();updateIdentityBtn();if(_pendingJoin){_doToggleMember(_pendingJoin,name);_pendingJoin=null}renderProjects()}
+window.pickIdentity=pickIdentity;
+function pickCustomIdentity(){const name=document.getElementById('id-custom-name').value.trim();if(!name)return;pickIdentity(name);document.getElementById('id-custom-name').value=''}
+window.pickCustomIdentity=pickCustomIdentity;
+function updateIdentityBtn(){const me=getCurrentUser();document.getElementById('identity-label').textContent=me?'👤 '+me:"M'identifier";document.getElementById('btn-identity').classList.toggle('identified',!!me)}
+document.getElementById('id-modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('id-modal-bg'))closeIdModal()});
+
+// ── MODALS ──
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function closeOverlay(e,id){if(e.target===document.getElementById(id))closeModal(id)}
+window.openModal=openModal;window.closeModal=closeModal;window.closeOverlay=closeOverlay;
+
+// ── RENDER ALL ──
+function renderAll(){renderProjects();renderReunions();renderTasks();renderCRs();updateStats()}
+
+// ── STATS ──
+function updateStats(){
+  const p=getProjects(),t=getTasks(),r=getReunions(),c=getCRs();
+  document.getElementById('s-ct').textContent=p.filter(x=>x.horizon==='court').length;
+  document.getElementById('s-mt').textContent=p.filter(x=>x.horizon==='moyen').length;
+  document.getElementById('s-lt').textContent=p.filter(x=>x.horizon==='long').length;
+  document.getElementById('s-rdv').textContent=r.length;
+  document.getElementById('s-cr').textContent=c.length;
+  const done=[...(t.court||[]),...(t.moyen||[]),...(t.long||[])].filter(x=>x.done).length;
+  document.getElementById('s-tasks').textContent=done;
+}
+
+// ── PROJECTS ──
+function getMembersArr(p){if(!p.members)return[];if(Array.isArray(p.members))return p.members;return p.members.split(',').map(s=>s.trim()).filter(Boolean)}
+function renderMemberChips(projId,membersArr){
+  const me=getCurrentUser();
+  return ALL_MEMBERS.map(name=>{
+    const active=membersArr.includes(name),isMe=name===me;
+    return '<span class="mchip'+(active?' active':'')+(active&&isMe?' is-me':'')+'" onclick="toggleMember(\''+projId+'\',\''+name+'\')"><span class="chip-check">✓</span>'+name+'</span>';
+  }).join('');
+}
+function renderProjects(){
+  const grid=document.getElementById('proj-grid');
+  let projs=getProjects();grid.innerHTML='';
+  if(!projs||!projs.length){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
+  projs=[...projs.filter(p=>p.priority==='urgent'),...projs.filter(p=>p.priority!=='urgent')];
+  const hL={court:'Court terme · 2026',moyen:'Moyen terme · 2027',long:'Long terme · 2028+'};
+  const hB={court:'h-court',moyen:'h-moyen',long:'h-long'};
+  const aC={env:'',vie:'purple',gouv:'navy'};
+  const sL={'s-lancer':'À lancer','s-cours':'En cours','s-attente':'En attente','s-fait':'Réalisé'};
+  const me=getCurrentUser();
+  const canPrio=isSuperAdmin();
+  projs.forEach(p=>{
+    const m=getMembersArr(p),j=me&&m.includes(me);
+    const isUrgent=p.priority==='urgent';
+    const card=document.createElement('div');
+    card.className='proj-card '+(aC[p.axe]||'')+(isUrgent?' urgent':'');
+    card.dataset.horizon=p.horizon;card.dataset.id=p.id;
+    let html='';
+    if(isUrgent)html+='<div class="priority-banner">🔴 Prioritaire</div>';
+    html+='<span class="proj-horizon '+hB[p.horizon]+'">'+hL[p.horizon]+'</span>';
+    if(p.sharedWith&&p.sharedWith.length)p.sharedWith.forEach(s=>{html+='<span style="display:inline-flex;align-items:center;gap:4px;background:#e8ecf5;color:var(--navy);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px">↔ '+({'scolaire':'Affaires scolaires','admin':'Admin. générale'}[s]||s)+'</span>';});
+    if(isAdmin)html+='<button class="btn-icon" style="position:absolute;top:10px;right:8px" onclick="event.stopPropagation();deleteProj(\''+p.id+'\')">🗑</button>';
+    html+='<div class="proj-title" onclick="openProjDetail(\''+p.id+'\')">'+p.title+'</div>';
+    html+='<div class="proj-desc" onclick="openProjDetail(\''+p.id+'\')">'+p.desc+'</div>';
+    html+='<div class="proj-meta"><span class="status-pill '+p.status+'">'+(sL[p.status]||p.status)+'</span>';
+    if(isAdmin)html+='<select class="form-control" style="padding:2px 6px;font-size:11px;width:auto" onchange="changeStatus(\''+p.id+'\',this.value)"><option value="s-lancer"'+(p.status==='s-lancer'?' selected':'')+'>À lancer</option><option value="s-cours"'+(p.status==='s-cours'?' selected':'')+'>En cours</option><option value="s-attente"'+(p.status==='s-attente'?' selected':'')+'>En attente</option><option value="s-fait"'+(p.status==='s-fait'?' selected':'')+'>Réalisé</option></select>';
+    if(canPrio)html+='<select class="priority-select" onchange="changePriority(\''+p.id+'\',this.value)"><option value="normal"'+(!isUrgent?' selected':'')+'>⬜ Normal</option><option value="urgent"'+(isUrgent?' selected':'')+'>🔴 Urgent</option></select>';
+    html+='</div>';
+    html+='<div style="margin-top:10px"><div class="members-zone-label">👥 Participants</div><div class="member-chips-proj" id="chips-'+p.id+'">'+renderMemberChips(p.id,m)+'</div>';
+    html+='<button class="btn-join'+(j?' joined':'')+'" onclick="joinProject(\''+p.id+'\')">'+( j?'✓ Inscrit·e':'+ Rejoindre')+'</button></div>';
+    html+='<div class="proj-budget">💶 '+p.budget+(p.subs&&p.subs!=='—'?' · '+p.subs:'')+'</div>';
+    if(p.source)html+='<div class="proj-source">'+p.source+'</div>';
+    html+='<div style="margin-top:8px;text-align:right"><button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="openProjDetail(\''+p.id+'\')">Notes &amp; commentaires →</button></div>';
+    card.innerHTML=html;
+    grid.appendChild(card);
+  });
+}
+function filterProj(h,btn){document.querySelectorAll('#page-projets .tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('#proj-grid .proj-card').forEach(c=>{c.style.display=(h==='tous'||c.dataset.horizon===h)?'':'none'})}
+window.filterProj=filterProj;
+function openAddProj(){const me=getCurrentUser();if(!me&&!isAdmin){openIdModal();return}openModal('m-proj')}
+window.openAddProj=openAddProj;
+function saveProj(){
+  const title=document.getElementById('p-title').value.trim();if(!title)return;
+  const shared=Array.from(document.getElementById('p-shared').selectedOptions).map(o=>o.value).filter(Boolean);
+  const p={id:'p'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement',priority:'normal',sharedWith:shared};
+  const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»');closeModal('m-proj');
+  ['p-title','p-desc','p-budget','p-subs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-shared').selectedIndex=-1;
+  if(!fbConnected)renderAll()
+}
+window.saveProj=saveProj;
+function deleteProj(id){if(!confirm('Supprimer ?'))return;const arr=getProjects().filter(p=>p.id!==id);writeProjects(arr);logAction('Projet supprimé','ID:'+id);if(!fbConnected)renderAll()}
+window.deleteProj=deleteProj;
+function changeStatus(id,val){const arr=getProjects(),p=arr.find(x=>x.id===id);if(p){p.status=val;writeProjects(arr);logAction('Statut','«'+p.title+'» → '+val)}if(!fbConnected)renderAll()}
+window.changeStatus=changeStatus;
+function changePriority(id,val){const arr=getProjects(),p=arr.find(x=>x.id===id);if(p){p.priority=val;writeProjects(arr);logAction('Priorité','«'+p.title+'» → '+val)}if(!fbConnected)renderAll()}
+window.changePriority=changePriority;
+
+// Member chips
+function toggleMember(projId,name){const me=getCurrentUser();if(!isAdmin&&name!==me){if(!me){_pendingJoin=projId;openIdModal()}return}if(!me&&!isAdmin){_pendingJoin=projId;openIdModal();return}_doToggleMember(projId,name)}
+window.toggleMember=toggleMember;
+function _doToggleMember(projId,memberName){const arr=getProjects(),p=arr.find(x=>x.id===projId);if(!p)return;let m=getMembersArr(p);const j=!m.includes(memberName);m=j?[...m,memberName]:m.filter(x=>x!==memberName);p.members=m;writeProjects(arr);logAction(j?'Inscription':'Désinscription','«'+p.title+'» — '+memberName);const el=document.getElementById('chips-'+projId);if(el)el.innerHTML=renderMemberChips(projId,m);const btn=document.querySelector('.proj-card[data-id="'+projId+'"] .btn-join');if(btn&&getCurrentUser()){const jj=m.includes(getCurrentUser());btn.textContent=jj?'✓ Inscrit·e':'+ Rejoindre';btn.className='btn-join'+(jj?' joined':'')}updateStats()}
+function joinProject(projId){const me=getCurrentUser();if(!me){_pendingJoin=projId;openIdModal();return}_doToggleMember(projId,me)}
+window.joinProject=joinProject;
+
+// ── PROJET DETAIL ──
+function openProjDetail(projId){
+  _currentProjId=projId;const p=getProjects().find(x=>x.id===projId);if(!p)return;
+  const sL={'s-lancer':'À lancer','s-cours':'En cours','s-attente':'En attente','s-fait':'Réalisé'};
+  const hL={court:'Court terme · 2026',moyen:'Moyen terme · 2027',long:'Long terme · 2028+'};
+  const hB={court:'h-court',moyen:'h-moyen',long:'h-long'};
+  document.getElementById('proj-detail-title').textContent=p.title;
+  document.getElementById('proj-detail-meta').innerHTML='<span class="proj-horizon '+hB[p.horizon]+'">'+hL[p.horizon]+'</span><span class="status-pill '+p.status+'">'+(sL[p.status]||p.status)+'</span>';
+  document.getElementById('proj-detail-desc').textContent=p.desc||'';
+  document.getElementById('proj-detail-budget').innerHTML='💶 '+(p.budget||'')+(p.subs&&p.subs!=='—'?' · '+p.subs:'');
+  document.getElementById('proj-detail-source').textContent=p.source?'Source : '+p.source:'';
+  const m=getMembersArr(p),me=getCurrentUser(),j=me&&m.includes(me);
+  document.getElementById('proj-detail-chips').innerHTML=renderMemberChips(projId,m);
+  const jb=document.getElementById('proj-detail-join');jb.textContent=j?'✓ Inscrit·e':'+ Rejoindre';jb.className='btn-join'+(j?' joined':'');
+  document.getElementById('proj-detail-notes').value=p.notes||'';
+  document.getElementById('proj-notes-status').textContent='';
+  renderComments(projId,p.comments||{});
+  openModal('m-proj-detail');
+}
+window.openProjDetail=openProjDetail;
+function renderComments(projId,obj){const cont=document.getElementById('proj-detail-comments');cont.innerHTML='';const c=Object.values(obj||{}).sort((a,b)=>a.ts-b.ts);if(!c.length){cont.innerHTML='<div style="font-size:12px;color:var(--soft);font-style:italic">Aucun commentaire.</div>';return}c.forEach(x=>{const d=document.createElement('div');d.className='comment-item';d.innerHTML='<span class="comment-who">'+x.who+'</span><span class="comment-time">'+x.time+'</span><br>'+x.text;cont.appendChild(d)});cont.scrollTop=cont.scrollHeight}
+function addComment(){if(!_currentProjId)return;const inp=document.getElementById('proj-comment-input');const text=inp.value.trim();if(!text)return;const who=getCurrentUser()||'Anonyme';const time=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});const c={who,text,time,ts:Date.now()};const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;if(!p.comments)p.comments={};p.comments['c'+Date.now()]=c;writeProjects(arr);logAction('Commentaire','«'+p.title+'»');inp.value='';renderComments(_currentProjId,p.comments);if(!fbConnected)localData.projects=arr}
+window.addComment=addComment;
+function autoSaveNotes(){if(!_currentProjId)return;clearTimeout(_notesTimer);document.getElementById('proj-notes-status').textContent='✏️ En cours…';_notesTimer=setTimeout(()=>{const text=document.getElementById('proj-detail-notes').value;const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;p.notes=text;writeProjects(arr);logAction('Notes','«'+p.title+'»');document.getElementById('proj-notes-status').textContent='✅ Sauvegardé';setTimeout(()=>document.getElementById('proj-notes-status').textContent='',2000);if(!fbConnected)localData.projects=arr},1200)}
+window.autoSaveNotes=autoSaveNotes;
+function joinFromDetail(){if(!_currentProjId)return;joinProject(_currentProjId);const p=getProjects().find(x=>x.id===_currentProjId);if(p){const m=getMembersArr(p),me=getCurrentUser();document.getElementById('proj-detail-chips').innerHTML=renderMemberChips(_currentProjId,m);const jb=document.getElementById('proj-detail-join');const j=me&&m.includes(me);jb.textContent=j?'✓ Inscrit·e':'+ Rejoindre';jb.className='btn-join'+(j?' joined':'')}}
+window.joinFromDetail=joinFromDetail;
+function deleteProjFromDetail(){if(!_currentProjId)return;closeModal('m-proj-detail');deleteProj(_currentProjId)}
+window.deleteProjFromDetail=deleteProjFromDetail;
+
+// ── RÉUNIONS ──
+function renderReunions(){
+  const list=document.getElementById('reunion-list'),empty=document.getElementById('reunion-empty'),arr=getReunions();
+  list.innerHTML='';empty.style.display=arr.length===0?'':'none';
+  arr.forEach((r,i)=>{
+    const hd=r.date&&r.date.trim();let day='À',mon='FIXER',yr='',cls='empty';
+    if(hd){const d=new Date(r.date);day=d.getDate();mon=d.toLocaleString('fr-FR',{month:'short'}).toUpperCase();yr=d.getFullYear();cls=''}
+    const tags=(r.tags||'').split(',').filter(t=>t.trim()).map(t=>'<span class="mtag">'+t.trim()+'</span>').join('');
+    const card=document.createElement('div');card.className='meeting-card';
+    card.innerHTML='<div class="m-date-col '+cls+'"><div class="m-day">'+day+'</div><div class="m-month">'+mon+'</div>'+(yr?'<div class="m-year">'+yr+'</div>':'')+'</div>'
+      +'<div class="m-body"><div class="m-title">'+r.title+'</div>'
+      +'<div class="m-meta">'+(hd?new Date(r.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}):'Date à fixer')+(r.heure?' · '+r.heure:'')+' · '+(r.lieu||'Mairie')+'</div>'
+      +'<div class="m-tags">'+tags+'</div>'
+      +(r.participants?'<div class="m-parts">👥 '+r.participants+'</div>':'')
+      +(r.notes?'<div class="m-notes">'+r.notes+'</div>':'')
+      +'</div>'
+      +'<div class="m-actions">'
+      +(hd?'<button class="btn btn-cal btn-sm" onclick=\'exportGcal('+JSON.stringify(r)+')\'>📅 Google</button><button class="btn btn-apple btn-sm" onclick=\'exportIcal('+JSON.stringify(r)+')\'>🍎 Apple</button>':'<span style="font-size:11px;color:var(--soft)">Date à fixer</span>')
+      +(isAdmin?'<button class="btn btn-ghost-red btn-sm" onclick="deleteReunion('+i+')">🗑 Supprimer</button>':'')
+      +'</div>';
+    list.appendChild(card);
+  });updateStats();
+}
+function saveReunion(){
+  const title=document.getElementById('r-title').value.trim();if(!title){alert('Titre requis.');return}
+  const r={id:'r'+Date.now(),title,date:document.getElementById('r-date').value,heure:document.getElementById('r-heure').value,lieu:document.getElementById('r-lieu').value.trim()||'Mairie de Lestiac',participants:document.getElementById('r-parts').value.trim(),tags:document.getElementById('r-tags').value.trim(),notes:document.getElementById('r-notes').value.trim()};
+  const arr=getReunions();arr.push(r);writeReunions(arr);
+  logAction('Réunion planifiée','«'+title+'»'+(r.date?' le '+new Date(r.date).toLocaleDateString('fr-FR'):''));
+  sendConvocation(r);
+  closeModal('m-reunion');
+  ['r-title','r-date','r-tags','r-notes'].forEach(id=>document.getElementById(id).value='');
+  if(!fbConnected)renderAll()
+}
+window.saveReunion=saveReunion;
+function deleteReunion(i){if(!confirm('Supprimer ?'))return;const arr=getReunions();arr.splice(i,1);writeReunions(arr);if(!fbConnected)renderAll()}
+window.deleteReunion=deleteReunion;
+
+function sendConvocation(r){
+  const ejs=getEjsConfig();if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template)return;
+  emailjs.init(ejs.pubkey);
+  const emails=getAllMemberEmails();if(!emails.length)return;
+  const dateStr=r.date?new Date(r.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'Date à fixer';
+  const body='Bonjour,\n\nVous êtes convoqué·e à la réunion suivante :\n\n📋 '+r.title+'\n📅 '+dateStr+(r.heure?' à '+r.heure:'')+'\n📍 '+(r.lieu||'Mairie de Lestiac')+(r.notes?'\n\nOrdre du jour :\n'+r.notes:'')+'\n\nCommission Cadre de Vie — Lestiac 2026·2032';
+  Promise.all(emails.map(to=>emailjs.send(ejs.service,ejs.template,{to_email:to,subject:'[Convocation] '+r.title,message:body,from_name:'Commission Cadre de Vie — Lestiac',date:r.date||''}))).then(()=>logAction('Convocation','«'+r.title+'» → '+emails.length+' membre(s)')).catch(e=>console.warn(e));
+}
+
+function exportGcal(r){if(!r.date)return;const d=new Date(r.date);const fmt=n=>String(n).padStart(2,'0');const ds=d.getFullYear()+''+fmt(d.getMonth()+1)+''+fmt(d.getDate());const hs=(r.heure||'18:30').replace(':','');const he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(r.title)+'&dates='+ds+'T'+hs+'00/'+ds+'T'+he+'00&location='+encodeURIComponent(r.lieu||'')+'&details='+encodeURIComponent('Commission Cadre de Vie Lestiac\n'+(r.notes||'')),'_blank')}
+window.exportGcal=exportGcal;
+function exportIcal(r){if(!r.date)return;const d=new Date(r.date);const fmt=n=>String(n).padStart(2,'0');const ds=d.getFullYear()+''+fmt(d.getMonth()+1)+''+fmt(d.getDate());const hs=(r.heure||'18:30').replace(':','');const he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);const ical=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDV Lestiac//FR','BEGIN:VEVENT','UID:lestiac-'+Date.now()+'@cdv','SUMMARY:'+r.title,'DTSTART:'+ds+'T'+hs+'00','DTEND:'+ds+'T'+he+'00','LOCATION:'+(r.lieu||'Mairie de Lestiac'),'DESCRIPTION:'+(r.notes||'Commission Cadre de Vie — Lestiac 2026'),'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ical],{type:'text/calendar'}));a.download=r.title.replace(/\s+/g,'_')+'.ics';a.click()}
+window.exportIcal=exportIcal;
+function exportAllIcal(){const arr=getReunions().filter(r=>r.date&&r.date.trim());if(!arr.length){alert('Aucune réunion avec date.');return}const fmt=n=>String(n).padStart(2,'0');let lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDV Lestiac//FR'];arr.forEach((r,i)=>{const d=new Date(r.date);const ds=d.getFullYear()+''+fmt(d.getMonth()+1)+''+fmt(d.getDate());const hs=(r.heure||'18:30').replace(':','');const he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);lines.push('BEGIN:VEVENT','UID:lestiac-'+i+'-'+Date.now()+'@cdv','SUMMARY:'+r.title,'DTSTART:'+ds+'T'+hs+'00','DTEND:'+ds+'T'+he+'00','LOCATION:'+(r.lieu||'Mairie de Lestiac'),'DESCRIPTION:Commission Cadre de Vie — Lestiac 2026','END:VEVENT')});lines.push('END:VCALENDAR');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'}));a.download='CDV_Lestiac_Reunions.ics';a.click()}
+window.exportAllIcal=exportAllIcal;
+
+// ── TÂCHES ──
+function renderTasks(){
+  const tasks=getTasks();
+  ['court','moyen','long'].forEach(h=>{
+    const cont=document.getElementById('tasks-'+h);cont.innerHTML='';
+    (tasks[h]||[]).forEach((t,i)=>{
+      const div=document.createElement('div');div.className='task-item'+(t.done?' done':'');div.onclick=()=>toggleTask(h,i);
+      const tagIco={tt_env:'🌿',tt_vie:'🎭',tt_gouv:'🗳'}[(t.tag||'tt-env').replace('-','_')]||'🌿';
+      div.innerHTML='<input type="checkbox" '+(t.done?'checked':'')+' onclick="event.stopPropagation();toggleTask(\''+h+'\','+i+')"><span class="task-label">'+t.text+'</span><span class="task-tag '+(t.tag||'tt-env')+'">'+tagIco+'</span>'+(isAdmin?'<button class="btn-icon" onclick="event.stopPropagation();deleteTask(\''+h+'\','+i+')" style="font-size:13px">🗑</button>':'');
+      cont.appendChild(div);
+    });
+  });updateStats();
+}
+function toggleTask(h,i){const t=getTasks();if(!t[h]||!t[h][i])return;t[h][i].done=!t[h][i].done;writeTasks(t);logAction(t[h][i].done?'Tâche cochée':'Tâche décochée','«'+t[h][i].text.substring(0,50)+'»');if(!fbConnected)renderTasks()}
+window.toggleTask=toggleTask;
+function deleteTask(h,i){if(!confirm('Supprimer ?'))return;const t=getTasks();t[h].splice(i,1);writeTasks(t);if(!fbConnected)renderTasks()}
+window.deleteTask=deleteTask;
+function addTask(h){const inp=document.getElementById('new-task-'+h),tag=document.getElementById('new-task-'+h+'-tag').value,text=inp.value.trim();if(!text)return;const t=getTasks();t[h].push({id:'t'+Date.now(),text,tag,done:false});writeTasks(t);logAction('Tâche ajoutée','«'+text+'»');inp.value='';if(!fbConnected)renderTasks()}
+window.addTask=addTask;
+
+// ── COMPTES RENDUS ──
+function publishCR(){
+  const title=document.getElementById('cr-title').value.trim(),body=document.getElementById('cr-body').value.trim(),date=document.getElementById('cr-date').value;
+  if(!title||!body){alert('Titre et contenu requis.');return}
+  const who=getCurrentUser()||'Admin';const time=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const cr={id:'cr'+Date.now(),title,body,date,who,time,ts:Date.now()};
+  writeCR(cr);logAction('CR publié','«'+title+'»');
+  sendCRByEmail(cr);
+  closeModal('m-cr');
+  ['cr-title','cr-body','cr-date'].forEach(id=>document.getElementById(id).value='');
+  if(!fbConnected)renderCRs()
+}
+window.publishCR=publishCR;
+function sendCRByEmail(cr){
+  const ejs=getEjsConfig();if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template){alert('⚠️ EmailJS non configuré. CR publié mais non envoyé.');return}
+  emailjs.init(ejs.pubkey);
+  const emails=(ejs.emails||'').split(',').map(e=>e.trim()).filter(Boolean);
+  if(!emails.length){alert('⚠️ Aucune adresse e-mail configurée.');return}
+  Promise.all(emails.map(to=>emailjs.send(ejs.service,ejs.template,{to_email:to,subject:cr.title,message:cr.body,from_name:'Commission Cadre de Vie — Lestiac',date:cr.date||''}))).then(()=>{alert('✅ CR envoyé à '+emails.length+' membre(s).');logAction('CR envoyé','«'+cr.title+'»')}).catch(e=>{alert('❌ Erreur : '+e.text)})
+}
+function renderCRs(){
+  const list=document.getElementById('cr-list'),empty=document.getElementById('cr-empty');
+  if(!list)return;const crs=getCRs();list.innerHTML='';
+  if(empty)empty.style.display=crs.length===0?'':'none';
+  crs.forEach(cr=>{
+    const card=document.createElement('div');card.className='cr-card';
+    card.innerHTML='<div class="cr-card-head"><div><div class="cr-title">'+cr.title+'</div><div class="cr-meta">Publié par '+cr.who+' · '+cr.time+(cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):'')+'</div></div><span style="display:inline-block;font-size:10px;font-weight:700;background:#e8f5e9;color:#2e7d32;border-radius:20px;padding:2px 8px">✓ Publié</span></div><div class="cr-body">'+cr.body+'</div>';
+    list.appendChild(card);
+  });updateStats();
+}
+
+// ── FINANCES ──
+function renderFinances(){
+  const b=getBudget();
+  if(!b){document.getElementById('fin-total').textContent='Budget : à renseigner';document.getElementById('fin-consomme').textContent='0 € consommé';document.getElementById('fin-bar').style.width='0%';return}
+  const pct=b.total>0?Math.min(100,Math.round(b.consomme/b.total*100)):0;
+  document.getElementById('fin-total').textContent='Budget : '+b.total+' €';
+  document.getElementById('fin-consomme').textContent=b.consomme+' € consommé ('+pct+'%)';
+  document.getElementById('fin-bar').style.width=pct+'%';
+  if(b.annee)document.getElementById('fin-annee').textContent='Exercice '+b.annee;
+  const cont=document.getElementById('fin-lignes');cont.innerHTML='';
+  if(b.comment){const card=document.createElement('div');card.style.cssText='background:white;border-radius:6px;box-shadow:var(--sh);padding:16px 18px;border-left:4px solid var(--navy);margin-bottom:14px';card.innerHTML='<div style="font-weight:700;margin-bottom:4px">Dernière mise à jour</div><div style="font-size:12px;color:var(--soft)">'+b.comment+'</div>';cont.appendChild(card)}
+}
+function saveBudget(){
+  const b={total:parseFloat(document.getElementById('fin-total-input').value)||0,consomme:parseFloat(document.getElementById('fin-consomme-input').value)||0,annee:new Date().getFullYear(),comment:document.getElementById('fin-comment').value.trim(),ts:Date.now()};
+  writeBudget(b);logAction('Budget',b.total+'€ total');renderFinances();
+  if(fbDb)fbSet('finances/'+COMMISSION,b);
+}
+window.saveBudget=saveBudget;
+
+// ── JOURNAL ──
+function renderLog(){const list=document.getElementById('log-list');const logs=getLog();if(!logs||!logs.length){list.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucune modification.</p></div>';return}list.innerHTML='';logs.forEach(l=>{const d=document.createElement('div');d.className='log-item';d.innerHTML='<strong>'+(l.who||'?')+'</strong> — '+(l.action||'')+' : '+(l.detail||'')+'<span class="log-time">'+(l.time||'')+'</span>';list.appendChild(d)})}
+function clearLog(){if(!confirm('Vider ?'))return;if(fbDb)fbRemove(COMMISSION+'/log');else{const d=getLocal();d.log=[];saveLocal(d);localData.log=[]}renderLog()}
+window.clearLog=clearLog;
+
+// ── ADMIN PARAMS ──
+function saveFbConfig(){const cfg={apiKey:document.getElementById('fb-apiKey').value.trim(),authDomain:'mairie-lestiac-2026.firebaseapp.com',databaseURL:document.getElementById('fb-databaseURL').value.trim(),projectId:document.getElementById('fb-projectId').value.trim()};if(!cfg.apiKey||!cfg.databaseURL){alert('apiKey et databaseURL requis.');return}localStorage.setItem(K_FB,JSON.stringify(cfg));initFirebase(cfg)}
+window.saveFbConfig=saveFbConfig;
+function saveEmailJS(){const cfg={pubkey:document.getElementById('ejs-pubkey').value.trim(),service:document.getElementById('ejs-service').value.trim(),template:document.getElementById('ejs-template').value.trim(),emails:document.getElementById('ejs-emails').value.trim()};localStorage.setItem(K_EJS,JSON.stringify(cfg));document.getElementById('ejs-status').textContent='✅ Configuration EmailJS enregistrée.';setTimeout(()=>document.getElementById('ejs-status').textContent='',3000)}
+window.saveEmailJS=saveEmailJS;
+function changePwd(){const p1=document.getElementById('new-pwd').value,p2=document.getElementById('new-pwd2').value;if(!p1||p1!==p2){alert('Mots de passe incorrects.');return}localStorage.setItem(K_PWD,p1);alert('Mot de passe mis à jour.');document.getElementById('new-pwd').value='';document.getElementById('new-pwd2').value=''}
+window.changePwd=changePwd;
+function exportJSON(){const blob=new Blob([JSON.stringify({projects:getProjects(),tasks:getTasks(),reunions:getReunions()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CadreDeVie_backup.json';a.click()}
+window.exportJSON=exportJSON;
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{
+  updateIdentityBtn();
+  loadMemberEmailFields();
+  const cfg=getFbConfig()||FB_PRESET;
+  initFirebase(cfg);
+  renderAll();
+});
+</script>
+
+<script>
+const manifest={name:'Commission Cadre de Vie — Lestiac',short_name:'Cadre de Vie',start_url:'./',display:'standalone',background_color:'#1B2F5E',theme_color:'#1B2F5E',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%231A6B5A"/><text y=".9em" font-size="80" x="10">🌿</text></svg>',sizes:'any',type:'image/svg+xml'}]};
+const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(blob);document.head.appendChild(link);
+</script>
+</body>
+</html>
