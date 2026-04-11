@@ -904,16 +904,18 @@ function renderMemberChips(projId,membersArr){
 }
 
 function renderProjects(){
-  const grid=document.getElementById('proj-grid');const projs=getProjects();grid.innerHTML='';
-  if(!projs||!projs.length){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
+  const grid=document.getElementById('proj-grid');grid.innerHTML='';
+  let projs=getProjects();
+  if(!projs){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
+  if(!Array.isArray(projs))projs=Object.values(projs);
+  projs=projs.filter(p=>p&&p.id);
+  if(!projs.length){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
   const hL={court:'Court terme · 2026',moyen:'Moyen terme · 2027',long:'Long terme · 2028+'};
   const hB={court:'h-court',moyen:'h-moyen',long:'h-long'};
   const aC={env:'',vie:'purple',gouv:'navy'};
   const sL={'s-lancer':'À lancer','s-cours':'En cours','s-attente':'En attente','s-fait':'Réalisé'};
   const me=getCurrentUser();
   // Remonter les urgents en tête
-  if(!Array.isArray(projs))projs=Object.values(projs);
-  projs=projs.filter(p=>p&&p.id);
   projs=[...projs.filter(p=>p.priority==='urgent'),...projs.filter(p=>p.priority!=='urgent')];
   projs.forEach(p=>{
     const m=getMembersArr(p),j=me&&m.includes(me);
