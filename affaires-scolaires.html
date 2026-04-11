@@ -898,6 +898,7 @@ function renderProjects(){
   const me=getCurrentUser();
   // Remonter les urgents en tête
   if(!Array.isArray(projs))projs=Object.values(projs);
+  projs=projs.filter(p=>p&&p.id);
   projs=[...projs.filter(p=>p.priority==='urgent'),...projs.filter(p=>p.priority!=='urgent')];
   projs.forEach(p=>{
     const m=getMembersArr(p),j=me&&m.includes(me);
