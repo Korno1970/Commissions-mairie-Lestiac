@@ -14,7 +14,7 @@
 :root{
   --teal:#1A6B5A;--teal-d:#134d40;--teal-p:#e8f5f1;
   --navy:#1B2F5E;--navy-p:#e8ecf5;
-  --accent:#2563a8;--accent-p:#e8f0fb; /* bleu Admin */
+  --accent:#2563a8;--accent-p:#e8f0fb;
   --purple:#5c2d6e;--purple-p:#f2eaf7;
   --terra:#c0613a;--gold:#f0a500;
   --light:#f5f7f4;--mid:#dde5e2;--text:#1e2822;--soft:#5a6b65;
@@ -29,6 +29,8 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 /* TOPBAR */
 #topbar{background:var(--navy);height:var(--topbar-h);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:fixed;top:0;left:0;right:0;z-index:900;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 .tb-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.tb-back{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.12);color:white;text-decoration:none;font-size:13px;flex-shrink:0;transition:background .2s;border:1px solid rgba(255,255,255,.2)}
+.tb-back:hover{background:rgba(255,255,255,.25)}
 .tb-logo{background:var(--accent);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:1.5px;padding:3px 8px;border-radius:4px;text-transform:uppercase;flex-shrink:0}
 .tb-title{color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb-sub{color:rgba(255,255,255,.5);font-size:10px;margin-top:1px}
@@ -97,8 +99,20 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .proj-card{background:white;border-radius:var(--r);box-shadow:var(--sh);padding:14px;border-left:5px solid var(--accent);position:relative;transition:transform .15s,box-shadow .15s}
 .proj-card:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
 .proj-card.navy{border-left-color:var(--navy)}.proj-card.teal{border-left-color:var(--teal)}.proj-card.terra{border-left-color:var(--terra)}
-.proj-horizon{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:7px}
+.proj-horizon{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:5px}
 .h-court{background:#fde8e0;color:var(--terra)}.h-moyen{background:var(--accent-p);color:var(--accent)}.h-long{background:var(--navy-p);color:var(--navy)}
+/* BADGE CATEGORIE */
+.proj-cat-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-left:5px;margin-bottom:5px}
+.cat-hab{background:#e0f0ff;color:#1565c0}
+.cat-com{background:#e8f5f1;color:#134d40}
+.cat-rh{background:#e8ecf5;color:#1B2F5E}
+.cat-soc{background:#f2eaf7;color:#5c2d6e}
+/* PILOTE */
+.proj-pilote{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.proj-pilote span{background:var(--accent-p);padding:2px 8px;border-radius:20px}
+/* NOTIF DOT */
+.notif-dot{position:absolute;top:10px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--terra);border:2px solid white;display:none}
+.notif-dot.show{display:block}
 .proj-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--navy);margin-bottom:5px;cursor:pointer}
 .proj-desc{font-size:12.5px;color:var(--soft);line-height:1.5;margin-bottom:8px;cursor:pointer}
 .proj-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px}
@@ -134,7 +148,6 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .task-item:hover{background:var(--accent-p)}
 .task-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:2px;cursor:pointer}
 .task-label{font-size:13.5px;line-height:1.5;flex:1}
-.task-label strong{color:var(--navy)}
 .task-item.done .task-label{text-decoration:line-through;color:var(--soft)}
 .task-tag{font-size:9.5px;font-weight:700;letter-spacing:.8px;padding:1px 6px;border-radius:20px;flex-shrink:0;margin-top:4px}
 .tt-hab{background:var(--accent-p);color:var(--accent)}.tt-com{background:var(--teal-p);color:var(--teal-d)}.tt-rh{background:var(--navy-p);color:var(--navy)}.tt-soc{background:var(--purple-p);color:var(--purple)}
@@ -160,7 +173,7 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .m-notes{font-size:12px;background:var(--light);padding:7px 10px;border-radius:4px;margin-top:6px;line-height:1.5}
 .m-actions{padding:10px 14px;border-top:1px solid var(--mid);display:flex;gap:6px;flex-wrap:wrap;align-items:center;grid-column:1/-1}
 
-/* CR (Comptes Rendus) */
+/* CR */
 .cr-list{display:flex;flex-direction:column;gap:12px}
 .cr-card{background:white;border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;border-left:4px solid var(--accent)}
 .cr-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
@@ -227,6 +240,10 @@ table.dtable tr:last-child td{border-bottom:none}
 .comment-item{background:var(--light);border-radius:var(--r);padding:9px 12px;font-size:13px;line-height:1.5}
 .comment-who{font-weight:700;color:var(--accent);margin-right:6px}
 .comment-time{font-size:10.5px;color:var(--soft)}
+
+/* NOTE AUTEUR */
+.note-author-line{font-size:11px;color:var(--soft);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.note-author-line strong{color:var(--accent)}
 
 /* TIMELINE */
 .timeline{padding-left:20px;position:relative}
@@ -353,6 +370,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- TOPBAR -->
 <div id="topbar">
   <div class="tb-brand">
+    <a href="https://commissions-lestiac.fr" class="tb-back" title="← Toutes les commissions">⬅</a>
     <div class="tb-logo">Lestiac 2026</div>
     <div>
       <div class="tb-title">Commission Administration Générale</div>
@@ -486,7 +504,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- ▓ FINANCES ▓ -->
 <div class="page" id="page-finances">
   <div class="ph"><h1>💶 Finances</h1><p>Budget de la commission · Daniel Bouchet, responsable Finances</p></div>
-  <div class="notice n-gold"><span>💶</span><div>Les données financières sont saisies par le responsable Finances (Daniel Bouchet) et visibles par toutes les commissions. <a href="#" onclick="nav('admin',null);return false" style="color:inherit;font-weight:700">Mettre à jour →</a></div></div>
+  <div class="notice n-gold"><span>💶</span><div>Les données financières sont saisies par le responsable Finances (Daniel Bouchet) et visibles par toutes les commissions.</div></div>
   <div class="fin-card">
     <div class="fin-title">Budget alloué — Commission Administration Générale</div>
     <div class="fin-meta" id="fin-annee">Exercice 2026</div>
@@ -508,7 +526,6 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="card" style="margin-top:14px">
     <div class="card-head navy"><h2>🔗 Budget global de la commune</h2></div>
     <div class="card-body">
-      <p style="font-size:13px;color:var(--soft);margin-bottom:12px">Le budget global est géré par la commission Finances (Daniel Bouchet). Consultez-le directement sur la PWA Cadre de Vie ou demandez un accès.</p>
       <div id="budget-global-display" style="font-size:13px;color:var(--soft);font-style:italic">Aucune donnée globale synchronisée.</div>
     </div>
   </div>
@@ -562,7 +579,7 @@ body.is-admin .admin-inline{display:inline-flex}
       <div class="form-group"><label class="form-label">Service ID</label><input type="text" id="ejs-service" class="form-control" placeholder="service_xxxxx"></div>
       <div class="form-group"><label class="form-label">Template ID</label><input type="text" id="ejs-template" class="form-control" placeholder="template_cr"></div>
     </div>
-    <div class="form-group"><label class="form-label">E-mails membres (séparés par des virgules — hors opposition)</label><textarea id="ejs-emails" class="form-control" rows="3" placeholder="catherine@exemple.fr, sophie@exemple.fr, corinne@exemple.fr…"></textarea></div>
+    <div class="form-group"><label class="form-label">E-mails membres (séparés par des virgules)</label><textarea id="ejs-emails" class="form-control" rows="3" placeholder="catherine@exemple.fr, sophie@exemple.fr…"></textarea></div>
     <button class="btn btn-accent btn-sm" onclick="saveEmailJS()">Enregistrer</button>
     <div id="ejs-status" style="margin-top:8px;font-size:12px;color:var(--soft)"></div>
   </div>
@@ -582,7 +599,7 @@ body.is-admin .admin-inline{display:inline-flex}
 </div>
 
 </main>
-</div><!-- #app -->
+</div>
 
 <!-- BOTTOM NAV -->
 <div id="bottom-nav">
@@ -613,6 +630,7 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="modal"><div class="modal-head"><h3>Ajouter un projet</h3><button class="modal-close" onclick="closeModal('m-proj')">✕</button></div>
   <div class="modal-body">
     <div class="form-group"><label class="form-label">Titre</label><input type="text" id="p-title" class="form-control" placeholder="Intitulé"></div>
+    <div class="form-group"><label class="form-label">Pilote du projet</label><input type="text" id="p-pilote" class="form-control" placeholder="Ex : Catherine"></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Horizon</label><select id="p-horizon" class="form-control"><option value="court">Court terme</option><option value="moyen">Moyen terme</option><option value="long">Long terme</option></select></div><div class="form-group"><label class="form-label">Statut</label><select id="p-status" class="form-control"><option value="s-lancer">À lancer</option><option value="s-cours">En cours</option><option value="s-attente">En attente</option><option value="s-fait">Réalisé</option></select></div></div>
     <div class="form-group"><label class="form-label">Sous-commission</label><select id="p-axe" class="form-control"><option value="hab">🏘 Relation habitants</option><option value="com">📢 Communication</option><option value="rh">👤 Relations Humaines</option><option value="soc">🤝 Social</option></select></div>
     <div class="form-group"><label class="form-label">Description</label><textarea id="p-desc" class="form-control" placeholder="Décrire…"></textarea></div>
@@ -627,7 +645,7 @@ body.is-admin .admin-inline{display:inline-flex}
     <div class="notice n-accent"><span>📧</span><div>Ce CR sera publié sur la PWA et envoyé automatiquement par e-mail à tous les membres (hors opposition).</div></div>
     <div class="form-group"><label class="form-label">Titre / Objet</label><input type="text" id="cr-title" class="form-control" placeholder="Ex : CR Réunion Commission Admin — 15 avril 2026"></div>
     <div class="form-group"><label class="form-label">Date de la réunion</label><input type="date" id="cr-date" class="form-control"></div>
-    <div class="form-group"><label class="form-label">Contenu du CR (collez votre texte Dictée.AI ici)</label><textarea id="cr-body" class="form-control" rows="10" placeholder="Ordre du jour, participants, décisions, actions…"></textarea></div>
+    <div class="form-group"><label class="form-label">Contenu du CR</label><textarea id="cr-body" class="form-control" rows="10" placeholder="Ordre du jour, participants, décisions, actions…"></textarea></div>
   </div>
   <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-cr')">Annuler</button><button class="btn btn-accent" onclick="publishCR()">📤 Publier &amp; Envoyer</button></div></div>
 </div>
@@ -639,7 +657,8 @@ body.is-admin .admin-inline{display:inline-flex}
       <h3 id="proj-detail-title">Projet</h3><button class="modal-close" onclick="closeModal('m-proj-detail')">✕</button>
     </div>
     <div class="modal-body">
-      <div id="proj-detail-meta" style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap"></div>
+      <div id="proj-detail-meta" style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"></div>
+      <div id="proj-detail-pilote" style="margin-bottom:12px"></div>
       <div id="proj-detail-desc" style="font-size:13.5px;color:var(--soft);line-height:1.6;margin-bottom:14px"></div>
       <div style="font-size:12px;color:var(--soft);margin-bottom:14px" id="proj-detail-budget"></div>
       <div style="margin-bottom:16px">
@@ -649,6 +668,7 @@ body.is-admin .admin-inline{display:inline-flex}
       </div>
       <div style="margin-bottom:14px">
         <div class="members-zone-label" style="margin-bottom:8px">📝 Notes collaboratives</div>
+        <div id="proj-notes-author" class="note-author-line" style="display:none"></div>
         <textarea id="proj-detail-notes" class="form-control" rows="4" placeholder="Notes, liens, informations…" oninput="autoSaveNotes()"></textarea>
         <div style="font-size:11px;color:var(--soft);margin-top:4px" id="proj-notes-status"></div>
       </div>
@@ -671,8 +691,7 @@ body.is-admin .admin-inline{display:inline-flex}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-// ── COMMISSION CONFIG ──
-const COMMISSION = 'admin'; // Firebase path prefix
+const COMMISSION = 'admin';
 const FB_PRESET = {
   apiKey:      "AIzaSyBkIqarLb7CmCwuricfLv3iBwQ1IcGKHm4",
   authDomain:  "mairie-lestiac-2026.firebaseapp.com",
@@ -680,24 +699,29 @@ const FB_PRESET = {
   projectId:   "mairie-lestiac-2026"
 };
 const K_PWD   = 'admin_pwd';
-const K_USER  = 'lestiac_user'; // shared across all PWAs
+const K_USER  = 'lestiac_user';
 const K_FB    = 'lestiac_fb';
 const K_LOCAL = 'admin_local_v1';
 const K_EJS   = 'admin_emailjs';
+const K_VISITED = 'admin_visited'; // {projId: ts} dernière visite
 
 const ALL_MEMBERS = ['Catherine','Sophie','Corinne','Anthony','Lalie','Daniel','Claire','Roger'];
 
+// Labels sous-commissions
+const AXE_LABELS = {hab:'🏘 Habitants',com:'📢 Communication',rh:'👤 RH',soc:'🤝 Social'};
+const AXE_CLASSES = {hab:'cat-hab',com:'cat-com',rh:'cat-rh',soc:'cat-soc'};
+
 const DEFAULT_PROJECTS = [
-  {id:'a1',horizon:'court',axe:'hab',title:'Cafés du Maire',desc:'Organisation des premières rencontres mensuelles maire/élus/habitants. Lieu, format, communication, fréquence.',members:['Catherine','Daniel'],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel'},
-  {id:'a2',horizon:'court',axe:'hab',title:'Fête des vendanges',desc:'Organisation de la fête des vendanges. Partenariats vignobles locaux, animation, logistique, communication.',members:['Catherine','Sophie','Lalie'],budget:'500–2 000 €',subs:'CDC, Département',status:'s-lancer',source:'Programme officiel'},
-  {id:'a3',horizon:'court',axe:'hab',title:'Trail de la colline',desc:'Événement sportif sur les hauteurs de Lestiac. Format, parcours, partenaires, inscription, sécurité.',members:['Catherine','Anthony'],budget:'300–800 €',subs:'Région (sport)',status:'s-lancer',source:'Programme officiel'},
-  {id:'a4',horizon:'court',axe:'com',title:'Réactivation Facebook & IntraMuros',desc:'Relancer la page Facebook de la commune et le compte IntraMuros. Charte éditoriale, calendrier de publication, formations.',members:['Sophie','Daniel'],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel'},
-  {id:'a5',horizon:'court',axe:'soc',title:'Réseau solidaire entre voisins',desc:'Développer un réseau de vigilance et d\'entraide entre Lestiacais pour prévenir les incivilités et incidents.',members:['Catherine','Claire'],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel'},
-  {id:'a6',horizon:'court',axe:'soc',title:'Octobre Rose — Lestiac solidaire',desc:'Organiser un événement de sensibilisation au cancer du sein. Collecte, animation, partenariats associations.',members:['Claire','Sophie'],budget:'100–300 €',subs:'Département (santé)',status:'s-lancer',source:'Programme officiel'},
-  {id:'a7',horizon:'moyen',axe:'hab',title:'Festival sur Garonne',desc:'Festival culturel au bord du fleuve. Nature, convivialité, traditions. Artistes locaux, scène, buvette, partenaires.',members:['Catherine','Anthony','Sophie'],budget:'2 000–5 000 €',subs:'DRAC, Région, CDC',status:'s-lancer',source:'Programme officiel'},
-  {id:'a8',horizon:'moyen',axe:'com',title:'Refonte du bulletin municipal',desc:'Moderniser le bulletin municipal : format, fréquence, contenu digital, distribution.',members:['Sophie','Catherine'],budget:'500–1 500 €/an',subs:'—',status:'s-lancer',source:'Mandat'},
-  {id:'a9',horizon:'moyen',axe:'soc',title:'Maintien lien personnes fragiles',desc:'Dispositif de visite et contact régulier avec les aînés isolés, notamment en période de canicule ou intempéries.',members:['Claire','Daniel','Catherine'],budget:'0 €',subs:'CAF, Département',status:'s-lancer',source:'Programme officiel'},
-  {id:'a10',horizon:'long',axe:'rh',title:'Procédures RH du conseil municipal',desc:'Formaliser les procédures de remplacement, délégations, absences et renouvellement de postes au sein du CM.',members:['Catherine','Roger'],budget:'0 €',subs:'CDG 33',status:'s-lancer',source:'Mandat'},
+  {id:'a1',horizon:'court',axe:'hab',title:'Cafés du Maire',pilote:'Catherine',desc:'Organisation des premières rencontres mensuelles maire/élus/habitants. Lieu, format, communication, fréquence.',members:['Catherine','Daniel'],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel'},
+  {id:'a2',horizon:'court',axe:'hab',title:'Fête des vendanges',pilote:'Catherine',desc:'Organisation de la fête des vendanges. Partenariats vignobles locaux, animation, logistique, communication.',members:['Catherine','Sophie','Lalie'],budget:'500–2 000 €',subs:'CDC, Département',status:'s-lancer',source:'Programme officiel'},
+  {id:'a3',horizon:'court',axe:'hab',title:'Trail de la colline',pilote:'Anthony',desc:'Événement sportif sur les hauteurs de Lestiac. Format, parcours, partenaires, inscription, sécurité.',members:['Catherine','Anthony'],budget:'300–800 €',subs:'Région (sport)',status:'s-lancer',source:'Programme officiel'},
+  {id:'a4',horizon:'court',axe:'com',title:'Réactivation Facebook & IntraMuros',pilote:'Sophie',desc:'Relancer la page Facebook de la commune et le compte IntraMuros. Charte éditoriale, calendrier de publication, formations.',members:['Sophie','Daniel'],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel'},
+  {id:'a5',horizon:'court',axe:'soc',title:'Réseau solidaire entre voisins',pilote:'Claire',desc:'Développer un réseau de vigilance et d\'entraide entre Lestiacais pour prévenir les incivilités et incidents.',members:['Catherine','Claire'],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel'},
+  {id:'a6',horizon:'court',axe:'soc',title:'Octobre Rose — Lestiac solidaire',pilote:'Claire',desc:'Organiser un événement de sensibilisation au cancer du sein. Collecte, animation, partenariats associations.',members:['Claire','Sophie'],budget:'100–300 €',subs:'Département (santé)',status:'s-lancer',source:'Programme officiel'},
+  {id:'a7',horizon:'moyen',axe:'hab',title:'Festival sur Garonne',pilote:'Catherine',desc:'Festival culturel au bord du fleuve. Nature, convivialité, traditions. Artistes locaux, scène, buvette, partenaires.',members:['Catherine','Anthony','Sophie'],budget:'2 000–5 000 €',subs:'DRAC, Région, CDC',status:'s-lancer',source:'Programme officiel'},
+  {id:'a8',horizon:'moyen',axe:'com',title:'Refonte du bulletin municipal',pilote:'Sophie',desc:'Moderniser le bulletin municipal : format, fréquence, contenu digital, distribution.',members:['Sophie','Catherine'],budget:'500–1 500 €/an',subs:'—',status:'s-lancer',source:'Mandat'},
+  {id:'a9',horizon:'moyen',axe:'soc',title:'Maintien lien personnes fragiles',pilote:'Claire',desc:'Dispositif de visite et contact régulier avec les aînés isolés, notamment en période de canicule ou intempéries.',members:['Claire','Daniel','Catherine'],budget:'0 €',subs:'CAF, Département',status:'s-lancer',source:'Programme officiel'},
+  {id:'a10',horizon:'long',axe:'rh',title:'Procédures RH du conseil municipal',pilote:'Catherine',desc:'Formaliser les procédures de remplacement, délégations, absences et renouvellement de postes au sein du CM.',members:['Catherine','Roger'],budget:'0 €',subs:'CDG 33',status:'s-lancer',source:'Mandat'},
 ];
 
 const DEFAULT_TASKS = {
@@ -720,7 +744,7 @@ const DEFAULT_TASKS = {
 
 // ── STATE ──
 let isAdmin=false, fbApp=null, fbDb=null, fbConnected=false;
-let currentThread=null, _currentProjId=null, _notesTimer=null, _pendingJoin=null;
+let _currentProjId=null, _notesTimer=null, _pendingJoin=null;
 let localData={projects:null,tasks:null,reunions:null,log:[],cr:[],budget:null};
 
 // ── LOCAL HELPERS ──
@@ -730,6 +754,16 @@ function getPwd(){return localStorage.getItem(K_PWD)||'lestiac2026'}
 function getCurrentUser(){return localStorage.getItem(K_USER)||null}
 function getFbConfig(){try{return JSON.parse(localStorage.getItem(K_FB))||null;}catch{return null}}
 function getEjsConfig(){try{return JSON.parse(localStorage.getItem(K_EJS))||null;}catch{return null}}
+
+// ── VISITED TRACKING ──
+function getVisited(){try{return JSON.parse(localStorage.getItem(K_VISITED))||{};}catch{return{}}}
+function markVisited(projId){const v=getVisited();v[projId]=Date.now();localStorage.setItem(K_VISITED,JSON.stringify(v))}
+function hasNew(p){
+  const v=getVisited();const lastVisit=v[p.id]||0;
+  const lastComment=p.comments?Math.max(...Object.values(p.comments).map(c=>c.ts||0)):0;
+  const lastNote=p.notesTs||0;
+  return Math.max(lastComment,lastNote)>lastVisit;
+}
 
 // ── FIREBASE ──
 function initFirebase(config){
@@ -749,7 +783,6 @@ function initFirebase(config){
       localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
       localData.budget=data.budget||null;
       renderAll();
-      // Also read global budget from finances node
       onValue(ref(fbDb,'finances/global'),(snap2)=>{
         const gb=snap2.val();
         if(gb){document.getElementById('budget-global-display').textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
@@ -764,7 +797,7 @@ function fbRemove(path){if(!fbDb)return;remove(ref(fbDb,path)).catch(e=>console.
 function setBanner(type,msg){const b=document.getElementById('fb-banner');b.className=type;b.textContent=msg;if(type==='ok')setTimeout(()=>{b.style.display='none'},4000)}
 
 // ── DATA ACCESS ──
-function getProjects(){if(localData.projects)return localData.projects;return getLocal().projects||[...DEFAULT_PROJECTS]}
+function getProjects(){if(localData.projects)return localData.projects;return getLocal().projects||JSON.parse(JSON.stringify(DEFAULT_PROJECTS))}
 function getTasks(){if(localData.tasks)return localData.tasks;const l=getLocal();return l.tasks||JSON.parse(JSON.stringify(DEFAULT_TASKS))}
 function getReunions(){if(localData.reunions)return localData.reunions;return getLocal().reunions||[]}
 function getCRs(){return localData.cr||(getLocal().crs||[])}
@@ -804,7 +837,6 @@ function doLogin(){
     document.getElementById('btn-mode').classList.add('admin');
     document.getElementById('mode-label').textContent='Admin';
     document.getElementById('nav-locked').style.display='none';
-    // Load saved configs
     const cfg=getFbConfig()||FB_PRESET;
     ['apiKey','databaseURL','projectId'].forEach(k=>{const el=document.getElementById('fb-'+k);if(el&&cfg[k])el.value=cfg[k]});
     const ejs=getEjsConfig();
@@ -861,6 +893,7 @@ function renderMemberChips(projId,membersArr){
     return `<span class="mchip${active?' active':''}${active&&isMe?' is-me':''}" onclick="toggleMember('${projId}','${name}')"><span class="chip-check">✓</span>${name}</span>`;
   }).join('');
 }
+
 function renderProjects(){
   const grid=document.getElementById('proj-grid');const projs=getProjects();grid.innerHTML='';
   if(!projs||!projs.length){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
@@ -871,10 +904,17 @@ function renderProjects(){
   const me=getCurrentUser();
   projs.forEach(p=>{
     const m=getMembersArr(p),j=me&&m.includes(me);
+    const newActivity=hasNew(p);
     const card=document.createElement('div');
     card.className=`proj-card ${aC[p.axe]||''}`;card.dataset.horizon=p.horizon;card.dataset.id=p.id;
-    card.innerHTML=`<span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
-      ${isAdmin?`<button class="btn-icon" style="position:absolute;top:10px;right:8px" onclick="event.stopPropagation();deleteProj('${p.id}')">🗑</button>`:''}
+    card.innerHTML=`
+      <div class="notif-dot${newActivity?' show':''}"></div>
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px">
+        <span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
+        <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>
+      </div>
+      ${p.pilote?`<div class="proj-pilote">👤 Pilote : <span>${p.pilote}</span></div>`:''}
+      ${isAdmin?`<button class="btn-icon" style="position:absolute;top:10px;right:22px" onclick="event.stopPropagation();deleteProj('${p.id}')">🗑</button>`:''}
       <div class="proj-title" onclick="openProjDetail('${p.id}')">${p.title}</div>
       <div class="proj-desc" onclick="openProjDetail('${p.id}')">${p.desc}</div>
       <div class="proj-meta"><span class="status-pill ${p.status}">${sL[p.status]}</span>
@@ -884,13 +924,24 @@ function renderProjects(){
         <button class="btn-join${j?' joined':''}" onclick="joinProject('${p.id}')">${j?'✓ Inscrit·e':'+ Rejoindre'}</button></div>
       <div class="proj-budget">💶 ${p.budget}${p.subs&&p.subs!=='—'?' · '+p.subs:''}</div>
       ${p.source?`<div class="proj-source">${p.source}</div>`:''}
-      <div style="margin-top:8px;text-align:right"><button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="openProjDetail('${p.id}')">Notes &amp; commentaires →</button></div>`;
+      <div style="margin-top:8px;text-align:right">
+        <button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="openProjDetail('${p.id}')">
+          Notes &amp; commentaires${newActivity?' 🔴':''} →
+        </button>
+      </div>`;
     grid.appendChild(card);
   });
 }
+
 function filterProj(h,btn){document.querySelectorAll('#page-projets .tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('#proj-grid .proj-card').forEach(c=>{c.style.display=(h==='tous'||c.dataset.horizon===h)?'':'none'})}
 window.filterProj=filterProj;
-function saveProj(){const title=document.getElementById('p-title').value.trim();if(!title)return;const p={id:'a'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement'};const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»');closeModal('m-proj');if(!fbConnected)renderAll()}
+
+function saveProj(){
+  const title=document.getElementById('p-title').value.trim();if(!title)return;
+  const p={id:'a'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,pilote:document.getElementById('p-pilote').value.trim(),status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement'};
+  const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»');closeModal('m-proj');
+  if(!fbConnected)renderAll()
+}
 window.saveProj=saveProj;
 function deleteProj(id){if(!confirm('Supprimer ?'))return;const arr=getProjects().filter(p=>p.id!==id);writeProjects(arr);logAction('Projet supprimé','ID:'+id);if(!fbConnected)renderAll()}
 window.deleteProj=deleteProj;
@@ -906,29 +957,97 @@ window.joinProject=joinProject;
 
 // ── PROJET DETAIL ──
 function openProjDetail(projId){
-  _currentProjId=projId;const p=getProjects().find(x=>x.id===projId);if(!p)return;
+  _currentProjId=projId;
+  markVisited(projId);
+  const p=getProjects().find(x=>x.id===projId);if(!p)return;
   const sL={'s-lancer':'À lancer','s-cours':'En cours','s-attente':'En attente','s-fait':'Réalisé'};
   const hL={court:'Court terme · 2026',moyen:'Moyen terme · 2027',long:'Long terme · 2028+'};
   const hB={court:'h-court',moyen:'h-moyen',long:'h-long'};
   document.getElementById('proj-detail-title').textContent=p.title;
-  document.getElementById('proj-detail-meta').innerHTML=`<span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span><span class="status-pill ${p.status}">${sL[p.status]}</span>`;
+  document.getElementById('proj-detail-meta').innerHTML=
+    `<span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
+     <span class="status-pill ${p.status}">${sL[p.status]}</span>
+     <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>`;
+  // Pilote
+  const piloteEl=document.getElementById('proj-detail-pilote');
+  piloteEl.innerHTML=p.pilote?`<div class="proj-pilote">👤 Pilote : <span>${p.pilote}</span></div>`:'';
   document.getElementById('proj-detail-desc').textContent=p.desc||'';
   document.getElementById('proj-detail-budget').innerHTML=`💶 ${p.budget||''}${p.subs&&p.subs!=='—'?' · '+p.subs:''}`;
   document.getElementById('proj-detail-source').textContent=p.source?'Source : '+p.source:'';
   const m=getMembersArr(p),me=getCurrentUser(),j=me&&m.includes(me);
   document.getElementById('proj-detail-chips').innerHTML=renderMemberChips(projId,m);
   const jb=document.getElementById('proj-detail-join');jb.textContent=j?'✓ Inscrit·e':'+ Rejoindre';jb.className='btn-join'+(j?' joined':'');
-  document.getElementById('proj-detail-notes').value=p.notes||'';
+  // Notes avec auteur
+  const notesText=typeof p.notes==='object'&&p.notes?p.notes.text:(p.notes||'');
+  const notesWho=typeof p.notes==='object'&&p.notes?p.notes.who:null;
+  const notesTs=typeof p.notes==='object'&&p.notes?p.notes.ts:null;
+  document.getElementById('proj-detail-notes').value=notesText;
+  const authorEl=document.getElementById('proj-notes-author');
+  if(notesWho){
+    const d=notesTs?new Date(notesTs).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    authorEl.style.display='flex';
+    authorEl.innerHTML=`✏️ Dernière note par <strong>${notesWho}</strong>${d?' · '+d:''}`;
+  }else{authorEl.style.display='none'}
   document.getElementById('proj-notes-status').textContent='';
   renderComments(projId,p.comments||{});
+  // Mettre à jour le dot sur la carte
+  const dot=document.querySelector(`.proj-card[data-id="${projId}"] .notif-dot`);
+  if(dot)dot.classList.remove('show');
+  const noteBtn=document.querySelector(`.proj-card[data-id="${projId}"] .btn.btn-ghost.btn-sm`);
+  if(noteBtn)noteBtn.innerHTML='Notes &amp; commentaires →';
   openModal('m-proj-detail');
 }
 window.openProjDetail=openProjDetail;
-function renderComments(projId,obj){const cont=document.getElementById('proj-detail-comments');cont.innerHTML='';const c=Object.values(obj||{}).sort((a,b)=>a.ts-b.ts);if(!c.length){cont.innerHTML='<div style="font-size:12px;color:var(--soft);font-style:italic">Aucun commentaire.</div>';return}c.forEach(x=>{const d=document.createElement('div');d.className='comment-item';d.innerHTML=`<span class="comment-who">${x.who}</span><span class="comment-time">${x.time}</span><br>${x.text}`;cont.appendChild(d)});cont.scrollTop=cont.scrollHeight}
-function addComment(){if(!_currentProjId)return;const inp=document.getElementById('proj-comment-input');const text=inp.value.trim();if(!text)return;const who=getCurrentUser()||'Anonyme';const time=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});const c={who,text,time,ts:Date.now()};const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;if(!p.comments)p.comments={};p.comments['c'+Date.now()]=c;writeProjects(arr);logAction('Commentaire','«'+p.title+'»');inp.value='';renderComments(_currentProjId,p.comments);if(!fbConnected)localData.projects=arr}
+
+function renderComments(projId,obj){
+  const cont=document.getElementById('proj-detail-comments');cont.innerHTML='';
+  const c=Object.values(obj||{}).sort((a,b)=>a.ts-b.ts);
+  if(!c.length){cont.innerHTML='<div style="font-size:12px;color:var(--soft);font-style:italic">Aucun commentaire.</div>';return}
+  c.forEach(x=>{
+    const d=document.createElement('div');d.className='comment-item';
+    d.innerHTML=`<span class="comment-who">${x.who||'?'}</span><span class="comment-time">${x.time||''}</span><br>${x.text}`;
+    cont.appendChild(d)
+  });cont.scrollTop=cont.scrollHeight
+}
+
+function addComment(){
+  if(!_currentProjId)return;
+  const inp=document.getElementById('proj-comment-input');const text=inp.value.trim();if(!text)return;
+  const who=getCurrentUser()||'Anonyme';
+  const time=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  const c={who,text,time,ts:Date.now()};
+  const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;
+  if(!p.comments)p.comments={};
+  p.comments['c'+Date.now()]=c;
+  writeProjects(arr);logAction('Commentaire','«'+p.title+'»');inp.value='';
+  renderComments(_currentProjId,p.comments);
+  if(!fbConnected)localData.projects=arr
+}
 window.addComment=addComment;
-function autoSaveNotes(){if(!_currentProjId)return;clearTimeout(_notesTimer);document.getElementById('proj-notes-status').textContent='✏️ En cours…';_notesTimer=setTimeout(()=>{const text=document.getElementById('proj-detail-notes').value;const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;p.notes=text;writeProjects(arr);logAction('Notes','«'+p.title+'»');document.getElementById('proj-notes-status').textContent='✅ Sauvegardé';setTimeout(()=>document.getElementById('proj-notes-status').textContent='',2000);if(!fbConnected)localData.projects=arr},1200)}
+
+function autoSaveNotes(){
+  if(!_currentProjId)return;clearTimeout(_notesTimer);
+  document.getElementById('proj-notes-status').textContent='✏️ En cours…';
+  _notesTimer=setTimeout(()=>{
+    const text=document.getElementById('proj-detail-notes').value;
+    const who=getCurrentUser()||'Anonyme';
+    const ts=Date.now();
+    const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;
+    p.notes={text,who,ts};
+    p.notesTs=ts;
+    writeProjects(arr);logAction('Notes','«'+p.title+'»');
+    document.getElementById('proj-notes-status').textContent='✅ Sauvegardé';
+    // Afficher auteur
+    const d=new Date(ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const authorEl=document.getElementById('proj-notes-author');
+    authorEl.style.display='flex';
+    authorEl.innerHTML=`✏️ Dernière note par <strong>${who}</strong> · ${d}`;
+    setTimeout(()=>document.getElementById('proj-notes-status').textContent='',2000);
+    if(!fbConnected)localData.projects=arr
+  },1200)
+}
 window.autoSaveNotes=autoSaveNotes;
+
 function joinFromDetail(){if(!_currentProjId)return;joinProject(_currentProjId);const p=getProjects().find(x=>x.id===_currentProjId);if(p){const m=getMembersArr(p),me=getCurrentUser();document.getElementById('proj-detail-chips').innerHTML=renderMemberChips(_currentProjId,m);const jb=document.getElementById('proj-detail-join');const j=me&&m.includes(me);jb.textContent=j?'✓ Inscrit·e':'+ Rejoindre';jb.className='btn-join'+(j?' joined':'')}}
 window.joinFromDetail=joinFromDetail;
 function deleteProjFromDetail(){if(!_currentProjId)return;closeModal('m-proj-detail');deleteProj(_currentProjId)}
@@ -938,7 +1057,6 @@ window.deleteProjFromDetail=deleteProjFromDetail;
 function renderReunions(){
   const list=document.getElementById('reunion-list'),empty=document.getElementById('reunion-empty'),arr=getReunions();
   list.innerHTML='';empty.style.display=arr.length===0?'':'none';
-  const fmt=n=>String(n).padStart(2,'0');
   arr.forEach((r,i)=>{
     const hd=r.date&&r.date.trim();let day='À',mon='FIXER',yr='',cls='empty';
     if(hd){const d=new Date(r.date);day=d.getDate();mon=d.toLocaleString('fr-FR',{month:'short'}).toUpperCase();yr=d.getFullYear();cls=''}
@@ -966,46 +1084,25 @@ window.exportAllIcal=exportAllIcal;
 
 // ── COMPTES RENDUS ──
 function publishCR(){
-  const title=document.getElementById('cr-title').value.trim();
-  const body=document.getElementById('cr-body').value.trim();
-  const date=document.getElementById('cr-date').value;
+  const title=document.getElementById('cr-title').value.trim(),body=document.getElementById('cr-body').value.trim(),date=document.getElementById('cr-date').value;
   if(!title||!body){alert('Titre et contenu requis.');return}
-  const who=getCurrentUser()||'Admin';
-  const time=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  const cr={id:'cr'+Date.now(),title,body,date,who,time,ts:Date.now(),sent:false};
-  writeCR(cr);
-  logAction('CR publié','«'+title+'»');
-  // Send via EmailJS
-  sendCRByEmail(cr);
-  closeModal('m-cr');
+  const who=getCurrentUser()||'Admin';const time=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const cr={id:'cr'+Date.now(),title,body,date,who,time,ts:Date.now()};
+  writeCR(cr);logAction('CR publié','«'+title+'»');sendCRByEmail(cr);closeModal('m-cr');
   ['cr-title','cr-body','cr-date'].forEach(id=>document.getElementById(id).value='');
-  if(!fbConnected)renderCRs();
+  if(!fbConnected)renderCRs()
 }
 window.publishCR=publishCR;
-
 function sendCRByEmail(cr){
-  const ejs=getEjsConfig();
-  if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template){
-    alert('⚠️ EmailJS non configuré. Le CR est publié mais non envoyé. Configurez EmailJS dans les Paramètres.');return;
-  }
+  const ejs=getEjsConfig();if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template){alert('⚠️ EmailJS non configuré. CR publié mais non envoyé.');return}
   emailjs.init(ejs.pubkey);
-  const emails=(ejs.emails||'').split(',').map(e=>e.trim()).filter(Boolean);
-  if(!emails.length){alert('⚠️ Aucune adresse e-mail configurée.');return}
-  const promises=emails.map(to=>emailjs.send(ejs.service,ejs.template,{to_email:to,subject:cr.title,message:cr.body,from_name:'Commission Administration Générale — Lestiac',date:cr.date||''}));
-  Promise.all(promises).then(()=>{
-    alert('✅ CR envoyé à '+emails.length+' membre(s).');
-    logAction('CR envoyé par mail','«'+cr.title+'» → '+emails.length+' destinataires');
-  }).catch(e=>{alert('❌ Erreur envoi : '+e.text);console.error(e)});
+  const emails=(ejs.emails||'').split(',').map(e=>e.trim()).filter(Boolean);if(!emails.length){alert('⚠️ Aucune adresse configurée.');return}
+  Promise.all(emails.map(to=>emailjs.send(ejs.service,ejs.template,{to_email:to,subject:cr.title,message:cr.body,from_name:'Commission Administration Générale — Lestiac',date:cr.date||''}))).then(()=>{alert('✅ CR envoyé à '+emails.length+' membre(s).');logAction('CR envoyé','«'+cr.title+'»')}).catch(e=>{alert('❌ Erreur envoi : '+e.text)})
 }
-
 function renderCRs(){
   const list=document.getElementById('cr-list'),empty=document.getElementById('cr-empty');
   const crs=getCRs();list.innerHTML='';empty.style.display=crs.length===0?'':'none';
-  crs.forEach(cr=>{
-    const card=document.createElement('div');card.className='cr-card';
-    card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${cr.title}</div><div class="cr-meta">Publié par ${cr.who} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><span class="cr-sent">✓ Publié</span></div><div class="cr-body">${cr.body}</div>`;
-    list.appendChild(card);
-  });updateStats();
+  crs.forEach(cr=>{const card=document.createElement('div');card.className='cr-card';card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${cr.title}</div><div class="cr-meta">Publié par ${cr.who} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><span class="cr-sent">✓ Publié</span></div><div class="cr-body">${cr.body}</div>`;list.appendChild(card)});updateStats()
 }
 
 // ── TÂCHES ──
@@ -1042,8 +1139,7 @@ function renderFinances(){
 }
 function saveBudget(){
   const b={total:parseFloat(document.getElementById('fin-total-input').value)||0,consomme:parseFloat(document.getElementById('fin-consomme-input').value)||0,annee:new Date().getFullYear(),comment:document.getElementById('fin-comment').value.trim(),ts:Date.now()};
-  writeBudget(b);logAction('Budget mis à jour',b.total+'€ total / '+b.consomme+'€ consommé');renderFinances();
-  // Also write to global node so other commissions can read
+  writeBudget(b);logAction('Budget',b.total+'€ total');renderFinances();
   if(fbDb)fbSet('finances/'+COMMISSION,b);
 }
 window.saveBudget=saveBudget;
@@ -1075,7 +1171,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 
 <script>
-// PWA Manifest
 const manifest={name:'Commission Administration Générale — Lestiac',short_name:'Admin Générale',start_url:'.',display:'standalone',background_color:'#1B2F5E',theme_color:'#1B2F5E',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%232563a8"/><text y=".9em" font-size="80" x="10">🏛</text></svg>',sizes:'any',type:'image/svg+xml'}]};
 const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
 const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(blob);document.head.appendChild(link);
