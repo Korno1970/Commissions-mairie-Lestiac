@@ -121,6 +121,11 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .s-attente{background:var(--purple-p);color:var(--purple)}.s-fait{background:#e8f5e9;color:#2e7d32}
 .proj-budget{font-size:11px;color:var(--soft);margin-top:6px}
 .proj-source{font-size:10.5px;color:var(--soft);margin-top:4px;font-style:italic}
+/* PRIORITÉ URGENTE */
+.proj-card.urgent{border-left-color:var(--terra);background:linear-gradient(135deg,#fff9f7 0%,#fff 100%)}
+.priority-banner{display:inline-flex;align-items:center;gap:5px;background:var(--terra);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:6px}
+.priority-select{font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid #ddd;background:white;cursor:pointer;color:var(--text)}
+
 
 /* MEMBER CHIPS */
 .member-chips-proj{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
@@ -891,6 +896,8 @@ function renderProjects(){
   const aC={hab:'',com:'teal',rh:'navy',soc:'terra'};
   const sL={'s-lancer':'À lancer','s-cours':'En cours','s-attente':'En attente','s-fait':'Réalisé'};
   const me=getCurrentUser();
+  // Remonter les urgents en tête
+  projs=[...projs.filter(p=>p.priority==='urgent'),...projs.filter(p=>p.priority!=='urgent')];
   projs.forEach(p=>{
     const m=getMembersArr(p),j=me&&m.includes(me);
     const newActivity=hasNew(p);
@@ -904,6 +911,7 @@ function renderProjects(){
       </div>
       ${p.pilote?`<div class="proj-pilote">👤 Pilote : <span>${p.pilote}</span></div>`:''}
       ${isAdmin?`<button class="btn-icon" style="position:absolute;top:10px;right:22px" onclick="event.stopPropagation();deleteProj('${p.id}')">🗑</button>`:''}
+      ${p.priority==='urgent'?'<div class="priority-banner">🔴 Prioritaire</div>':''}
       <div class="proj-title" onclick="openProjDetail('${p.id}')">${p.title}</div>
       <div class="proj-desc" onclick="openProjDetail('${p.id}')">${p.desc}</div>
       <div class="proj-meta"><span class="status-pill ${p.status}">${sL[p.status]}</span>
@@ -936,6 +944,10 @@ function deleteProj(id){if(!confirm('Supprimer ?'))return;const arr=getProjects(
 window.deleteProj=deleteProj;
 function changeStatus(id,val){const arr=getProjects(),p=arr.find(x=>x.id===id);if(p){p.status=val;writeProjects(arr);logAction('Statut','«'+p.title+'» → '+val)}if(!fbConnected)renderAll()}
 window.changeStatus=changeStatus;
+
+function changePriority(id,val){const arr=getProjects(),p=arr.find(x=>x.id===id);if(p){p.priority=val;writeProjects(arr);logAction('Priorité','«'+p.title+'» → '+val)}if(!fbConnected)renderAll()}
+window.changePriority=changePriority;
+
 
 // Member chips
 function toggleMember(projId,name){const me=getCurrentUser();if(!isAdmin&&name!==me){if(!me){_pendingJoin=projId;openIdModal()}return}if(!me&&!isAdmin){_pendingJoin=projId;openIdModal();return}_doToggleMember(projId,name)}
