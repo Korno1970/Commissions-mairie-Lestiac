@@ -908,6 +908,7 @@ function renderProjects(){
   const sL={'s-lancer':'À lancer','s-cours':'En cours','s-attente':'En attente','s-fait':'Réalisé'};
   const me=getCurrentUser();
   // Remonter les urgents en tête
+  if(!Array.isArray(projs))projs=Object.values(projs);
   projs=[...projs.filter(p=>p.priority==='urgent'),...projs.filter(p=>p.priority!=='urgent')];
   projs.forEach(p=>{
     const m=getMembersArr(p),j=me&&m.includes(me);
