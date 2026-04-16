@@ -101,16 +101,13 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .proj-card.navy{border-left-color:var(--navy)}.proj-card.teal{border-left-color:var(--teal)}.proj-card.terra{border-left-color:var(--terra)}
 .proj-horizon{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:5px}
 .h-court{background:#fde8e0;color:var(--terra)}.h-moyen{background:var(--accent-p);color:var(--accent)}.h-long{background:var(--navy-p);color:var(--navy)}
-/* BADGE CATEGORIE */
 .proj-cat-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-left:5px;margin-bottom:5px}
 .cat-hab{background:#e0f0ff;color:#1565c0}
 .cat-com{background:#e8f5f1;color:#134d40}
 .cat-rh{background:#e8ecf5;color:#1B2F5E}
 .cat-soc{background:#f2eaf7;color:#5c2d6e}
-/* PILOTE */
 .proj-pilote{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px}
 .proj-pilote span{background:var(--accent-p);padding:2px 8px;border-radius:20px}
-/* NOTIF DOT */
 .notif-dot{position:absolute;top:10px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--terra);border:2px solid white;display:none}
 .notif-dot.show{display:block}
 .proj-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--navy);margin-bottom:5px;cursor:pointer}
@@ -121,11 +118,8 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .s-attente{background:var(--purple-p);color:var(--purple)}.s-fait{background:#e8f5e9;color:#2e7d32}
 .proj-budget{font-size:11px;color:var(--soft);margin-top:6px}
 .proj-source{font-size:10.5px;color:var(--soft);margin-top:4px;font-style:italic}
-/* PRIORITÉ URGENTE */
 .proj-card.urgent{border-left-color:var(--terra);background:linear-gradient(135deg,#fff9f7 0%,#fff 100%)}
 .priority-banner{display:inline-flex;align-items:center;gap:5px;background:var(--terra);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:6px}
-.priority-select{font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid #ddd;background:white;cursor:pointer;color:var(--text)}
-
 
 /* MEMBER CHIPS */
 .member-chips-proj{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
@@ -147,7 +141,7 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
 .tab:hover:not(.active){color:var(--text)}
 
-/* TASKS */
+/* TASKS (page globale) */
 .task-item{display:flex;align-items:flex-start;gap:10px;padding:10px 6px;border-bottom:1px solid var(--mid);cursor:pointer;border-radius:4px;transition:background .1s;-webkit-tap-highlight-color:transparent}
 .task-item:last-child{border-bottom:none}
 .task-item:hover{background:var(--accent-p)}
@@ -160,6 +154,48 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .add-task-row input{flex:1;min-width:140px;padding:8px 12px;border:1.5px solid var(--mid);border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:13px}
 .add-task-row input:focus{outline:none;border-color:var(--accent)}
 .add-task-row select{padding:8px 8px;border:1.5px solid var(--mid);border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:12px;cursor:pointer;color:var(--text)}
+
+/* ══ PROJECT TASKS (nouvelles) ══ */
+.ptask-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.ptask-row{background:var(--light);border-radius:var(--r);padding:10px 12px;display:flex;align-items:flex-start;gap:10px;border-left:3px solid var(--mid);transition:border-color .15s}
+.ptask-row.status-todo{border-left-color:var(--soft)}
+.ptask-row.status-doing{border-left-color:var(--gold)}
+.ptask-row.status-done{border-left-color:#4caf50;opacity:.7}
+.ptask-row.status-done .ptask-title{text-decoration:line-through;color:var(--soft)}
+.ptask-row.overdue{border-left-color:var(--terra)!important;background:#fff5f2}
+.ptask-row.due-soon{border-left-color:var(--gold)!important;background:#fffbf0}
+.ptask-main{flex:1;min-width:0}
+.ptask-title{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.4}
+.ptask-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.ptask-assignee{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;background:var(--teal-p);color:var(--teal-d);padding:2px 8px;border-radius:20px}
+.ptask-assignee.is-me{background:var(--terra);color:white;background:linear-gradient(135deg,#c0613a,#d4754d)}
+/* Deadline badges */
+.ptask-deadline{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+.dl-ok{background:#e8f5e9;color:#2e7d32}
+.dl-soon{background:#fff8e1;color:#7a5800}
+.dl-overdue{background:#fde8e0;color:var(--terra);animation:pulse-red 1.5s ease-in-out infinite}
+@keyframes pulse-red{0%,100%{opacity:1}50%{opacity:.7}}
+.dl-none{background:var(--light);color:var(--soft)}
+/* Status select */
+.ptask-status-sel{font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid var(--mid);background:white;cursor:pointer;color:var(--text);font-family:'Barlow',sans-serif}
+/* Add ptask form */
+.ptask-add-form{background:var(--light);border-radius:var(--r);border:1.5px dashed var(--mid);padding:12px;margin-top:8px}
+.ptask-add-form-title{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.ptask-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.ptask-form-full{grid-column:1/-1}
+.ptask-form-label{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--soft);display:block;margin-bottom:3px}
+.ptask-form-input{width:100%;padding:7px 10px;border:1.5px solid var(--mid);border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);background:white;transition:border-color .15s}
+.ptask-form-input:focus{outline:none;border-color:var(--accent)}
+/* Assignee chips inside form */
+.ptask-assign-chips{display:flex;flex-wrap:wrap;gap:5px}
+.ptask-assign-chip{padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:600;border:1.5px solid var(--mid);background:white;color:var(--soft);cursor:pointer;transition:all .15s}
+.ptask-assign-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-p)}
+.ptask-assign-chip.selected{background:var(--teal);border-color:var(--teal);color:white}
+/* Delete btn */
+.ptask-del{background:none;border:none;color:var(--mid);font-size:14px;cursor:pointer;padding:2px 4px;border-radius:4px;flex-shrink:0;transition:color .15s}
+.ptask-del:hover{color:var(--terra)}
+/* Empty ptask */
+.ptask-empty{text-align:center;padding:18px;color:var(--soft);font-size:13px;font-style:italic}
 
 /* MEETINGS */
 .meeting-list{display:flex;flex-direction:column;gap:10px}
@@ -304,6 +340,14 @@ body.is-admin .admin-inline{display:inline-flex}
 .config-card h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px}
 .config-fields{display:grid;gap:8px}
 
+/* Modal detail tabs */
+.detail-tab-bar{display:flex;gap:0;border-bottom:2px solid var(--mid);margin-bottom:16px}
+.detail-tab{padding:9px 16px;border:none;background:none;font-size:13px;font-weight:500;color:var(--soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s;flex:1;text-align:center}
+.detail-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.detail-tab:hover:not(.active){color:var(--text)}
+.detail-panel{display:none}
+.detail-panel.active{display:block}
+
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:var(--mid);border-radius:3px}
 
@@ -318,6 +362,7 @@ body.is-admin .admin-inline{display:inline-flex}
   .proj-grid{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
   .meeting-card{grid-template-columns:60px 1fr}
+  .ptask-form-grid{grid-template-columns:1fr}
 }
 @media print{
   #topbar,#sidebar,#gate,#bottom-nav,#id-modal-bg,.admin-only,.admin-inline,#fb-banner{display:none!important}
@@ -489,7 +534,7 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="empty-state" id="cr-empty"><div class="ei">📄</div><p>Aucun compte rendu publié.</p></div>
 </div>
 
-<!-- ▓ TÂCHES ▓ -->
+<!-- ▓ TÂCHES (page globale) ▓ -->
 <div class="page" id="page-taches">
   <div class="ph"><h1>Tâches</h1><p>Cochez au fur et à mesure</p></div>
   <div class="card"><div class="card-head terra"><h2>🟠 Court terme — 2026</h2></div><div class="card-body"><div id="tasks-court"></div><div class="add-task-row admin-only"><input type="text" id="new-task-court" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('court')"><select id="new-task-court-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-terra btn-sm" onclick="addTask('court')">Ajouter</button></div></div></div>
@@ -561,7 +606,6 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- ▓ ADMIN ▓ -->
 <div class="page admin-only" id="page-admin">
   <div class="ph"><h1>⚙️ Paramètres</h1><p>Firebase, EmailJS, mot de passe</p></div>
-
   <div class="config-card">
     <h3>🔥 Firebase</h3>
     <div class="config-fields">
@@ -572,7 +616,6 @@ body.is-admin .admin-inline{display:inline-flex}
     <button class="btn btn-teal btn-sm" onclick="saveFbConfig()">Connecter Firebase</button>
     <div id="fb-config-status" style="margin-top:8px;font-size:12px;color:var(--soft)"></div>
   </div>
-
   <div class="config-card">
     <h3>📧 EmailJS — Envoi automatique des CR</h3>
     <p style="font-size:13px;color:var(--soft);margin-bottom:12px">Créez un compte sur <strong>emailjs.com</strong>, connectez votre Gmail, créez un template nommé <code>template_cr</code> avec les variables <code>&#123;&#123;subject&#125;&#125;</code>, <code>&#123;&#123;message&#125;&#125;</code>, <code>&#123;&#123;to_email&#125;&#125;</code>.</p>
@@ -585,7 +628,6 @@ body.is-admin .admin-inline{display:inline-flex}
     <button class="btn btn-accent btn-sm" onclick="saveEmailJS()">Enregistrer</button>
     <div id="ejs-status" style="margin-top:8px;font-size:12px;color:var(--soft)"></div>
   </div>
-
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
     <div class="card"><div class="card-head"><h2>🔑 Mot de passe</h2></div><div class="card-body">
       <div class="form-group"><input type="password" id="new-pwd" class="form-control" placeholder="Nouveau"></div>
@@ -652,32 +694,76 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-cr')">Annuler</button><button class="btn btn-accent" onclick="publishCR()">📤 Publier &amp; Envoyer</button></div></div>
 </div>
 
-<!-- MODAL DÉTAIL PROJET -->
+<!-- ═══════ MODAL DÉTAIL PROJET (avec onglets) ═══════ -->
 <div class="overlay" id="m-proj-detail" onclick="closeOverlay(event,'m-proj-detail')">
   <div class="modal" style="max-width:640px">
     <div class="modal-head" id="proj-detail-head" style="background:var(--accent)">
       <h3 id="proj-detail-title">Projet</h3><button class="modal-close" onclick="closeModal('m-proj-detail')">✕</button>
     </div>
     <div class="modal-body">
+      <!-- Méta projet -->
       <div id="proj-detail-meta" style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"></div>
-      <div id="proj-detail-pilote" style="margin-bottom:12px"></div>
-      <div id="proj-detail-desc" style="font-size:13.5px;color:var(--soft);line-height:1.6;margin-bottom:14px"></div>
-      <div style="font-size:12px;color:var(--soft);margin-bottom:14px" id="proj-detail-budget"></div>
-      <div style="margin-bottom:16px">
+      <div id="proj-detail-pilote" style="margin-bottom:8px"></div>
+      <div id="proj-detail-desc" style="font-size:13.5px;color:var(--soft);line-height:1.6;margin-bottom:10px"></div>
+      <div style="font-size:12px;color:var(--soft);margin-bottom:12px" id="proj-detail-budget"></div>
+      <!-- Participants -->
+      <div style="margin-bottom:14px">
         <div class="members-zone-label" style="margin-bottom:6px">👥 Participants</div>
         <div class="member-chips-proj" id="proj-detail-chips"></div>
         <button class="btn-join" id="proj-detail-join" onclick="joinFromDetail()">+ Rejoindre</button>
       </div>
-      <div style="margin-bottom:14px">
-        <div class="members-zone-label" style="margin-bottom:8px">📝 Notes collaboratives</div>
+      <!-- ─── ONGLETS Notes / Tâches / Commentaires ─── -->
+      <div class="detail-tab-bar">
+        <button class="detail-tab active" onclick="switchDetailTab('notes',this)">📝 Notes</button>
+        <button class="detail-tab" onclick="switchDetailTab('ptasks',this)">✅ Tâches <span id="ptask-count-badge" style="font-size:10px;background:var(--terra);color:white;border-radius:20px;padding:1px 6px;margin-left:3px;display:none"></span></button>
+        <button class="detail-tab" onclick="switchDetailTab('comments',this)">💬 Commentaires</button>
+      </div>
+
+      <!-- Panneau Notes -->
+      <div class="detail-panel active" id="panel-notes">
         <div id="proj-notes-author" class="note-author-line" style="display:none"></div>
-        <textarea id="proj-detail-notes" class="form-control" rows="4" placeholder="Notes, liens, informations…" oninput="autoSaveNotes()"></textarea>
+        <textarea id="proj-detail-notes" class="form-control" rows="5" placeholder="Notes, liens, informations partagées…" oninput="autoSaveNotes()"></textarea>
         <div style="font-size:11px;color:var(--soft);margin-top:4px" id="proj-notes-status"></div>
       </div>
-      <div>
-        <div class="members-zone-label" style="margin-bottom:8px">💬 Commentaires</div>
-        <div id="proj-detail-comments" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;max-height:180px;overflow-y:auto"></div>
-        <div style="display:flex;gap:8px"><input type="text" id="proj-comment-input" class="form-control" placeholder="Ajouter un commentaire…" onkeydown="if(event.key==='Enter')addComment()" style="flex:1"><button class="btn btn-accent btn-sm" onclick="addComment()">Envoyer</button></div>
+
+      <!-- Panneau Tâches projet -->
+      <div class="detail-panel" id="panel-ptasks">
+        <div class="ptask-list" id="ptask-list"></div>
+
+        <!-- Formulaire ajout tâche -->
+        <div class="ptask-add-form" id="ptask-add-form">
+          <div class="ptask-add-form-title">+ Nouvelle tâche</div>
+          <div class="ptask-form-grid">
+            <div class="ptask-form-full">
+              <label class="ptask-form-label">Titre de la tâche *</label>
+              <input type="text" id="pt-title" class="ptask-form-input" placeholder="Ex : Contacter le Département 33 pour la D10">
+            </div>
+            <div>
+              <label class="ptask-form-label">Assigné à</label>
+              <div class="ptask-assign-chips" id="pt-assign-chips"></div>
+            </div>
+            <div>
+              <label class="ptask-form-label">Date limite</label>
+              <input type="date" id="pt-deadline" class="ptask-form-input">
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+            <button class="btn btn-ghost btn-sm" onclick="cancelAddPtask()">Annuler</button>
+            <button class="btn btn-accent btn-sm" onclick="savePtask()">Ajouter la tâche</button>
+          </div>
+        </div>
+        <div style="margin-top:8px;text-align:right" id="ptask-add-btn-wrap">
+          <button class="btn btn-ghost btn-sm" onclick="showPtaskForm()" id="btn-show-ptask-form">+ Ajouter une tâche</button>
+        </div>
+      </div>
+
+      <!-- Panneau Commentaires -->
+      <div class="detail-panel" id="panel-comments">
+        <div id="proj-detail-comments" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;max-height:200px;overflow-y:auto"></div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="proj-comment-input" class="form-control" placeholder="Ajouter un commentaire…" onkeydown="if(event.key==='Enter')addComment()" style="flex:1">
+          <button class="btn btn-accent btn-sm" onclick="addComment()">Envoyer</button>
+        </div>
       </div>
     </div>
     <div class="modal-foot">
@@ -705,11 +791,12 @@ const K_USER  = 'lestiac_user';
 const K_FB    = 'lestiac_fb';
 const K_LOCAL = 'cdv_local_v1';
 const K_EJS   = 'cdv_emailjs';
-const K_VISITED = 'cdv_visited'; // {projId: ts} dernière visite
+const K_VISITED = 'cdv_visited';
 
 const ALL_MEMBERS = ['Sylvain','Roger','Corinne','Vivien','Lalie','Anthony','Claire'];
+// Super-admins pouvant assigner à n'importe qui
+const SUPER_ADMINS = ['Sylvain','Corinne','Catherine'];
 
-// Labels sous-commissions
 const AXE_LABELS = {env:'🌿 Environnement',vie:'🎭 Vie du village',gouv:'🗳 Gouvernance'};
 const AXE_CLASSES = {env:'cat-hab',vie:'cat-com',gouv:'cat-rh'};
 
@@ -754,6 +841,7 @@ const DEFAULT_TASKS = {
 // ── STATE ──
 let isAdmin=false, fbApp=null, fbDb=null, fbConnected=false;
 let _currentProjId=null, _notesTimer=null, _pendingJoin=null;
+let _ptAssignee=null; // assigné sélectionné dans le form tâche projet
 let localData={projects:null,tasks:null,reunions:null,log:[],cr:[],budget:null};
 
 // ── LOCAL HELPERS ──
@@ -761,17 +849,19 @@ function getLocal(){try{return JSON.parse(localStorage.getItem(K_LOCAL))||{};}ca
 function saveLocal(d){localStorage.setItem(K_LOCAL,JSON.stringify(d))}
 function getPwd(){return localStorage.getItem(K_PWD)||'lestiac2026'}
 function getCurrentUser(){return localStorage.getItem(K_USER)||null}
+function isSuperAdmin(){const me=getCurrentUser();return isAdmin||(me&&SUPER_ADMINS.includes(me))}
 function getFbConfig(){try{return JSON.parse(localStorage.getItem(K_FB))||null;}catch{return null}}
 function getEjsConfig(){try{return JSON.parse(localStorage.getItem(K_EJS))||null;}catch{return null}}
 
-// ── VISITED TRACKING ──
+// ── VISITED ──
 function getVisited(){try{return JSON.parse(localStorage.getItem(K_VISITED))||{};}catch{return{}}}
 function markVisited(projId){const v=getVisited();v[projId]=Date.now();localStorage.setItem(K_VISITED,JSON.stringify(v))}
 function hasNew(p){
   const v=getVisited();const lastVisit=v[p.id]||0;
   const lastComment=p.comments?Math.max(...Object.values(p.comments).map(c=>c.ts||0)):0;
   const lastNote=p.notesTs||0;
-  return Math.max(lastComment,lastNote)>lastVisit;
+  const lastPtask=p.project_tasks?Math.max(...Object.values(p.project_tasks).map(t=>t.ts||0)):0;
+  return Math.max(lastComment,lastNote,lastPtask)>lastVisit;
 }
 
 // ── FIREBASE ──
@@ -792,6 +882,11 @@ function initFirebase(config){
       localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
       localData.budget=data.budget||null;
       renderAll();
+      // Si modal projet ouvert, rafraîchir tâches
+      if(_currentProjId){
+        const p=getProjects().find(x=>x.id===_currentProjId);
+        if(p)renderPtasks(_currentProjId,p.project_tasks||{});
+      }
       onValue(ref(fbDb,'finances/global'),(snap2)=>{
         const gb=snap2.val();
         if(gb){document.getElementById('budget-global-display').textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
@@ -915,11 +1010,14 @@ function renderProjects(){
   const aC={env:'',vie:'purple',gouv:'navy'};
   const sL={'s-lancer':'À lancer','s-cours':'En cours','s-attente':'En attente','s-fait':'Réalisé'};
   const me=getCurrentUser();
-  // Remonter les urgents en tête
   projs=[...projs.filter(p=>p.priority==='urgent'),...projs.filter(p=>p.priority!=='urgent')];
   projs.forEach(p=>{
     const m=getMembersArr(p),j=me&&m.includes(me);
     const newActivity=hasNew(p);
+    // Compter tâches projet actives
+    const ptasks=p.project_tasks?Object.values(p.project_tasks):[];
+    const openPtasks=ptasks.filter(t=>t.status!=='done').length;
+    const overduePtasks=ptasks.filter(t=>t.status!=='done'&&t.deadline&&new Date(t.deadline)<new Date()).length;
     const card=document.createElement('div');
     card.className=`proj-card ${aC[p.axe]||''}`;card.dataset.horizon=p.horizon;card.dataset.id=p.id;
     card.innerHTML=`
@@ -940,9 +1038,10 @@ function renderProjects(){
         <button class="btn-join${j?' joined':''}" onclick="joinProject('${p.id}')">${j?'✓ Inscrit·e':'+ Rejoindre'}</button></div>
       <div class="proj-budget">💶 ${p.budget}${p.subs&&p.subs!=='—'?' · '+p.subs:''}</div>
       ${p.source?`<div class="proj-source">${p.source}</div>`:''}
-      <div style="margin-top:8px;text-align:right">
+      <div style="margin-top:8px;display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap">
+        ${openPtasks>0?`<span style="font-size:11px;font-weight:700;background:${overduePtasks>0?'var(--terra)':'var(--teal)'};color:white;padding:2px 8px;border-radius:20px">${overduePtasks>0?'⚠ ':'✅ '}${openPtasks} tâche${openPtasks>1?'s':''}</span>`:''}
         <button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="openProjDetail('${p.id}')">
-          Notes &amp; commentaires${newActivity?' 🔴':''} →
+          Détail${newActivity?' 🔴':''} →
         </button>
       </div>`;
     grid.appendChild(card);
@@ -963,10 +1062,8 @@ function deleteProj(id){if(!confirm('Supprimer ?'))return;const arr=getProjects(
 window.deleteProj=deleteProj;
 function changeStatus(id,val){const arr=getProjects(),p=arr.find(x=>x.id===id);if(p){p.status=val;writeProjects(arr);logAction('Statut','«'+p.title+'» → '+val)}if(!fbConnected)renderAll()}
 window.changeStatus=changeStatus;
-
 function changePriority(id,val){const arr=getProjects(),p=arr.find(x=>x.id===id);if(p){p.priority=val;writeProjects(arr);logAction('Priorité','«'+p.title+'» → '+val)}if(!fbConnected)renderAll()}
 window.changePriority=changePriority;
-
 
 // Member chips
 function toggleMember(projId,name){const me=getCurrentUser();if(!isAdmin&&name!==me){if(!me){_pendingJoin=projId;openIdModal()}return}if(!me&&!isAdmin){_pendingJoin=projId;openIdModal();return}_doToggleMember(projId,name)}
@@ -974,6 +1071,168 @@ window.toggleMember=toggleMember;
 function _doToggleMember(projId,memberName){const arr=getProjects(),p=arr.find(x=>x.id===projId);if(!p)return;let m=getMembersArr(p);const j=!m.includes(memberName);m=j?[...m,memberName]:m.filter(x=>x!==memberName);p.members=m;writeProjects(arr);logAction(j?'Inscription':'Désinscription','«'+p.title+'» — '+memberName);const el=document.getElementById('chips-'+projId);if(el)el.innerHTML=renderMemberChips(projId,m);const btn=document.querySelector(`.proj-card[data-id="${projId}"] .btn-join`);if(btn&&getCurrentUser()){const jj=m.includes(getCurrentUser());btn.textContent=jj?'✓ Inscrit·e':'+ Rejoindre';btn.className='btn-join'+(jj?' joined':'')}updateStats()}
 function joinProject(projId){const me=getCurrentUser();if(!me){_pendingJoin=projId;openIdModal();return}_doToggleMember(projId,me)}
 window.joinProject=joinProject;
+
+// ── DETAIL TAB SWITCH ──
+function switchDetailTab(panel,btn){
+  document.querySelectorAll('.detail-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.detail-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+panel).classList.add('active');
+}
+window.switchDetailTab=switchDetailTab;
+
+// ═══════════════════════════════════════════
+// ── PROJECT TASKS (tâches par projet) ──
+// ═══════════════════════════════════════════
+
+function deadlineBadge(deadline,status){
+  if(status==='done')return`<span class="ptask-deadline dl-ok">✓ Terminé</span>`;
+  if(!deadline)return`<span class="ptask-deadline dl-none">Pas de date</span>`;
+  const now=new Date();now.setHours(0,0,0,0);
+  const dl=new Date(deadline);dl.setHours(0,0,0,0);
+  const diff=Math.ceil((dl-now)/(1000*60*60*24));
+  const label=dl.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+  if(diff<0)return`<span class="ptask-deadline dl-overdue">🔴 En retard · ${label}</span>`;
+  if(diff===0)return`<span class="ptask-deadline dl-soon">⚠ Aujourd'hui · ${label}</span>`;
+  if(diff<=3)return`<span class="ptask-deadline dl-soon">⏰ ${diff}j · ${label}</span>`;
+  return`<span class="ptask-deadline dl-ok">📅 ${label}</span>`;
+}
+
+function getStatusLabel(s){return{todo:'À faire',doing:'En cours',done:'Terminé'}[s]||'À faire'}
+
+function renderPtasks(projId,obj){
+  const me=getCurrentUser();
+  const list=document.getElementById('ptask-list');
+  list.innerHTML='';
+  const tasks=Object.entries(obj||{}).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
+  // Update badge count
+  const openCount=tasks.filter(([,t])=>t.status!=='done').length;
+  const badge=document.getElementById('ptask-count-badge');
+  if(openCount>0){badge.textContent=openCount;badge.style.display=''}else{badge.style.display='none'}
+
+  if(!tasks.length){
+    list.innerHTML='<div class="ptask-empty">Aucune tâche pour ce projet.<br>Cliquez sur « + Ajouter une tâche » pour commencer.</div>';
+    return;
+  }
+  tasks.forEach(([key,t])=>{
+    const isOverdue=t.status!=='done'&&t.deadline&&new Date(t.deadline)<new Date();
+    const isDueSoon=!isOverdue&&t.status!=='done'&&t.deadline&&Math.ceil((new Date(t.deadline)-new Date())/(1000*60*60*24))<=3;
+    const isMe=t.assignee===me;
+    const row=document.createElement('div');
+    row.className=`ptask-row status-${t.status||'todo'}${isOverdue?' overdue':''}${isDueSoon?' due-soon':''}`;
+
+    // Droits de modification : propriétaire de la tâche ou super-admin
+    const canEdit=isAdmin||isSuperAdmin()||isMe;
+    const statusSel=canEdit
+      ?`<select class="ptask-status-sel" onchange="updatePtaskStatus('${projId}','${key}',this.value)">
+          <option value="todo"${(t.status||'todo')==='todo'?' selected':''}>À faire</option>
+          <option value="doing"${t.status==='doing'?' selected':''}>En cours</option>
+          <option value="done"${t.status==='done'?' selected':''}>Terminé</option>
+        </select>`
+      :`<span style="font-size:11px;color:var(--soft)">${getStatusLabel(t.status)}</span>`;
+
+    const delBtn=canEdit
+      ?`<button class="ptask-del" onclick="deletePtask('${projId}','${key}')" title="Supprimer">✕</button>`:'';
+
+    row.innerHTML=`
+      <div class="ptask-main">
+        <div class="ptask-title">${t.title}</div>
+        <div class="ptask-meta">
+          ${t.assignee?`<span class="ptask-assignee${isMe?' is-me':''}">👤 ${t.assignee}</span>`:'<span class="ptask-assignee" style="opacity:.6">Non assigné</span>'}
+          ${deadlineBadge(t.deadline,t.status||'todo')}
+          ${statusSel}
+        </div>
+      </div>
+      ${delBtn}`;
+    list.appendChild(row);
+  });
+}
+
+function updatePtaskStatus(projId,key,newStatus){
+  const arr=getProjects(),p=arr.find(x=>x.id===projId);if(!p)return;
+  if(!p.project_tasks)p.project_tasks={};
+  if(!p.project_tasks[key])return;
+  p.project_tasks[key].status=newStatus;
+  writeProjects(arr);
+  logAction('Tâche projet','Statut → '+newStatus+' · «'+p.project_tasks[key].title+'»');
+  renderPtasks(projId,p.project_tasks);
+  renderProjects();
+  if(!fbConnected)localData.projects=arr;
+}
+window.updatePtaskStatus=updatePtaskStatus;
+
+function deletePtask(projId,key){
+  if(!confirm('Supprimer cette tâche ?'))return;
+  const arr=getProjects(),p=arr.find(x=>x.id===projId);if(!p||!p.project_tasks)return;
+  const title=p.project_tasks[key]?.title||'';
+  delete p.project_tasks[key];
+  writeProjects(arr);
+  logAction('Tâche projet supprimée','«'+title+'»');
+  renderPtasks(projId,p.project_tasks);
+  renderProjects();
+  if(!fbConnected)localData.projects=arr;
+}
+window.deletePtask=deletePtask;
+
+function showPtaskForm(){
+  const me=getCurrentUser();
+  // Remplir chips assignation
+  const chipsEl=document.getElementById('pt-assign-chips');
+  chipsEl.innerHTML='';
+  // Qui peut assigner ?
+  const canAssignOthers=isAdmin||isSuperAdmin();
+  const members=canAssignOthers?ALL_MEMBERS:(me?[me]:[]);
+  _ptAssignee=me||null; // pré-sélectionner soi-même
+  members.forEach(name=>{
+    const chip=document.createElement('button');
+    chip.className='ptask-assign-chip'+(name===_ptAssignee?' selected':'');
+    chip.textContent=name;
+    chip.onclick=()=>{
+      _ptAssignee=name;
+      document.querySelectorAll('.ptask-assign-chip').forEach(c=>c.classList.remove('selected'));
+      chip.classList.add('selected');
+    };
+    chipsEl.appendChild(chip);
+  });
+  // Afficher form
+  document.getElementById('ptask-add-form').style.display='block';
+  document.getElementById('ptask-add-btn-wrap').style.display='none';
+  document.getElementById('pt-title').focus();
+}
+window.showPtaskForm=showPtaskForm;
+
+function cancelAddPtask(){
+  document.getElementById('ptask-add-form').style.display='none';
+  document.getElementById('ptask-add-btn-wrap').style.display='';
+  document.getElementById('pt-title').value='';
+  document.getElementById('pt-deadline').value='';
+  _ptAssignee=null;
+}
+window.cancelAddPtask=cancelAddPtask;
+
+function savePtask(){
+  if(!_currentProjId)return;
+  const title=document.getElementById('pt-title').value.trim();
+  if(!title){alert('Le titre est obligatoire.');return}
+  const deadline=document.getElementById('pt-deadline').value;
+  const assignee=_ptAssignee||null;
+  const me=getCurrentUser();
+  // Droit : peut-on assigner à quelqu'un d'autre ?
+  if(assignee&&assignee!==me&&!isAdmin&&!isSuperAdmin()){
+    alert('Vous ne pouvez vous assigner qu\'à vous-même.');return;
+  }
+  const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;
+  if(!p.project_tasks)p.project_tasks={};
+  const key='pt'+Date.now();
+  p.project_tasks[key]={title,assignee,deadline,status:'todo',ts:Date.now(),by:me||'Anonyme'};
+  writeProjects(arr);
+  logAction('Tâche projet ajoutée','«'+title+'»'+(assignee?' → '+assignee:''));
+  cancelAddPtask();
+  renderPtasks(_currentProjId,p.project_tasks);
+  renderProjects();
+  if(!fbConnected)localData.projects=arr;
+}
+window.savePtask=savePtask;
 
 // ── PROJET DETAIL ──
 function openProjDetail(projId){
@@ -988,7 +1247,6 @@ function openProjDetail(projId){
     `<span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
      <span class="status-pill ${p.status}">${sL[p.status]}</span>
      <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>`;
-  // Pilote
   const piloteEl=document.getElementById('proj-detail-pilote');
   piloteEl.innerHTML=p.pilote?`<div class="proj-pilote">👤 Pilote : <span>${p.pilote}</span></div>`:'';
   document.getElementById('proj-detail-desc').textContent=p.desc||'';
@@ -997,24 +1255,29 @@ function openProjDetail(projId){
   const m=getMembersArr(p),me=getCurrentUser(),j=me&&m.includes(me);
   document.getElementById('proj-detail-chips').innerHTML=renderMemberChips(projId,m);
   const jb=document.getElementById('proj-detail-join');jb.textContent=j?'✓ Inscrit·e':'+ Rejoindre';jb.className='btn-join'+(j?' joined':'');
-  // Notes avec auteur
+  // Notes
   const notesText=typeof p.notes==='object'&&p.notes?p.notes.text:(p.notes||'');
   const notesWho=typeof p.notes==='object'&&p.notes?p.notes.who:null;
   const notesTs=typeof p.notes==='object'&&p.notes?p.notes.ts:null;
   document.getElementById('proj-detail-notes').value=notesText;
   const authorEl=document.getElementById('proj-notes-author');
-  if(notesWho){
-    const d=notesTs?new Date(notesTs).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
-    authorEl.style.display='flex';
-    authorEl.innerHTML=`✏️ Dernière note par <strong>${notesWho}</strong>${d?' · '+d:''}`;
+  if(notesWho){const d=notesTs?new Date(notesTs).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';authorEl.style.display='flex';authorEl.innerHTML=`✏️ Dernière note par <strong>${notesWho}</strong>${d?' · '+d:''}`;
   }else{authorEl.style.display='none'}
   document.getElementById('proj-notes-status').textContent='';
+  // Commentaires
   renderComments(projId,p.comments||{});
-  // Mettre à jour le dot sur la carte
+  // Tâches projet
+  renderPtasks(projId,p.project_tasks||{});
+  // Reset form tâche
+  cancelAddPtask();
+  // Reset onglet → Notes par défaut
+  document.querySelectorAll('.detail-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.detail-panel').forEach(pn=>pn.classList.remove('active'));
+  document.querySelector('.detail-tab').classList.add('active');
+  document.getElementById('panel-notes').classList.add('active');
+  // Mettre à jour dot carte
   const dot=document.querySelector(`.proj-card[data-id="${projId}"] .notif-dot`);
   if(dot)dot.classList.remove('show');
-  const noteBtn=document.querySelector(`.proj-card[data-id="${projId}"] .btn.btn-ghost.btn-sm`);
-  if(noteBtn)noteBtn.innerHTML='Notes &amp; commentaires →';
   openModal('m-proj-detail');
 }
 window.openProjDetail=openProjDetail;
@@ -1023,11 +1286,8 @@ function renderComments(projId,obj){
   const cont=document.getElementById('proj-detail-comments');cont.innerHTML='';
   const c=Object.values(obj||{}).sort((a,b)=>a.ts-b.ts);
   if(!c.length){cont.innerHTML='<div style="font-size:12px;color:var(--soft);font-style:italic">Aucun commentaire.</div>';return}
-  c.forEach(x=>{
-    const d=document.createElement('div');d.className='comment-item';
-    d.innerHTML=`<span class="comment-who">${x.who||'?'}</span><span class="comment-time">${x.time||''}</span><br>${x.text}`;
-    cont.appendChild(d)
-  });cont.scrollTop=cont.scrollHeight
+  c.forEach(x=>{const d=document.createElement('div');d.className='comment-item';d.innerHTML=`<span class="comment-who">${x.who||'?'}</span><span class="comment-time">${x.time||''}</span><br>${x.text}`;cont.appendChild(d)});
+  cont.scrollTop=cont.scrollHeight;
 }
 
 function addComment(){
@@ -1041,7 +1301,7 @@ function addComment(){
   p.comments['c'+Date.now()]=c;
   writeProjects(arr);logAction('Commentaire','«'+p.title+'»');inp.value='';
   renderComments(_currentProjId,p.comments);
-  if(!fbConnected)localData.projects=arr
+  if(!fbConnected)localData.projects=arr;
 }
 window.addComment=addComment;
 
@@ -1050,20 +1310,16 @@ function autoSaveNotes(){
   document.getElementById('proj-notes-status').textContent='✏️ En cours…';
   _notesTimer=setTimeout(()=>{
     const text=document.getElementById('proj-detail-notes').value;
-    const who=getCurrentUser()||'Anonyme';
-    const ts=Date.now();
+    const who=getCurrentUser()||'Anonyme';const ts=Date.now();
     const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;
-    p.notes={text,who,ts};
-    p.notesTs=ts;
+    p.notes={text,who,ts};p.notesTs=ts;
     writeProjects(arr);logAction('Notes','«'+p.title+'»');
     document.getElementById('proj-notes-status').textContent='✅ Sauvegardé';
-    // Afficher auteur
     const d=new Date(ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     const authorEl=document.getElementById('proj-notes-author');
-    authorEl.style.display='flex';
-    authorEl.innerHTML=`✏️ Dernière note par <strong>${who}</strong> · ${d}`;
+    authorEl.style.display='flex';authorEl.innerHTML=`✏️ Dernière note par <strong>${who}</strong> · ${d}`;
     setTimeout(()=>document.getElementById('proj-notes-status').textContent='',2000);
-    if(!fbConnected)localData.projects=arr
+    if(!fbConnected)localData.projects=arr;
   },1200)
 }
 window.autoSaveNotes=autoSaveNotes;
@@ -1097,9 +1353,9 @@ function deleteReunion(i){if(!confirm('Supprimer ?'))return;const arr=getReunion
 window.deleteReunion=deleteReunion;
 function exportGcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(r.title)}&dates=${ds}T${hs}00/${ds}T${he}00&location=${encodeURIComponent(r.lieu||'')}`),'_blank'}
 window.exportGcal=exportGcal;
-function exportIcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);const ic=['BEGIN:VCALENDAR','VERSION:2.0',`PRODID:-//CDV Lestiac//FR`,'BEGIN:VEVENT',`UID:cdv-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission Administration Générale`,`END:VEVENT`,'END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ic],{type:'text/calendar'}));a.download=r.title.replace(/\s+/g,'_')+'.ics';a.click()}
+function exportIcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);const ic=['BEGIN:VCALENDAR','VERSION:2.0',`PRODID:-//CDV Lestiac//FR`,'BEGIN:VEVENT',`UID:cdv-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission Cadre de Vie`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ic],{type:'text/calendar'}));a.download=r.title.replace(/\s+/g,'_')+'.ics';a.click()}
 window.exportIcal=exportIcal;
-function exportAllIcal(){const arr=getReunions().filter(r=>r.date&&r.date.trim());if(!arr.length){alert('Aucune réunion avec date.');return}const fmt=n=>String(n).padStart(2,'0');let lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDV Lestiac//FR'];arr.forEach((r,i)=>{const d=new Date(r.date),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);lines.push('BEGIN:VEVENT',`UID:cdv-${i}-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission Administration Générale`,'END:VEVENT')});lines.push('END:VCALENDAR');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'}));a.download='CDV_Lestiac_Reunions.ics';a.click()}
+function exportAllIcal(){const arr=getReunions().filter(r=>r.date&&r.date.trim());if(!arr.length){alert('Aucune réunion avec date.');return}const fmt=n=>String(n).padStart(2,'0');let lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDV Lestiac//FR'];arr.forEach((r,i)=>{const d=new Date(r.date),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);lines.push('BEGIN:VEVENT',`UID:cdv-${i}-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission Cadre de Vie`,'END:VEVENT')});lines.push('END:VCALENDAR');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'}));a.download='CDV_Lestiac_Reunions.ics';a.click()}
 window.exportAllIcal=exportAllIcal;
 
 // ── COMPTES RENDUS ──
@@ -1110,7 +1366,7 @@ function publishCR(){
   const cr={id:'cr'+Date.now(),title,body,date,who,time,ts:Date.now()};
   writeCR(cr);logAction('CR publié','«'+title+'»');sendCRByEmail(cr);closeModal('m-cr');
   ['cr-title','cr-body','cr-date'].forEach(id=>document.getElementById(id).value='');
-  if(!fbConnected)renderCRs()
+  if(!fbConnected)renderCRs();
 }
 window.publishCR=publishCR;
 function sendCRByEmail(cr){
@@ -1122,10 +1378,10 @@ function sendCRByEmail(cr){
 function renderCRs(){
   const list=document.getElementById('cr-list'),empty=document.getElementById('cr-empty');
   const crs=getCRs();list.innerHTML='';empty.style.display=crs.length===0?'':'none';
-  crs.forEach(cr=>{const card=document.createElement('div');card.className='cr-card';card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${cr.title}</div><div class="cr-meta">Publié par ${cr.who} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><span class="cr-sent">✓ Publié</span></div><div class="cr-body">${cr.body}</div>`;list.appendChild(card)});updateStats()
+  crs.forEach(cr=>{const card=document.createElement('div');card.className='cr-card';card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${cr.title}</div><div class="cr-meta">Publié par ${cr.who} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><span class="cr-sent">✓ Publié</span></div><div class="cr-body">${cr.body}</div>`;list.appendChild(card)});updateStats();
 }
 
-// ── TÂCHES ──
+// ── TÂCHES (page globale) ──
 function renderTasks(){
   const tasks=getTasks();
   ['court','moyen','long'].forEach(h=>{
@@ -1187,11 +1443,14 @@ document.addEventListener('DOMContentLoaded',()=>{
   const cfg=getFbConfig()||FB_PRESET;
   initFirebase(cfg);
   renderAll();
+  // Cacher form tâche projet par défaut
+  if(document.getElementById('ptask-add-form'))
+    document.getElementById('ptask-add-form').style.display='none';
 });
 </script>
 
 <script>
-const manifest={name:'Commission Cadre de Vie — Lestiac',short_name:'Cadre de Vie',start_url:'.',display:'standalone',background_color:'#1B2F5E',theme_color:'#1B2F5E',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%232563a8"/><text y=".9em" font-size="80" x="10">🏛</text></svg>',sizes:'any',type:'image/svg+xml'}]};
+const manifest={name:'Commission Cadre de Vie — Lestiac',short_name:'Cadre de Vie',start_url:'.',display:'standalone',background_color:'#1B2F5E',theme_color:'#1B2F5E',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%231A6B5A"/><text y=".9em" font-size="80" x="10">🌿</text></svg>',sizes:'any',type:'image/svg+xml'}]};
 const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
 const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(blob);document.head.appendChild(link);
 </script>
