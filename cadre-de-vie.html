@@ -348,6 +348,21 @@ body.is-admin .admin-inline{display:inline-flex}
 .detail-panel{display:none}
 .detail-panel.active{display:block}
 
+
+/* DASHBOARD SHORTCUTS */
+.dash-shortcut{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 10px;background:white;border:1.5px solid var(--mid);border-radius:var(--r);cursor:pointer;transition:all .15s;box-shadow:var(--sh)}
+.dash-shortcut:hover{border-color:var(--accent);background:var(--accent-p);transform:translateY(-2px);box-shadow:var(--sh-lg)}
+.ds-icon{font-size:22px;line-height:1}
+.ds-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--soft)}
+.ds-count{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--navy);line-height:1}
+/* QUICK TASK */
+.quick-task-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--light);border-radius:var(--r);margin-bottom:8px;border-left:3px solid var(--accent)}
+.quick-task-row.done-qt{opacity:.6;border-left-color:var(--mid)}
+.quick-task-row.done-qt .qt-title{text-decoration:line-through;color:var(--soft)}
+.qt-title{font-size:13px;font-weight:600;flex:1}
+.qt-assignee{font-size:11px;font-weight:700;background:var(--teal-p);color:var(--teal-d);padding:2px 8px;border-radius:20px}
+.qt-deadline{font-size:11px;padding:2px 8px;border-radius:20px}
+
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:var(--mid);border-radius:3px}
 
@@ -394,13 +409,18 @@ body.is-admin .admin-inline{display:inline-flex}
     <h3>Qui êtes-vous ?</h3>
     <p>Choisissez votre prénom — mémorisé sur cet appareil.</p>
     <div id="id-chips-pick">
-      <button class="id-pick-btn" onclick="pickIdentity('Sylvain')">Sylvain</button>
-      <button class="id-pick-btn" onclick="pickIdentity('Roger')">Roger</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Daniel')">Daniel</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Catherine')">Catherine</button>
       <button class="id-pick-btn" onclick="pickIdentity('Corinne')">Corinne</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Sylvain')">Sylvain</button>
       <button class="id-pick-btn" onclick="pickIdentity('Vivien')">Vivien</button>
-      <button class="id-pick-btn" onclick="pickIdentity('Lalie')">Lalie</button>
       <button class="id-pick-btn" onclick="pickIdentity('Anthony')">Anthony</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Rose')">Rose</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Michel')">Michel</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Roger')">Roger</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Lalie')">Lalie</button>
       <button class="id-pick-btn" onclick="pickIdentity('Claire')">Claire</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Sophie')">Sophie</button>
     </div>
     <div style="margin-bottom:14px">
       <p style="font-size:12px;color:var(--soft);margin-bottom:8px">Autre prénom :</p>
@@ -420,7 +440,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <div id="topbar">
   <div class="tb-brand">
     <a href="https://commissions-lestiac.fr" class="tb-back" title="← Toutes les commissions">⬅</a>
-    <div class="tb-logo">Lestiac 2026</div>
+    <div class="tb-logo">AGORA</div>
     <div>
       <div class="tb-title">Commission Cadre de Vie</div>
       <div class="tb-sub">Mandat 2026–2032 · S. Kornowski</div>
@@ -484,15 +504,36 @@ body.is-admin .admin-inline{display:inline-flex}
     <div class="stat"><div class="stat-n" id="s-tasks">—</div><div class="stat-l">Tâches ✓</div></div>
     <div class="stat"><div class="stat-n" id="s-cr">—</div><div class="stat-l">CR publiés</div></div>
   </div>
+  <!-- Tâches du quotidien -->
   <div class="card">
-    <div class="card-head"><h2>🌿 Axes du programme — Cadre de Vie</h2></div>
-    <div class="card-body">
-      <div class="timeline">
-        <div class="tl-item"><div class="tl-period">Environnement & Bâti</div><div class="tl-title">Éclairage, voirie, accessibilité</div><div class="tl-body">LED · Voirie · PMR · Mobilités douces · D10 · Stationnement · Rénovation bâtiments</div></div>
-        <div class="tl-item teal"><div class="tl-period">Vie du village</div><div class="tl-title">Lien social, culture, patrimoine</div><div class="tl-body">Marché local · Associations · Festival sur Garonne · Patrimoine · Intergénérationnel</div></div>
-        <div class="tl-item navy"><div class="tl-period">Gouvernance</div><div class="tl-title">Participation citoyenne</div><div class="tl-body">Concertation citoyenne · CMJ · Esplanade · Intercommunalité Convergence Garonne</div></div>
-      </div>
+    <div class="card-head" style="display:flex;align-items:center;justify-content:space-between">
+      <h2>📌 Tâches du quotidien</h2>
+      <button class="btn btn-ghost btn-sm admin-only" onclick="openModal('m-quick-task')" style="color:white;border-color:rgba(255,255,255,.4)">+ Assigner</button>
     </div>
+    <div class="card-body">
+      <div id="quick-tasks-list"><div class="empty-state" style="padding:16px"><div class="ei" style="font-size:24px">📋</div><p>Aucune tâche du quotidien.</p></div></div>
+    </div>
+  </div>
+  <!-- Raccourcis navigation dashboard -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px">
+    <button class="dash-shortcut" onclick="nav('projets',document.querySelector('[data-page=projets]'))">
+      <span class="ds-icon">📋</span><span class="ds-label">Projets</span><span class="ds-count" id="ds-projets">—</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('taches',document.querySelector('[data-page=taches]'))">
+      <span class="ds-icon">✅</span><span class="ds-label">Tâches</span><span class="ds-count" id="ds-taches">—</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('reunions',document.querySelector('[data-page=reunions]'))">
+      <span class="ds-icon">📅</span><span class="ds-label">Réunions</span><span class="ds-count" id="ds-reunions">—</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('cr',document.querySelector('[data-page=cr]'))">
+      <span class="ds-icon">📄</span><span class="ds-label">CR</span><span class="ds-count" id="ds-cr">—</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('membres',document.querySelector('[data-page=membres]'))">
+      <span class="ds-icon">👥</span><span class="ds-label">Membres</span><span class="ds-count" id="ds-membres">12</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('finances',document.querySelector('[data-page=finances]'))">
+      <span class="ds-icon">💶</span><span class="ds-label">Finances</span><span class="ds-count" id="ds-finances">—</span>
+    </button>
   </div>
 </div>
 
@@ -574,24 +615,22 @@ body.is-admin .admin-inline{display:inline-flex}
 
 <!-- ▓ MEMBRES ▓ -->
 <div class="page" id="page-membres">
-  <div class="ph"><h1>Membres</h1><p>Commission Cadre de Vie — responsable : Sylvain Kornowski</p></div>
+  <div class="ph"><h1>Membres</h1><p>Commission Cadre de Vie — responsable : Sylvain Kornowski · Conseil Municipal 2026–2032</p></div>
   <div class="card">
-    <div class="card-head"><h2>Travaux · Voirie · Bâti · Urbanisme</h2></div>
-    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Rôle</th><th class="admin-only">Contact</th></tr></thead><tbody>
-      <tr><td><strong>Sylvain Kornowski</strong></td><td>Responsable commission</td><td class="admin-only" contenteditable="false" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Roger Carteau</strong></td><td>Travaux · Voirie · Bâti</td><td class="admin-only" contenteditable="false" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Corinne Eeckeman</strong></td><td>Travaux &amp; Vie associative</td><td class="admin-only" contenteditable="false" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Vivien Bomont</strong></td><td>Travaux &amp; Vie associative</td><td class="admin-only" contenteditable="false" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Lalie</strong></td><td>Travaux · Voirie</td><td class="admin-only" contenteditable="false" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-    </tbody></table></div></div>
-  </div>
-  <div class="card">
-    <div class="card-head" style="background:var(--purple)"><h2>Vie Associative · Culture · Patrimoine</h2></div>
-    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Rôle</th><th class="admin-only">Contact</th></tr></thead><tbody>
-      <tr><td><strong>Anthony Benoît</strong></td><td>Vie asso · Culture · Patrimoine</td><td class="admin-only" contenteditable="false" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Claire Gaston</strong></td><td>Vie asso · Culture · Patrimoine</td><td class="admin-only" contenteditable="false" onclick="makeEditable(this)" style="cursor:text">Cliquer…</td></tr>
-      <tr><td><strong>Corinne Eeckeman</strong></td><td>Travaux &amp; Vie associative</td><td style="font-size:11px;color:var(--soft)">↑ ci-dessus</td></tr>
-      <tr><td><strong>Vivien Bomont</strong></td><td>Travaux &amp; Vie associative</td><td style="font-size:11px;color:var(--soft)">↑ ci-dessus</td></tr>
+    <div class="card-head"><h2>👥 Conseil Municipal — Majorité</h2></div>
+    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Rôle</th><th>Contact</th></tr></thead><tbody id="membres-tbody">
+      <tr><td><strong>Daniel Bouchet</strong></td><td>Maire · Super-admin</td><td><a href="mailto:daniel.bouchet@lestiac.fr" style="color:var(--accent)">daniel.bouchet@lestiac.fr</a></td></tr>
+      <tr><td><strong>Catherine Penard</strong></td><td>1ère adjointe · Admin Générale</td><td><a href="mailto:catherine.penard@lestiac.fr" style="color:var(--accent)">catherine.penard@lestiac.fr</a></td></tr>
+      <tr><td><strong>Corinne Eeckeman</strong></td><td>3ème adjointe · Affaires Scolaires</td><td><a href="mailto:corinne.eeckeman@lestiac.fr" style="color:var(--accent)">corinne.eeckeman@lestiac.fr</a></td></tr>
+      <tr><td><strong>Sylvain Kornowski</strong></td><td>2ème adjoint · Cadre de Vie</td><td><a href="mailto:sylvain.kornowski@lestiac.fr" style="color:var(--accent)">sylvain.kornowski@lestiac.fr</a></td></tr>
+      <tr><td><strong>Vivien Bomont</strong></td><td>Conseiller</td><td><a href="mailto:vivien.bomont@lestiac.fr" style="color:var(--accent)">vivien.bomont@lestiac.fr</a></td></tr>
+      <tr><td><strong>Anthony Benoit</strong></td><td>Conseiller</td><td><a href="mailto:anthony.benoit@lestiac.fr" style="color:var(--accent)">anthony.benoit@lestiac.fr</a></td></tr>
+      <tr><td><strong>Rose Adjei</strong></td><td>Conseillère</td><td><a href="mailto:rose.adjei@lestiac.fr" style="color:var(--accent)">rose.adjei@lestiac.fr</a></td></tr>
+      <tr><td><strong>Michel Jorge</strong></td><td>Conseiller</td><td><a href="mailto:michel.jorge@lestiac.fr" style="color:var(--accent)">michel.jorge@lestiac.fr</a></td></tr>
+      <tr><td><strong>Roger Carteau</strong></td><td>Conseiller</td><td><a href="mailto:roger.carteau@lestiac.fr" style="color:var(--accent)">roger.carteau@lestiac.fr</a></td></tr>
+      <tr><td><strong>Lalie Deredin</strong></td><td>Conseillère</td><td><a href="mailto:lalie.deredin@lestiac.fr" style="color:var(--accent)">lalie.deredin@lestiac.fr</a></td></tr>
+      <tr><td><strong>Claire Gaston</strong></td><td>Conseillère</td><td><a href="mailto:claire.gaston@lestiac.fr" style="color:var(--accent)">claire.gaston@lestiac.fr</a></td></tr>
+      <tr><td><strong>Sophie Larrieu-Manan</strong></td><td>Conseillère · Communication</td><td><a href="mailto:sophie.larrieumanan@free.fr" style="color:var(--accent)">sophie.larrieumanan@free.fr</a></td></tr>
     </tbody></table></div></div>
   </div>
 </div>
@@ -774,6 +813,26 @@ body.is-admin .admin-inline{display:inline-flex}
   </div>
 </div>
 
+
+<!-- MODAL TÂCHE QUOTIDIEN -->
+<div class="overlay" id="m-quick-task" onclick="closeOverlay(event,'m-quick-task')">
+  <div class="modal"><div class="modal-head"><h3>📌 Nouvelle tâche du quotidien</h3><button class="modal-close" onclick="closeModal('m-quick-task')">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Titre *</label><input type="text" id="qt-title" class="form-control" placeholder="Ex : Contacter le notaire pour parcelle 123-456"></div>
+    <div class="form-group"><label class="form-label">Assigner à</label>
+      <select id="qt-assignee" class="form-control">
+        <option value="">— Choisir un membre —</option>
+        <option>Daniel</option><option>Catherine</option><option>Corinne</option><option>Sylvain</option>
+        <option>Vivien</option><option>Anthony</option><option>Rose</option><option>Michel</option>
+        <option>Roger</option><option>Lalie</option><option>Claire</option><option>Sophie</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Date limite</label><input type="date" id="qt-deadline" class="form-control"></div>
+    <div class="form-group"><label class="form-label">Note</label><textarea id="qt-note" class="form-control" rows="2" placeholder="Détails…"></textarea></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-quick-task')">Annuler</button><button class="btn btn-accent" onclick="saveQuickTask()">Assigner</button></div></div>
+</div>
+
 <!-- ════ JAVASCRIPT ════ -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -793,9 +852,10 @@ const K_LOCAL = 'cdv_local_v1';
 const K_EJS   = 'cdv_emailjs';
 const K_VISITED = 'cdv_visited';
 
-const ALL_MEMBERS = ['Sylvain','Roger','Corinne','Vivien','Lalie','Anthony','Claire'];
+const ALL_MEMBERS = ['Daniel','Catherine','Corinne','Sylvain','Vivien','Anthony','Rose','Michel','Roger','Lalie','Claire','Sophie'];
 // Super-admins pouvant assigner à n'importe qui
-const SUPER_ADMINS = ['Sylvain','Corinne','Catherine'];
+const SUPER_ADMINS = ['Daniel','Catherine','Corinne','Sylvain'];
+const MEMBER_EMAILS = {'Daniel':'daniel.bouchet@lestiac.fr','Catherine':'catherine.penard@lestiac.fr','Corinne':'corinne.eeckeman@lestiac.fr','Sylvain':'sylvain.kornowski@lestiac.fr','Vivien':'vivien.bomont@lestiac.fr','Anthony':'anthony.benoit@lestiac.fr','Rose':'rose.adjei@lestiac.fr','Michel':'michel.jorge@lestiac.fr','Roger':'roger.carteau@lestiac.fr','Lalie':'lalie.deredin@lestiac.fr','Claire':'claire.gaston@lestiac.fr','Sophie':'sophie.larrieumanan@free.fr'};
 
 const AXE_LABELS = {env:'🌿 Environnement',vie:'🎭 Vie du village',gouv:'🗳 Gouvernance'};
 const AXE_CLASSES = {env:'cat-hab',vie:'cat-com',gouv:'cat-rh'};
@@ -816,33 +876,14 @@ const DEFAULT_PROJECTS = [
   {id:'p13',horizon:'long',axe:'env',title:'Mobilités douces — plan vélo',pilote:'Vivien',desc:'Itinéraires cyclables sécurisés, stationnements vélos. Lien avec projets intercommunaux.',members:['Vivien','Lalie'],budget:'À chiffrer',subs:'Région, DSIL, CDC',status:'s-lancer',source:'Mandat'},
 ];
 
-const DEFAULT_TASKS = {
-  court:[
-    {id:'t1',text:'[Sylvain] Convoquer la 1ère réunion de commission',tag:'tt-gouv',done:false},
-    {id:'t2',text:'[Sylvain + Roger] Diagnostic voiries et bâtiments communaux prioritaires',tag:'tt-env',done:false},
-    {id:'t3',text:'[Vivien + Roger] Devis réfection éclairage LED',tag:'tt-env',done:false},
-    {id:'t4',text:'[Sylvain + Roger] Solliciter le Département 33 pour la D10',tag:'tt-env',done:false},
-    {id:'t5',text:'[Sylvain] Organiser la concertation citoyenne sur le nom de l\'esplanade',tag:'tt-gouv',done:false},
-    {id:'t6',text:'[Anthony + Claire] Tour des associations — recueil des besoins subventions',tag:'tt-vie',done:false},
-    {id:'t7',text:'[Anthony] Démarches pour le marché local place Victor Hugo',tag:'tt-vie',done:false},
-  ],
-  moyen:[
-    {id:'t8',text:'[Sylvain + Roger] Dossier DETR (voirie / accessibilité)',tag:'tt-env',done:false},
-    {id:'t9',text:'[Vivien] Audit éclairage public — recensement points à moderniser',tag:'tt-env',done:false},
-    {id:'t10',text:'[Anthony + Claire] Format et budget Festival sur Garonne',tag:'tt-vie',done:false},
-    {id:'t11',text:'[Sylvain] Lancer la réflexion CMJ — contact ANACEJ',tag:'tt-gouv',done:false},
-  ],
-  long:[
-    {id:'t12',text:'[Sylvain + Roger] Faisabilité accessibilité PMR — rapport CM',tag:'tt-env',done:false},
-    {id:'t13',text:'[Vivien + Lalie] Étude mobilités douces — vélo et stationnements',tag:'tt-env',done:false},
-  ]
-};
+const DEFAULT_TASKS = {court:[],moyen:[],long:[]};
 
 // ── STATE ──
 let isAdmin=false, fbApp=null, fbDb=null, fbConnected=false;
 let _currentProjId=null, _notesTimer=null, _pendingJoin=null;
+let localData={projects:null,tasks:null,reunions:null,log:[],cr:[],budget:null,quickTasks:null};
 let _ptAssignee=null; // assigné sélectionné dans le form tâche projet
-let localData={projects:null,tasks:null,reunions:null,log:[],cr:[],budget:null};
+
 
 // ── LOCAL HELPERS ──
 function getLocal(){try{return JSON.parse(localStorage.getItem(K_LOCAL))||{};}catch{return{}}}
@@ -881,6 +922,7 @@ function initFirebase(config){
       localData.log=data.log?Object.values(data.log).sort((a,b)=>b.ts-a.ts):[];
       localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
       localData.budget=data.budget||null;
+      localData.quickTasks=data.quickTasks?Object.values(data.quickTasks).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
       renderAll();
       // Si modal projet ouvert, rafraîchir tâches
       if(_currentProjId){
@@ -912,6 +954,15 @@ function writeProjects(arr){const obj={};arr.forEach(p=>{obj[p.id]=p});if(fbDb)f
 function writeTasks(t){if(fbDb)fbSet(COMMISSION+'/tasks',t);else{const d=getLocal();d.tasks=t;saveLocal(d)}}
 function writeReunions(arr){const obj={};arr.forEach((r,i)=>{obj[r.id||('r'+i)]=r});if(fbDb)fbSet(COMMISSION+'/reunions',obj);else{const d=getLocal();d.reunions=arr;saveLocal(d)}}
 function writeLog(e){if(fbDb)fbPush(COMMISSION+'/log',e);else{const d=getLocal();if(!d.log)d.log=[];d.log.unshift(e);saveLocal(d);localData.log=d.log;renderLog()}}
+function deleteCR(idOrIdx){
+  if(!confirm('Supprimer ce compte rendu ?'))return;
+  if(fbDb){
+    // Trouver la clé Firebase
+    const crs=getCRs();const cr=crs.find(c=>c.id===idOrIdx)||crs[parseInt(idOrIdx)];
+    if(cr&&cr.fbKey)fbRemove(COMMISSION+'/cr/'+cr.fbKey);
+    else{// fallback local
+      const d=getLocal();if(d.crs)d.crs=d.crs.filter((_,i)=>i!==parseInt(idOrIdx));saveLocal(d);localData.cr=d.crs||[];renderCRs();}
+  }else{const d=getLocal();if(d.crs){d.crs=d.crs.filter(c=>c.id!==idOrIdx&&c.id!==parseInt(idOrIdx));saveLocal(d);localData.cr=d.crs;renderCRs();}}}
 function writeCR(cr){if(fbDb)fbPush(COMMISSION+'/cr',cr);else{const d=getLocal();if(!d.crs)d.crs=[];d.crs.unshift(cr);saveLocal(d);localData.cr=d.crs;renderCRs()}}
 function writeBudget(b){if(fbDb)fbSet(COMMISSION+'/budget',b);else{const d=getLocal();d.budget=b;saveLocal(d);localData.budget=b}}
 function logAction(action,detail){const who=getCurrentUser()||'Anonyme';writeLog({who,action,detail,ts:Date.now(),time:new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})})}
@@ -974,7 +1025,7 @@ function closeOverlay(e,id){if(e.target===document.getElementById(id))closeModal
 window.openModal=openModal;window.closeModal=closeModal;window.closeOverlay=closeOverlay;
 
 // ── RENDER ALL ──
-function renderAll(){renderProjects();renderReunions();renderTasks();renderCRs();updateStats()}
+function renderAll(){renderProjects();renderReunions();renderTasks();renderCRs();updateStats();if(typeof renderQuickTasks==='function')renderQuickTasks();if(typeof updateDashShortcuts==='function')updateDashShortcuts()}
 
 // ── STATS ──
 function updateStats(){
@@ -1053,7 +1104,9 @@ window.filterProj=filterProj;
 
 function saveProj(){
   const title=document.getElementById('p-title').value.trim();if(!title)return;
-  const p={id:'a'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,pilote:document.getElementById('p-pilote').value.trim(),status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement'};
+  const me=getCurrentUser()||'';
+  const piloteVal=document.getElementById('p-pilote').value.trim()||me;
+  const p={id:'a'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,pilote:piloteVal,status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:piloteVal?[piloteVal]:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement'};
   const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»');closeModal('m-proj');
   if(!fbConnected)renderAll()
 }
@@ -1347,9 +1400,15 @@ function renderReunions(){
     list.appendChild(card);
   });updateStats();
 }
-function saveReunion(){const title=document.getElementById('r-title').value.trim();if(!title)return;const r={id:'r'+Date.now(),title,date:document.getElementById('r-date').value,heure:document.getElementById('r-heure').value,lieu:document.getElementById('r-lieu').value.trim()||'Mairie de Lestiac',participants:document.getElementById('r-parts').value.trim(),tags:document.getElementById('r-tags').value.trim(),notes:document.getElementById('r-notes').value.trim()};const arr=getReunions();arr.push(r);writeReunions(arr);logAction('Réunion planifiée','«'+title+'»');closeModal('m-reunion');['r-title','r-date','r-tags','r-notes'].forEach(id=>document.getElementById(id).value='');if(!fbConnected)renderAll()}
+function saveReunion(){const title=document.getElementById('r-title').value.trim();if(!title)return;const r={id:'r'+Date.now(),title,date:document.getElementById('r-date').value,heure:document.getElementById('r-heure').value,lieu:document.getElementById('r-lieu').value.trim()||'Mairie de Lestiac',participants:document.getElementById('r-parts').value.trim(),tags:document.getElementById('r-tags').value.trim(),notes:document.getElementById('r-notes').value.trim(),createdBy:getCurrentUser()||'Anonyme'};const arr=getReunions();arr.push(r);writeReunions(arr);logAction('Réunion planifiée','«'+title+'»');closeModal('m-reunion');['r-title','r-date','r-tags','r-notes'].forEach(id=>document.getElementById(id).value='');if(!fbConnected)renderAll()}
 window.saveReunion=saveReunion;
-function deleteReunion(i){if(!confirm('Supprimer ?'))return;const arr=getReunions();arr.splice(i,1);writeReunions(arr);if(!fbConnected)renderAll()}
+function deleteReunion(i){
+  const arr=getReunions();const r=arr[i];
+  const me=getCurrentUser();
+  if(!isAdmin&&!isSuperAdmin()&&r.createdBy&&r.createdBy!==me){alert('Seul le créateur ou un admin peut supprimer cette réunion.');return}
+  if(!confirm('Supprimer cette réunion ?'))return;
+  arr.splice(i,1);writeReunions(arr);logAction('Réunion supprimée',r.title||'');if(!fbConnected)renderAll()
+}
 window.deleteReunion=deleteReunion;
 function exportGcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(r.title)}&dates=${ds}T${hs}00/${ds}T${he}00&location=${encodeURIComponent(r.lieu||'')}`),'_blank'}
 window.exportGcal=exportGcal;
@@ -1378,7 +1437,13 @@ function sendCRByEmail(cr){
 function renderCRs(){
   const list=document.getElementById('cr-list'),empty=document.getElementById('cr-empty');
   const crs=getCRs();list.innerHTML='';empty.style.display=crs.length===0?'':'none';
-  crs.forEach(cr=>{const card=document.createElement('div');card.className='cr-card';card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${cr.title}</div><div class="cr-meta">Publié par ${cr.who} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><span class="cr-sent">✓ Publié</span></div><div class="cr-body">${cr.body}</div>`;list.appendChild(card)});updateStats();
+  crs.forEach((cr,idx)=>{
+  const me=getCurrentUser();
+  const canDel=isAdmin||isSuperAdmin()||(cr.who&&cr.who===me);
+  const card=document.createElement('div');card.className='cr-card';
+  card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${cr.title}</div><div class="cr-meta">Publié par ${cr.who} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><div style="display:flex;align-items:center;gap:8px"><span class="cr-sent">✓ Publié</span>${canDel?`<button class="btn btn-ghost-red btn-sm" onclick="deleteCR('${cr.id||idx}')">🗑</button>`:''}</div></div><div class="cr-body">${cr.body}</div>`;
+  list.appendChild(card);
+});updateStats();
 }
 
 // ── TÂCHES (page globale) ──
@@ -1437,13 +1502,91 @@ window.exportJSON=exportJSON;
 function makeEditable(el){if(!isAdmin)return;el.contentEditable='true';el.style.background='#fffde7';el.focus();el.onblur=()=>{el.contentEditable='false';el.style.background=''}}
 window.makeEditable=makeEditable;
 
+// ── QUICK TASKS (tâches du quotidien) ──
+function getQuickTasks(){
+  if(localData.quickTasks)return localData.quickTasks;
+  return getLocal().quickTasks||[];
+}
+function writeQuickTasks(arr){
+  const obj={};arr.forEach((t,i)=>{obj[t.id||('qt'+i)]=t});
+  if(fbDb)fbSet(COMMISSION+'/quickTasks',obj);
+  else{const d=getLocal();d.quickTasks=arr;saveLocal(d)}
+}
+function saveQuickTask(){
+  const title=document.getElementById('qt-title').value.trim();if(!title)return;
+  const qt={id:'qt'+Date.now(),title,assignee:document.getElementById('qt-assignee').value,deadline:document.getElementById('qt-deadline').value,note:document.getElementById('qt-note').value.trim(),status:'todo',createdBy:getCurrentUser()||'Anonyme',ts:Date.now()};
+  const arr=getQuickTasks();arr.unshift(qt);writeQuickTasks(arr);
+  logAction('Tâche quotidien','«'+title+'»'+(qt.assignee?' → '+qt.assignee:''));
+  closeModal('m-quick-task');
+  ['qt-title','qt-deadline','qt-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('qt-assignee').value='';
+  renderQuickTasks();
+}
+window.saveQuickTask=saveQuickTask;
+
+function renderQuickTasks(){
+  const cont=document.getElementById('quick-tasks-list');if(!cont)return;
+  const tasks=getQuickTasks();
+  if(!tasks.length){cont.innerHTML='<div class="empty-state" style="padding:16px"><div class="ei" style="font-size:24px">📋</div><p>Aucune tâche du quotidien.</p></div>';return}
+  const me=getCurrentUser();
+  cont.innerHTML='';
+  tasks.forEach((t,i)=>{
+    const canDel=isAdmin||isSuperAdmin()||(t.createdBy&&t.createdBy===me)||(t.assignee&&t.assignee===me);
+    const now=new Date();now.setHours(0,0,0,0);
+    let dlHtml='';
+    if(t.deadline){
+      const dl=new Date(t.deadline);dl.setHours(0,0,0,0);
+      const diff=Math.ceil((dl-now)/(1000*60*60*24));
+      const lbl=dl.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+      if(diff<0)dlHtml=`<span class="qt-deadline dl-overdue">🔴 ${lbl}</span>`;
+      else if(diff<=3)dlHtml=`<span class="qt-deadline dl-soon">⏰ ${lbl}</span>`;
+      else dlHtml=`<span class="qt-deadline dl-ok">📅 ${lbl}</span>`;
+    }
+    const row=document.createElement('div');
+    row.className='quick-task-row'+(t.status==='done'?' done-qt':'');
+    row.innerHTML=`<div style="flex:1">
+      <div class="qt-title">${t.title}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+        ${t.assignee?`<span class="qt-assignee">👤 ${t.assignee}</span>`:''}
+        ${dlHtml}
+        ${t.note?`<span style="font-size:11px;color:var(--soft);font-style:italic">${t.note}</span>`:''}
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;align-items:center">
+      ${t.status!=='done'?`<button class="btn btn-accent btn-sm" style="font-size:11px" onclick="doneQuickTask(${i})">✓</button>`:'<span style="font-size:11px;color:#2e7d32;font-weight:700">✓</span>'}
+      ${canDel?`<button class="btn-icon" onclick="deleteQuickTask(${i})" style="font-size:13px">🗑</button>`:''}
+    </div>`;
+    cont.appendChild(row);
+  });
+}
+function doneQuickTask(i){const arr=getQuickTasks();arr[i].status='done';writeQuickTasks(arr);logAction('Tâche quotidien ✓',arr[i].title);renderQuickTasks()}
+function deleteQuickTask(i){
+  const arr=getQuickTasks();const t=arr[i];
+  const me=getCurrentUser();
+  if(!isAdmin&&!isSuperAdmin()&&t.createdBy!==me&&t.assignee!==me){alert('Vous ne pouvez pas supprimer cette tâche.');return}
+  if(!confirm('Supprimer ?'))return;
+  arr.splice(i,1);writeQuickTasks(arr);renderQuickTasks();
+}
+window.doneQuickTask=doneQuickTask;window.deleteQuickTask=deleteQuickTask;
+
+function updateDashShortcuts(){
+  const p=getProjects(),t=getTasks(),r=getReunions(),c=getCRs();
+  const el=id=>document.getElementById(id);
+  if(el('ds-projets'))el('ds-projets').textContent=p.length;
+  const taskCount=[...(t.court||[]),...(t.moyen||[]),...(t.long||[])].filter(x=>!x.done).length;
+  if(el('ds-taches'))el('ds-taches').textContent=taskCount||'0';
+  if(el('ds-reunions'))el('ds-reunions').textContent=r.length;
+  if(el('ds-cr'))el('ds-cr').textContent=c.length;
+}
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
   updateIdentityBtn();
   const cfg=getFbConfig()||FB_PRESET;
   initFirebase(cfg);
   renderAll();
-  // Cacher form tâche projet par défaut
+  renderQuickTasks();
+  updateDashShortcuts();
   if(document.getElementById('ptask-add-form'))
     document.getElementById('ptask-add-form').style.display='none';
 });
