@@ -149,7 +149,7 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .task-label{font-size:13.5px;line-height:1.5;flex:1}
 .task-item.done .task-label{text-decoration:line-through;color:var(--soft)}
 .task-tag{font-size:9.5px;font-weight:700;letter-spacing:.8px;padding:1px 6px;border-radius:20px;flex-shrink:0;margin-top:4px}
-.tt-sco{background:#e8ecf5;color:var(--navy)}.tt-peri{background:#e8f5f1;color:var(--teal-d)}.tt-jeu{background:var(--purple-p);color:var(--purple)}
+.tt-sielp{background:#e8ecf5;color:var(--navy)}.tt-peri{background:#e8f5f1;color:var(--teal-d)}.tt-bati{background:var(--purple-p);color:var(--purple)}
 .add-task-row{display:flex;gap:6px;margin-top:10px;border-top:1px dashed var(--mid);padding-top:10px;flex-wrap:wrap}
 .add-task-row input{flex:1;min-width:140px;padding:8px 12px;border:1.5px solid var(--mid);border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:13px}
 .add-task-row input:focus{outline:none;border-color:var(--accent)}
@@ -574,9 +574,9 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- ▓ TÂCHES (page globale) ▓ -->
 <div class="page" id="page-taches">
   <div class="ph"><h1>Tâches</h1><p>Cochez au fur et à mesure</p></div>
-  <div class="card"><div class="card-head terra"><h2>🟠 Court terme — 2026</h2></div><div class="card-body"><div id="tasks-court"></div><div class="add-task-row admin-only"><input type="text" id="new-task-court" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('court')"><select id="new-task-court-tag"><option value="tt-sco">🏫 Sco</option><option value="tt-peri">🕐 Péri</option><option value="tt-jeu">🎯 Jeun</option></select><button class="btn btn-terra btn-sm" onclick="addTask('court')">Ajouter</button></div></div></div>
-  <div class="card"><div class="card-head"><h2>🔵 Moyen terme — 2027</h2></div><div class="card-body"><div id="tasks-moyen"></div><div class="add-task-row admin-only"><input type="text" id="new-task-moyen" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('moyen')"><select id="new-task-moyen-tag"><option value="tt-sco">🏫 Sco</option><option value="tt-peri">🕐 Péri</option><option value="tt-jeu">🎯 Jeun</option></select><button class="btn btn-accent btn-sm" onclick="addTask('moyen')">Ajouter</button></div></div></div>
-  <div class="card"><div class="card-head navy"><h2>🔷 Long terme — 2028+</h2></div><div class="card-body"><div id="tasks-long"></div><div class="add-task-row admin-only"><input type="text" id="new-task-long" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('long')"><select id="new-task-long-tag"><option value="tt-sco">🏫 Sco</option><option value="tt-peri">🕐 Péri</option><option value="tt-jeu">🎯 Jeun</option></select><button class="btn btn-navy btn-sm" onclick="addTask('long')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head terra"><h2>🟠 Court terme — 2026</h2></div><div class="card-body"><div id="tasks-court"></div><div class="add-task-row admin-only"><input type="text" id="new-task-court" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('court')"><select id="new-task-court-tag"><option value="tt-sielp">🏫 SIELP/Sco</option><option value="tt-peri">🕐 Périscolaire</option><option value="tt-bati">🏗 Bâti</option></select><button class="btn btn-terra btn-sm" onclick="addTask('court')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head"><h2>🔵 Moyen terme — 2027</h2></div><div class="card-body"><div id="tasks-moyen"></div><div class="add-task-row admin-only"><input type="text" id="new-task-moyen" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('moyen')"><select id="new-task-moyen-tag"><option value="tt-sielp">🏫 SIELP/Sco</option><option value="tt-peri">🕐 Périscolaire</option><option value="tt-bati">🏗 Bâti</option></select><button class="btn btn-accent btn-sm" onclick="addTask('moyen')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head navy"><h2>🔷 Long terme — 2028+</h2></div><div class="card-body"><div id="tasks-long"></div><div class="add-task-row admin-only"><input type="text" id="new-task-long" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('long')"><select id="new-task-long-tag"><option value="tt-sielp">🏫 SIELP/Sco</option><option value="tt-peri">🕐 Périscolaire</option><option value="tt-bati">🏗 Bâti</option></select><button class="btn btn-navy btn-sm" onclick="addTask('long')">Ajouter</button></div></div></div>
 </div>
 
 <!-- ▓ FINANCES ▓ -->
@@ -711,7 +711,7 @@ body.is-admin .admin-inline{display:inline-flex}
     <div class="form-group"><label class="form-label">Titre</label><input type="text" id="p-title" class="form-control" placeholder="Intitulé"></div>
     <div class="form-group"><label class="form-label">Pilote du projet</label><input type="text" id="p-pilote" class="form-control" placeholder="Ex : Catherine"></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Horizon</label><select id="p-horizon" class="form-control"><option value="court">Court terme</option><option value="moyen">Moyen terme</option><option value="long">Long terme</option></select></div><div class="form-group"><label class="form-label">Statut</label><select id="p-status" class="form-control"><option value="s-lancer">À lancer</option><option value="s-cours">En cours</option><option value="s-attente">En attente</option><option value="s-fait">Réalisé</option></select></div></div>
-    <div class="form-group"><label class="form-label">Sous-commission</label><select id="p-axe" class="form-control"><option value="sco">🏫 Vie scolaire</option><option value="peri">🕐 Périscolaire</option><option value="jeu">🎯 Jeunesse</option></select></div>
+    <div class="form-group"><label class="form-label">Sous-commission</label><select id="p-axe" class="form-control"><option value="sielp">🏫 SIELP & Scolarité</option><option value="peri">🕐 Périscolaire & Cantine</option><option value="bati">🏗 Bâti scolaire</option></select></div>
     <div class="form-group"><label class="form-label">Description</label><textarea id="p-desc" class="form-control" placeholder="Décrire…"></textarea></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Budget</label><input type="text" id="p-budget" class="form-control" placeholder="500 €"></div><div class="form-group"><label class="form-label">Subventions</label><input type="text" id="p-subs" class="form-control" placeholder="FDVA, CAF…"></div></div>
   </div>
@@ -834,7 +834,7 @@ body.is-admin .admin-inline{display:inline-flex}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-const COMMISSION = 'as';
+const COMMISSION = 'scolaire';
 const FB_PRESET = {
   apiKey:      "AIzaSyBkIqarLb7CmCwuricfLv3iBwQ1IcGKHm4",
   authDomain:  "mairie-lestiac-2026.firebaseapp.com",
@@ -853,19 +853,18 @@ const ALL_MEMBERS = ['Daniel','Catherine','Corinne','Sylvain','Vivien','Anthony'
 const SUPER_ADMINS = ['Daniel','Catherine','Corinne','Sylvain'];
 const MEMBER_EMAILS = {'Daniel':'daniel.bouchet@lestiac.fr','Catherine':'catherine.penard@lestiac.fr','Corinne':'corinne.eeckeman@lestiac.fr','Sylvain':'sylvain.kornowski@lestiac.fr','Vivien':'vivien.bomont@lestiac.fr','Anthony':'anthony.benoit@lestiac.fr','Rose':'rose.adjei@lestiac.fr','Michel':'michel.jorge@lestiac.fr','Roger':'roger.carteau@lestiac.fr','Lalie':'lalie.deredin@lestiac.fr','Claire':'claire.gaston@lestiac.fr','Sophie':'sophie.larrieumanan@free.fr'};
 
-const AXE_LABELS = {sco:'🏫 Vie scolaire',peri:'🕐 Périscolaire',jeu:'🎯 Jeunesse'};
-const AXE_CLASSES = {sco:'cat-rh',peri:'cat-com',jeu:'cat-soc'};
+const AXE_LABELS = {sielp:'🏫 SIELP & Scolarité',peri:'🕐 Périscolaire & Cantine',bati:'🏗 Bâti scolaire'};
+const AXE_CLASSES = {sielp:'cat-rh',peri:'cat-com',bati:'cat-soc'};
 
 const DEFAULT_PROJECTS = [
-  {id:'p1',horizon:'court',axe:'sco',title:'SIELP — Syndicat intercommunal scolaire',pilote:'Corinne',desc:'Suivi du SIELP (Syndicat Intercommunal des Écoles de Lestiac et Paillet). Réunions, budget, coordination.',members:['Corinne','Lalie'],budget:'Budget SIELP',subs:'État, Département',status:'s-cours',source:'Mandat'},
-  {id:'p2',horizon:'court',axe:'sco',title:'Rénovation bâtiment scolaire',pilote:'Corinne',desc:"Travaux d'entretien et rénovation des locaux scolaires.",members:['Corinne','Sylvain'],budget:'À chiffrer',subs:'DETR, Département',status:'s-lancer',source:'Programme officiel'},
-  {id:'p3',horizon:'court',axe:'peri',title:'Cantine scolaire — qualité et tarification',pilote:'Corinne',desc:'Amélioration de la qualité des repas, révision de la grille tarifaire.',members:['Corinne','Lalie','Claire'],budget:'Budget communal',subs:'CAF',status:'s-lancer',source:'Programme officiel'},
-  {id:'p4',horizon:'court',axe:'peri',title:'Périscolaire — accueil avant/après école',pilote:'Lalie',desc:"Qualité de l'accueil périscolaire : animateurs, activités, locaux.",members:['Lalie','Corinne','Claire'],budget:'Budget communal',subs:'CAF, État',status:'s-lancer',source:'Programme officiel'},
-  {id:'p5',horizon:'court',axe:'jeu',title:'Végétalisation de la cour de récré',pilote:'Corinne',desc:"Projet participatif avec les élèves : arbres, jardins, zones d'ombre.",members:['Corinne','Lalie','Anthony'],budget:'1 000–5 000 €',subs:'Fonds Vert, Région',status:'s-lancer',source:'Programme officiel'},
-  {id:'p6',horizon:'moyen',axe:'jeu',title:'Conseil Municipal des Jeunes (CMJ)',pilote:'Sylvain',desc:'Création du CMJ et dispositif « Argent de poche ».',members:['Sylvain','Corinne','Anthony'],budget:'500–1 000 €',subs:'CAF, Région, FDVA',status:'s-lancer',source:'Programme officiel'},
-  {id:'p7',horizon:'moyen',axe:'sco',title:'Équipements numériques scolaires',pilote:'Corinne',desc:"Renouvellement ou déploiement d'équipements numériques dans les classes.",members:['Corinne','Sylvain'],budget:'À chiffrer',subs:'Région, État',status:'s-lancer',source:'Programme officiel'},
-  {id:'p8',horizon:'moyen',axe:'peri',title:'Sorties scolaires — programme annuel',pilote:'Lalie',desc:'Structurer et valoriser le programme annuel de sorties scolaires.',members:['Lalie','Claire','Sophie'],budget:'Budget communal',subs:'CAF, Département',status:'s-lancer',source:'Mandat'},
-  {id:'p9',horizon:'long',axe:'sco',title:'Extension bâtiment école',pilote:'Corinne',desc:"Réflexion sur la capacité d'accueil scolaire à long terme.",members:['Corinne','Sylvain'],budget:'À évaluer',subs:'DETR, DSIL',status:'s-attente',source:'Mandat'},
+  {id:'s1',horizon:'court',axe:'sielp',title:"Représentation Lestiac au SIELP",pilote:'',desc:"Participer aux réunions mensuelles du SIELP. Représenter les intérêts de Lestiac sur les questions d'organisation scolaire intercommunale.",members:["Michel","Corinne","Lalie"],budget:'0 €',subs:'—',status:'s-cours',source:'Mandat'},
+  {id:'s2',horizon:'court',axe:'bati',title:"Végétalisation cour de l'école",pilote:'',desc:"Espaces plus frais et agréables pour les enfants. Plantation, ombrage, jardin pédagogique. Implique enfants, parents et enseignants.",members:["Corinne","Lalie","Michel","Claire"],budget:'300–600 €',subs:'CAF, Région',status:'s-lancer',source:'Programme officiel'},
+  {id:'s3',horizon:'court',axe:'bati',title:"Rénovation bâtiments scolaires",pilote:'',desc:"Rénover pour un environnement plus sain et écoresponsable. Diagnostic, priorisation, financement.",members:["Corinne"],budget:'À chiffrer',subs:'DETR, DSIL',status:'s-lancer',source:'Programme officiel'},
+  {id:'s4',horizon:'court',axe:'peri',title:"Maintien accueil périscolaire",pilote:'',desc:"Préserver le service périscolaire malgré la suppression d'une classe. Négociation SIELP, organisation, budget.",members:["Corinne","Rose","Michel"],budget:'Budget communal',subs:'CAF',status:'s-lancer',source:'Programme officiel'},
+  {id:'s5',horizon:'court',axe:'peri',title:"Circuit court à la cantine",pilote:'',desc:"Poursuivre et renforcer l'engagement pour des produits locaux et de saison dans les repas scolaires. Partenariats avec producteurs locaux.",members:["Corinne","Michel","Anthony"],budget:'0 € (organisation)',subs:'—',status:'s-lancer',source:'Programme officiel'},
+  {id:'s6',horizon:'moyen',axe:'peri',title:"Amélioration qualité restauration scolaire",pilote:'',desc:"Révision des menus, formation des agents, amélioration du cadre de la cantine. Enquête satisfaction familles.",members:["Corinne","Rose","Michel","Anthony"],budget:'500–1 500 €',subs:'CAF, Département',status:'s-lancer',source:'Mandat'},
+  {id:'s7',horizon:'moyen',axe:'sielp',title:"Conseil Municipal des Jeunes (CMJ)",pilote:'',desc:"Créer un Conseil Municipal des Jeunes impliquant les élèves de l'école et les collégiens. Dispositif Argent de poche.",members:["Corinne","Lalie"],budget:'500–1 000 €',subs:'CAF, Région',status:'s-lancer',source:'Programme officiel'},
+  {id:'s8',horizon:'long',axe:'bati',title:"Rénovation énergétique école",pilote:'',desc:"Isolation, chauffage performant, éventuellement panneaux photovoltaïques sur le toit de l'école. Études, devis, financements.",members:["Corinne"],budget:'À chiffrer',subs:'Fonds Vert, DETR, DSIL',status:'s-lancer',source:'Mandat'},
 ];
 
 const DEFAULT_TASKS = {court:[],moyen:[],long:[]};
@@ -1479,7 +1478,7 @@ function renderTasks(){
     const cont=document.getElementById('tasks-'+h);cont.innerHTML='';
     (tasks[h]||[]).forEach((t,i)=>{
       const div=document.createElement('div');div.className='task-item'+(t.done?' done':'');div.onclick=()=>toggleTask(h,i);
-      const tagIco={tt_sco:'🏫',tt_peri:'🕐',tt_jeu:'🎯'}[(t.tag||'tt-sco').replace('-','_')]||'🏫';
+      const tagIco={tt_sielp:'🏫',tt_peri:'🕐',tt_bati:'🏗'}[(t.tag||'tt-sielp').replace('-','_')]||'🏫';
       div.innerHTML=`<input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask('${h}',${i})"><span class="task-label">${t.text}</span><span class="task-tag ${t.tag||'tt-hab'}">${tagIco}</span>${isAdmin?`<button class="btn-icon" onclick="event.stopPropagation();deleteTask('${h}',${i})" style="font-size:13px">🗑</button>`:''}`;
       cont.appendChild(div);
     });

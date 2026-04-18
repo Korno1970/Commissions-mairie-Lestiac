@@ -710,7 +710,7 @@ body.is-admin .admin-inline{display:inline-flex}
     <div class="form-group"><label class="form-label">Titre</label><input type="text" id="p-title" class="form-control" placeholder="Intitulé"></div>
     <div class="form-group"><label class="form-label">Pilote du projet</label><input type="text" id="p-pilote" class="form-control" placeholder="Ex : Catherine"></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Horizon</label><select id="p-horizon" class="form-control"><option value="court">Court terme</option><option value="moyen">Moyen terme</option><option value="long">Long terme</option></select></div><div class="form-group"><label class="form-label">Statut</label><select id="p-status" class="form-control"><option value="s-lancer">À lancer</option><option value="s-cours">En cours</option><option value="s-attente">En attente</option><option value="s-fait">Réalisé</option></select></div></div>
-    <div class="form-group"><label class="form-label">Sous-commission</label><select id="p-axe" class="form-control"><option value="com">📢 Communication</option><option value="eve">🎉 Événements</option><option value="adm">🏛 Administration</option></select></div>
+    <div class="form-group"><label class="form-label">Sous-commission</label><select id="p-axe" class="form-control"><option value="hab">🎉 Habitants & Vie locale</option><option value="com">📢 Communication</option><option value="soc">🤝 Social & Solidarité</option><option value="rh">🏛 Admin & RH</option></select></div>
     <div class="form-group"><label class="form-label">Description</label><textarea id="p-desc" class="form-control" placeholder="Décrire…"></textarea></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Budget</label><input type="text" id="p-budget" class="form-control" placeholder="500 €"></div><div class="form-group"><label class="form-label">Subventions</label><input type="text" id="p-subs" class="form-control" placeholder="FDVA, CAF…"></div></div>
   </div>
@@ -833,7 +833,7 @@ body.is-admin .admin-inline{display:inline-flex}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-const COMMISSION = 'ag';
+const COMMISSION = 'admin';
 const FB_PRESET = {
   apiKey:      "AIzaSyBkIqarLb7CmCwuricfLv3iBwQ1IcGKHm4",
   authDomain:  "mairie-lestiac-2026.firebaseapp.com",
@@ -852,20 +852,20 @@ const ALL_MEMBERS = ['Daniel','Catherine','Corinne','Sylvain','Vivien','Anthony'
 const SUPER_ADMINS = ['Daniel','Catherine','Corinne','Sylvain'];
 const MEMBER_EMAILS = {'Daniel':'daniel.bouchet@lestiac.fr','Catherine':'catherine.penard@lestiac.fr','Corinne':'corinne.eeckeman@lestiac.fr','Sylvain':'sylvain.kornowski@lestiac.fr','Vivien':'vivien.bomont@lestiac.fr','Anthony':'anthony.benoit@lestiac.fr','Rose':'rose.adjei@lestiac.fr','Michel':'michel.jorge@lestiac.fr','Roger':'roger.carteau@lestiac.fr','Lalie':'lalie.deredin@lestiac.fr','Claire':'claire.gaston@lestiac.fr','Sophie':'sophie.larrieumanan@free.fr'};
 
-const AXE_LABELS = {com:'📢 Communication',eve:'🎉 Événements',adm:'🏛 Administration'};
-const AXE_CLASSES = {com:'cat-com',eve:'cat-soc',adm:'cat-rh'};
+const AXE_LABELS = {hab:'🎉 Habitants & Vie locale',com:'📢 Communication',soc:'🤝 Social & Solidarité',rh:'🏛 Admin & RH'};
+const AXE_CLASSES = {hab:'cat-soc',com:'cat-com',soc:'cat-hab',rh:'cat-rh'};
 
 const DEFAULT_PROJECTS = [
-  {id:'p1',horizon:'court',axe:'com',title:'Cafés du Maire',pilote:'Catherine',desc:'Rencontres régulières entre Daniel Bouchet et les habitants de Lestiac.',members:['Catherine','Daniel','Sophie'],budget:'100–200 €/session',subs:'Budget comm.',status:'s-lancer',source:'Programme officiel'},
-  {id:'p2',horizon:'court',axe:'com',title:'Facebook & IntraMuros',pilote:'Sophie',desc:'Animation des réseaux sociaux et de la plateforme IntraMuros. Actualités, événements, infos pratiques.',members:['Sophie','Catherine'],budget:'Abonnement IntraMuros',subs:'—',status:'s-lancer',source:'Programme officiel'},
-  {id:'p3',horizon:'court',axe:'eve',title:'Fête des Vendanges 2026',pilote:'Catherine',desc:'Organisation de la fête des vendanges annuelle.',members:['Catherine','Sophie','Anthony','Vivien'],budget:'À définir',subs:'—',status:'s-lancer',source:'Mandat'},
-  {id:'p4',horizon:'court',axe:'eve',title:'Trail de Lestiac 2026',pilote:'Anthony',desc:'Organiser ou soutenir le trail annuel. Logistique, balisage, partenaires locaux.',members:['Anthony','Vivien'],budget:'À définir',subs:'CDOS, Département',status:'s-lancer',source:'Mandat'},
-  {id:'p5',horizon:'court',axe:'eve',title:'Octobre Rose',pilote:'Sophie',desc:'Sensibilisation au cancer du sein — événement local.',members:['Sophie','Claire'],budget:'200–500 €',subs:'Ligue contre le cancer',status:'s-lancer',source:'Mandat'},
-  {id:'p6',horizon:'court',axe:'adm',title:'Délibérations & registres CM',pilote:'Catherine',desc:'Suivi des délibérations, archivage et publication légale.',members:['Catherine','Daniel'],budget:'—',subs:'—',status:'s-lancer',source:'Mandat'},
-  {id:'p7',horizon:'moyen',axe:'eve',title:'Festival sur Garonne',pilote:'Anthony',desc:'Festival de musique et culture au bord du fleuve.',members:['Anthony','Claire','Sophie'],budget:'À définir',subs:'DRAC, Département, Région',status:'s-lancer',source:'Programme officiel'},
-  {id:'p8',horizon:'moyen',axe:'eve',title:'Marché Nocturne — Place Victor Hugo',pilote:'Sylvain',desc:'Marché nocturne estival. Artisans, créateurs, food trucks.',members:['Sylvain','Anthony','Sophie'],budget:'500–1 500 €',subs:'CDC, Département',status:'s-cours',source:'Projet en cours'},
-  {id:'p9',horizon:'moyen',axe:'adm',title:'Budget communal — transparence',pilote:'Daniel',desc:"Publication d'un résumé budgétaire accessible aux habitants.",members:['Daniel','Catherine'],budget:'—',subs:'—',status:'s-lancer',source:'Mandat'},
-  {id:'p10',horizon:'long',axe:'adm',title:'Révision PLU / PLUI intercommunal',pilote:'Catherine',desc:'Participation à la révision du PLU dans le cadre de Convergence Garonne.',members:['Catherine','Daniel','Sylvain'],budget:'—',subs:'DETR, DSIL',status:'s-attente',source:'Mandat'},
+  {id:'a1',horizon:'court',axe:'hab',title:"Cafés du Maire",pilote:'',desc:"Organisation des premières rencontres mensuelles maire/élus/habitants. Lieu, format, communication, fréquence.",members:["Catherine","Daniel","Anthony"],budget:'0 €',subs:'—',status:'s-cours',source:'Programme officiel'},
+  {id:'a2',horizon:'court',axe:'hab',title:"Fête des vendanges",pilote:'',desc:"Organisation de la fête des vendanges. Partenariats vignobles locaux, animation, logistique, communication.",members:["Catherine","Sophie","Claire"],budget:'500–2 000 €',subs:'CDC, Département',status:'s-lancer',source:'Programme officiel'},
+  {id:'a3',horizon:'court',axe:'hab',title:"Trail de la colline",pilote:'',desc:"Événement sportif sur les hauteurs de Lestiac. Format, parcours, partenaires, inscription, sécurité.",members:["Catherine","Anthony","Claire"],budget:'300–800 €',subs:'Région (sport)',status:'s-lancer',source:'Programme officiel'},
+  {id:'a4',horizon:'court',axe:'com',title:"Réactivation Facebook & IntraMuros",pilote:'',desc:"Relancer la page Facebook de la commune et le compte IntraMuros. Charte éditoriale, calendrier de publication, formations.",members:["Sophie","Daniel","Catherine"],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel'},
+  {id:'a5',horizon:'court',axe:'soc',title:"Réseau solidaire entre voisins",pilote:'',desc:"Développer un réseau de vigilance et d'entraide entre Lestiacais pour prévenir les incivilités et incidents.",members:["Catherine","Claire","Daniel"],budget:'0 €',subs:'—',status:'s-lancer',source:'Programme officiel'},
+  {id:'a6',horizon:'court',axe:'soc',title:"Octobre Rose — Lestiac solidaire",pilote:'',desc:"Organiser un événement de sensibilisation au cancer du sein. Collecte, animation, partenariats associations.",members:["Claire","Sophie"],budget:'100–300 €',subs:'Département (santé)',status:'s-lancer',source:'Programme officiel'},
+  {id:'a7',horizon:'moyen',axe:'hab',title:"Festival sur Garonne",pilote:'',desc:"Festival culturel au bord du fleuve. Nature, convivialité, traditions. Artistes locaux, scène, buvette, partenaires.",members:["Catherine","Anthony","Sophie","Claire","Lalie"],budget:'2 000–5 000 €',subs:'DRAC, Région, CDC',status:'s-lancer',source:'Programme officiel'},
+  {id:'a8',horizon:'moyen',axe:'com',title:"Refonte du bulletin municipal",pilote:'',desc:"Moderniser le bulletin municipal : format, fréquence, contenu digital, distribution.",members:["Sophie","Catherine","Claire"],budget:'500–1 500 €/an',subs:'—',status:'s-lancer',source:'Mandat'},
+  {id:'a9',horizon:'moyen',axe:'soc',title:"Maintien lien personnes fragiles",pilote:'',desc:"Dispositif de visite et contact régulier avec les aînés isolés, notamment en période de canicule ou intempéries.",members:["Claire","Daniel","Catherine","Anthony"],budget:'0 €',subs:'CAF, Département',status:'s-lancer',source:'Programme officiel'},
+  {id:'a10',horizon:'long',axe:'rh',title:"Procédures RH du conseil municipal",pilote:'',desc:"Formaliser les procédures de remplacement, délégations, absences et renouvellement de postes au sein du CM.",members:["Catherine","Roger","Daniel"],budget:'0 €',subs:'CDG 33',status:'s-lancer',source:'Mandat'},
 ];
 
 const DEFAULT_TASKS = {court:[],moyen:[],long:[]};
