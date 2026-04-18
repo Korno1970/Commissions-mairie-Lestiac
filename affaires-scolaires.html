@@ -900,7 +900,7 @@ function hasNew(p){
 function initFirebase(config){
   if(!config||!config.apiKey||!config.databaseURL){return}
   try{
-    fbApp=initializeApp(config,'cdv-'+Date.now());
+    fbApp=initializeApp(config,'as-'+Date.now());
     fbDb=getDatabase(fbApp);
     fbConnected=true;
     setBanner('connecting','⏳ Connexion Firebase…');
