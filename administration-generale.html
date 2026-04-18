@@ -149,7 +149,7 @@ button{font-family:'Barlow',sans-serif;cursor:pointer}
 .task-label{font-size:13.5px;line-height:1.5;flex:1}
 .task-item.done .task-label{text-decoration:line-through;color:var(--soft)}
 .task-tag{font-size:9.5px;font-weight:700;letter-spacing:.8px;padding:1px 6px;border-radius:20px;flex-shrink:0;margin-top:4px}
-.tt-env{background:var(--teal-p);color:var(--teal-d)}.tt-vie{background:var(--purple-p);color:var(--purple)}.tt-gouv{background:var(--navy-p);color:var(--navy)}
+.tt-com{background:#e8f0fb;color:#2563a8}.tt-eve{background:#fde8e0;color:var(--terra)}.tt-adm{background:var(--navy-p);color:var(--navy)}
 .add-task-row{display:flex;gap:6px;margin-top:10px;border-top:1px dashed var(--mid);padding-top:10px;flex-wrap:wrap}
 .add-task-row input{flex:1;min-width:140px;padding:8px 12px;border:1.5px solid var(--mid);border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:13px}
 .add-task-row input:focus{outline:none;border-color:var(--accent)}
@@ -573,9 +573,9 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- ▓ TÂCHES (page globale) ▓ -->
 <div class="page" id="page-taches">
   <div class="ph"><h1>Tâches</h1><p>Cochez au fur et à mesure</p></div>
-  <div class="card"><div class="card-head terra"><h2>🟠 Court terme — 2026</h2></div><div class="card-body"><div id="tasks-court"></div><div class="add-task-row admin-only"><input type="text" id="new-task-court" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('court')"><select id="new-task-court-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-terra btn-sm" onclick="addTask('court')">Ajouter</button></div></div></div>
-  <div class="card"><div class="card-head"><h2>🔵 Moyen terme — 2027</h2></div><div class="card-body"><div id="tasks-moyen"></div><div class="add-task-row admin-only"><input type="text" id="new-task-moyen" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('moyen')"><select id="new-task-moyen-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-accent btn-sm" onclick="addTask('moyen')">Ajouter</button></div></div></div>
-  <div class="card"><div class="card-head navy"><h2>🔷 Long terme — 2028+</h2></div><div class="card-body"><div id="tasks-long"></div><div class="add-task-row admin-only"><input type="text" id="new-task-long" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('long')"><select id="new-task-long-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-navy btn-sm" onclick="addTask('long')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head terra"><h2>🟠 Court terme — 2026</h2></div><div class="card-body"><div id="tasks-court"></div><div class="add-task-row admin-only"><input type="text" id="new-task-court" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('court')"><select id="new-task-court-tag"><option value="tt-com">📢 Com</option><option value="tt-eve">🎉 Événements</option><option value="tt-adm">🏛 Admin</option></select><button class="btn btn-terra btn-sm" onclick="addTask('court')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head"><h2>🔵 Moyen terme — 2027</h2></div><div class="card-body"><div id="tasks-moyen"></div><div class="add-task-row admin-only"><input type="text" id="new-task-moyen" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('moyen')"><select id="new-task-moyen-tag"><option value="tt-com">📢 Com</option><option value="tt-eve">🎉 Événements</option><option value="tt-adm">🏛 Admin</option></select><button class="btn btn-accent btn-sm" onclick="addTask('moyen')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head navy"><h2>🔷 Long terme — 2028+</h2></div><div class="card-body"><div id="tasks-long"></div><div class="add-task-row admin-only"><input type="text" id="new-task-long" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('long')"><select id="new-task-long-tag"><option value="tt-com">📢 Com</option><option value="tt-eve">🎉 Événements</option><option value="tt-adm">🏛 Admin</option></select><button class="btn btn-navy btn-sm" onclick="addTask('long')">Ajouter</button></div></div></div>
 </div>
 
 <!-- ▓ FINANCES ▓ -->
@@ -583,7 +583,7 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="ph"><h1>💶 Finances</h1><p>Budget de la commission · Daniel Bouchet, responsable Finances</p></div>
   <div class="notice n-gold"><span>💶</span><div>Les données financières sont saisies par le responsable Finances (Daniel Bouchet) et visibles par toutes les commissions.</div></div>
   <div class="fin-card">
-    <div class="fin-title">Budget alloué — Commission Cadre de Vie</div>
+    <div class="fin-title">Budget alloué — Commission Administration Générale</div>
     <div class="fin-meta" id="fin-annee">Exercice 2026</div>
     <div class="budget-bar-wrap"><div class="budget-bar" id="fin-bar" style="width:0%"></div></div>
     <div class="budget-labels"><span id="fin-consomme">0 € consommé</span><span id="fin-total">Budget : à renseigner</span></div>
@@ -1404,9 +1404,9 @@ function deleteReunion(i){
 window.deleteReunion=deleteReunion;
 function exportGcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(r.title)}&dates=${ds}T${hs}00/${ds}T${he}00&location=${encodeURIComponent(r.lieu||'')}`),'_blank'}
 window.exportGcal=exportGcal;
-function exportIcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);const ic=['BEGIN:VCALENDAR','VERSION:2.0',`PRODID:-//CDV Lestiac//FR`,'BEGIN:VEVENT',`UID:cdv-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission Cadre de Vie`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ic],{type:'text/calendar'}));a.download=r.title.replace(/\s+/g,'_')+'.ics';a.click()}
+function exportIcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);const ic=['BEGIN:VCALENDAR','VERSION:2.0',`PRODID:-//AG Lestiac//FR`,'BEGIN:VEVENT',`UID:cdv-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission Administration Générale`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ic],{type:'text/calendar'}));a.download=r.title.replace(/\s+/g,'_')+'.ics';a.click()}
 window.exportIcal=exportIcal;
-function exportAllIcal(){const arr=getReunions().filter(r=>r.date&&r.date.trim());if(!arr.length){alert('Aucune réunion avec date.');return}const fmt=n=>String(n).padStart(2,'0');let lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDV Lestiac//FR'];arr.forEach((r,i)=>{const d=new Date(r.date),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);lines.push('BEGIN:VEVENT',`UID:cdv-${i}-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission Cadre de Vie`,'END:VEVENT')});lines.push('END:VCALENDAR');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'}));a.download='AG_Lestiac_Reunions.ics';a.click()}
+function exportAllIcal(){const arr=getReunions().filter(r=>r.date&&r.date.trim());if(!arr.length){alert('Aucune réunion avec date.');return}const fmt=n=>String(n).padStart(2,'0');let lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AG Lestiac//FR'];arr.forEach((r,i)=>{const d=new Date(r.date),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);lines.push('BEGIN:VEVENT',`UID:cdv-${i}-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission Administration Générale`,'END:VEVENT')});lines.push('END:VCALENDAR');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'}));a.download='AG_Lestiac_Reunions.ics';a.click()}
 window.exportAllIcal=exportAllIcal;
 
 // ── COMPTES RENDUS ──
@@ -1445,7 +1445,7 @@ function renderTasks(){
     const cont=document.getElementById('tasks-'+h);cont.innerHTML='';
     (tasks[h]||[]).forEach((t,i)=>{
       const div=document.createElement('div');div.className='task-item'+(t.done?' done':'');div.onclick=()=>toggleTask(h,i);
-      const tagIco={tt_env:'🌿',tt_vie:'🎭',tt_gouv:'🗳'}[(t.tag||'tt-env').replace('-','_')]||'🌿';
+      const tagIco={tt_com:'📢',tt_eve:'🎉',tt_adm:'🏛'}[(t.tag||'tt-com').replace('-','_')]||'📢';
       div.innerHTML=`<input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask('${h}',${i})"><span class="task-label">${t.text}</span><span class="task-tag ${t.tag||'tt-hab'}">${tagIco}</span>${isAdmin?`<button class="btn-icon" onclick="event.stopPropagation();deleteTask('${h}',${i})" style="font-size:13px">🗑</button>`:''}`;
       cont.appendChild(div);
     });
