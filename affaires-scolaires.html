@@ -324,9 +324,10 @@ body.is-admin .admin-inline{display:inline-flex}
 .id-pick-btn:hover,.id-pick-btn.selected{background:var(--accent);border-color:var(--accent);color:white}
 
 /* FB BANNER */
-#fb-banner{display:none;position:fixed;top:var(--topbar-h);left:0;right:0;z-index:800;padding:8px 16px;font-size:12px;font-weight:600;text-align:center}
+#fb-banner{display:none;position:fixed;top:var(--topbar-h);left:0;right:0;z-index:800;padding:8px 16px;font-size:12px;font-weight:600;text-align:center;transition:opacity .4s}
 #fb-banner.connecting{display:block;background:#fff8e1;color:#7a5800}
-#fb-banner.ok{display:block;background:#e8f5e9;color:#2e7d32;animation:fadeout 2s 1.5s forwards}
+#fb-banner.ok{display:block;background:#e8f5e9;color:#2e7d32}
+#fb-banner.empty{display:block;background:#e8f0fb;color:#1a4580}
 #fb-banner.err{display:block;background:#fde8e0;color:#a00}
 @keyframes fadeout{to{opacity:0;pointer-events:none}}
 
@@ -890,30 +891,58 @@ function getVisited(){try{return JSON.parse(localStorage.getItem(K_VISITED))||{}
 function markVisited(projId){const v=getVisited();v[projId]=Date.now();localStorage.setItem(K_VISITED,JSON.stringify(v))}
 function hasNew(p){
   const v=getVisited();const lastVisit=v[p.id]||0;
-  const lastComment=p.comments?Math.max(...Object.values(p.comments).map(c=>c.ts||0)):0;
+  const lastComment=(p.comments&&typeof p.comments==="object"&&!Array.isArray(p.comments))?Math.max(...Object.values(p.comments).map(c=>c.ts||0)):0;
   const lastNote=p.notesTs||0;
-  const lastPtask=p.project_tasks?Math.max(...Object.values(p.project_tasks).map(t=>t.ts||0)):0;
+  const lastPtask=(p.project_tasks&&typeof p.project_tasks==="object"&&!Array.isArray(p.project_tasks))?Math.max(...Object.values(p.project_tasks).map(t=>t.ts||0)):0;
   return Math.max(lastComment,lastNote,lastPtask)>lastVisit;
 }
 
 // ── FIREBASE ──
+function safeValues(obj){
+  if(!obj||typeof obj!=='object'||Array.isArray(obj))return null;
+  return Object.values(obj);
+}
 function initFirebase(config){
-  if(!config||!config.apiKey||!config.databaseURL){return}
+  if(!config||!config.apiKey||!config.databaseURL){
+    console.warn('[AS] initFirebase: config manquante ou incomplète');
+    return;
+  }
   try{
+    console.log('[AS] Firebase init start');
+    setBanner('connecting','⏳ Connexion Firebase…');
     fbApp=initializeApp(config,'as-'+Date.now());
     fbDb=getDatabase(fbApp);
-    fbConnected=true;
-    setBanner('connecting','⏳ Connexion Firebase…');
     onValue(ref(fbDb,COMMISSION),(snap)=>{
-      setBanner('ok','✅ Connecté');
-      const data=snap.val()||{};
-      localData.projects=data.projects?Object.values(data.projects):null;
-      localData.tasks=data.tasks||null;
-      localData.reunions=data.reunions?Object.values(data.reunions):null;
-      localData.log=data.log?Object.values(data.log).sort((a,b)=>b.ts-a.ts):[];
-      localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
-      localData.budget=data.budget||null;
-      localData.quickTasks=data.quickTasks?Object.values(data.quickTasks).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
+      if(!fbConnected){
+        fbConnected=true;
+        document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
+        console.log('[AS] Firebase connected');
+      }
+      const raw=snap.val();
+      if(raw===null){
+        // Branche Firebase vide — pas une erreur, juste pas encore de données distantes
+        console.log('[AS] No remote data found — branche '+COMMISSION+' vide, fallback sur defaults');
+        setBanner('empty','ℹ️ Firebase connecté — aucune donnée pour cette commission');
+        if(!localData.projects)localData.projects=null;
+        if(!localData.tasks)localData.tasks=null;
+        if(!localData.reunions)localData.reunions=null;
+        renderAll();
+        return;
+      }
+      const data=raw;
+      setBanner('ok','✅ Firebase connecté');
+      const rawProjects=safeValues(data.projects);
+      localData.projects=rawProjects?rawProjects.filter(p=>p&&p.id):null;
+      localData.tasks=data.tasks&&typeof data.tasks==='object'?data.tasks:null;
+      const rawReunions=safeValues(data.reunions);
+      localData.reunions=rawReunions?rawReunions.filter(r=>r&&r.id):null;
+      const rawLog=safeValues(data.log);
+      localData.log=rawLog?rawLog.filter(Boolean).sort((a,b)=>b.ts-a.ts):[];
+      const rawCr=safeValues(data.cr);
+      localData.cr=rawCr?rawCr.filter(Boolean).sort((a,b)=>b.ts-a.ts):[];
+      localData.budget=data.budget&&typeof data.budget==='object'?data.budget:null;
+      const rawQt=safeValues(data.quickTasks);
+      localData.quickTasks=rawQt?rawQt.filter(Boolean).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
       renderAll();
       // Si modal projet ouvert, rafraîchir tâches
       if(_currentProjId){
@@ -922,16 +951,22 @@ function initFirebase(config){
       }
       onValue(ref(fbDb,'finances/global'),(snap2)=>{
         const gb=snap2.val();
-        if(gb){document.getElementById('budget-global-display').textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
+        if(gb&&typeof gb==='object'){const el=document.getElementById('budget-global-display');if(el)el.textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
       });
-    },(err)=>{setBanner('err','❌ '+err.message);fbConnected=false});
-    document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
-  }catch(e){setBanner('err','❌ Config invalide')}
+    },(err)=>{
+      console.error('[AS] Firebase init error:',err.message);
+      setBanner('err','❌ Erreur Firebase : '+err.message);
+      fbConnected=false;
+    });
+  }catch(e){
+    console.error('[AS] Firebase init error (exception):',e.message);
+    setBanner('err','❌ Config Firebase invalide');
+  }
 }
-function fbSet(path,val){if(!fbDb)return;set(ref(fbDb,path),val).catch(e=>console.error(e))}
-function fbPush(path,val){if(!fbDb)return;push(ref(fbDb,path),val).catch(e=>console.error(e))}
-function fbRemove(path){if(!fbDb)return;remove(ref(fbDb,path)).catch(e=>console.error(e))}
-function setBanner(type,msg){const b=document.getElementById('fb-banner');b.className=type;b.textContent=msg;if(type==='ok')setTimeout(()=>{b.style.display='none'},4000)}
+function fbSet(path,val){if(!fbDb)return;set(ref(fbDb,path),val).catch(e=>console.error('[AS] fbSet error:',e))}
+function fbPush(path,val){if(!fbDb)return;push(ref(fbDb,path),val).catch(e=>console.error('[AS] fbPush error:',e))}
+function fbRemove(path){if(!fbDb)return;remove(ref(fbDb,path)).catch(e=>console.error('[AS] fbRemove error:',e))}
+function setBanner(type,msg){const b=document.getElementById('fb-banner');if(!b)return;b.className=type;b.textContent=msg;if(type==='ok')setTimeout(()=>{b.style.opacity='0';setTimeout(()=>{b.style.display='none';b.style.opacity=''},600)},3000);else{b.style.display='';b.style.opacity=''}}
 
 // ── DATA ACCESS ──
 function getProjects(){if(localData.projects)return localData.projects;return getLocal().projects||JSON.parse(JSON.stringify(DEFAULT_PROJECTS))}
