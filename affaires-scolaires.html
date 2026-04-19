@@ -288,14 +288,14 @@ button{font-family:'Figtree',sans-serif;cursor:pointer}
 .notif-dot{position:absolute;top:88px;right:14px;width:11px;height:11px;border-radius:50%;background:var(--terra);border:2px solid rgba(255,255,255,.7);display:none;z-index:6}
 .notif-dot.show{display:block}
 
-/* Priority banner - floats on gradient */
+/* Priority banner - inline badge in card flow */
 .priority-banner{
-  position:absolute;bottom:117px;left:14px;z-index:5;
   display:inline-flex;align-items:center;gap:4px;
-  background:rgba(194,97,59,.9);color:white;
+  background:var(--terra);color:white;
   font-family:'Sora',sans-serif;font-weight:700;
   font-size:9.5px;letter-spacing:1px;text-transform:uppercase;
   padding:3px 10px;border-radius:20px;
+  margin-bottom:6px;
 }
 
 /* Pilote */
@@ -437,10 +437,10 @@ textarea.form-control{resize:vertical;min-height:70px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* MODAL */
-.overlay{position:fixed;inset:0;background:rgba(10,20,40,.5);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px)}
+.overlay{position:fixed;inset:0;background:rgba(10,20,40,.5);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px);padding:16px}
 .overlay.open{opacity:1;pointer-events:all}
-.modal{background:white;border-radius:14px 14px 0 0;box-shadow:0 -4px 40px rgba(0,0,0,.22);width:100%;max-width:640px;max-height:92vh;overflow-y:auto;transform:translateY(40px);transition:transform .26s cubic-bezier(.32,.72,0,1)}
-.overlay.open .modal{transform:translateY(0)}
+.modal{background:white;border-radius:14px;box-shadow:0 8px 48px rgba(0,0,0,.28);width:100%;max-width:640px;max-height:92vh;overflow-y:auto;transform:translateY(24px) scale(.98);transition:transform .26s cubic-bezier(.32,.72,0,1)}
+.overlay.open .modal{transform:translateY(0) scale(1)}
 .modal-head{background:var(--navy);color:white;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1}
 .modal-head h3{font-family:'Sora',sans-serif;font-weight:700;font-size:15px}
 .modal-close{background:none;border:none;color:white;font-size:22px;opacity:.6;cursor:pointer;padding:2px 6px}
@@ -666,14 +666,6 @@ body.is-admin .admin-inline{display:inline-flex}
   <button class="nav-btn admin-only" data-page="admin"      onclick="nav('admin',this)"><span class="ni">⚙️</span>Paramètres</button>
   <div id="nav-locked" style="padding:8px 16px;font-size:12px;color:rgba(255,255,255,.35);font-style:italic">🔒 Accès réservé</div>
   <hr class="nav-divider">
-  <div class="commission-box">
-    <div class="commission-box-title">AFF. SCOLAIRES</div>
-    <div class="commission-box-sub">SCOLAIRE · PÉRISCOLAIRE · JEUNESSE</div>
-    <div class="mbadges">
-      <span class="mbadge">Corinne</span><span class="mbadge">Lalie</span>
-      <span class="mbadge">Claire</span><span class="mbadge">Sylvain</span>
-    </div>
-  </div>
 </nav>
 
 <!-- MAIN -->
@@ -916,7 +908,14 @@ body.is-admin .admin-inline{display:inline-flex}
     <div class="form-group"><label class="form-label">Description</label><textarea id="p-desc" class="form-control" placeholder="Décrire…"></textarea></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Budget</label><input type="text" id="p-budget" class="form-control" placeholder="500 €"></div><div class="form-group"><label class="form-label">Subventions</label><input type="text" id="p-subs" class="form-control" placeholder="FDVA, CAF…"></div></div>
   </div>
-  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-proj')">Annuler</button><button class="btn btn-accent" onclick="saveProj()">Ajouter</button></div></div>
+  <div class="modal-foot" style="flex-wrap:wrap;gap:8px">
+    <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--soft);cursor:pointer;flex:1">
+      <input type="checkbox" id="p-sophie" style="width:16px;height:16px;accent-color:var(--accent)">
+      📣 Solliciter Sophie (communication)
+    </label>
+    <button class="btn btn-ghost" onclick="closeModal('m-proj')">Annuler</button>
+    <button class="btn btn-accent" onclick="saveProj()">Ajouter</button>
+  </div></div>
 </div>
 
 <div class="overlay" id="m-cr" onclick="closeOverlay(event,'m-cr')">
@@ -953,6 +952,7 @@ body.is-admin .admin-inline{display:inline-flex}
         <button class="detail-tab active" onclick="switchDetailTab('notes',this)">📝 Notes</button>
         <button class="detail-tab" onclick="switchDetailTab('ptasks',this)">✅ Tâches <span id="ptask-count-badge" style="font-size:10px;background:var(--terra);color:white;border-radius:20px;padding:1px 6px;margin-left:3px;display:none"></span></button>
         <button class="detail-tab" onclick="switchDetailTab('comments',this)">💬 Commentaires</button>
+        <button class="detail-tab" onclick="switchDetailTab('docs',this)">📎 Documents</button>
       </div>
 
       <!-- Panneau Notes -->
@@ -999,6 +999,30 @@ body.is-admin .admin-inline{display:inline-flex}
         <div style="display:flex;gap:8px">
           <input type="text" id="proj-comment-input" class="form-control" placeholder="Ajouter un commentaire…" onkeydown="if(event.key==='Enter')addComment()" style="flex:1">
           <button class="btn btn-accent btn-sm" onclick="addComment()">Envoyer</button>
+        </div>
+      </div>
+      <!-- Panneau Documents -->
+      <div class="detail-panel" id="panel-docs">
+        <div style="font-size:12px;color:var(--soft);margin-bottom:12px;line-height:1.6">
+          📁 Les documents sont stockés sur Google Drive dans un dossier partagé de la commission.<br>
+          <strong>Cliquez sur « Ouvrir le dossier Drive »</strong> pour y déposer ou consulter des fichiers PDF, comptes rendus, délibérations, etc.
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+          <a id="drive-folder-link" href="#" target="_blank" class="btn btn-navy btn-sm" onclick="openDriveFolder(event)">
+            📂 Ouvrir le dossier Drive
+          </a>
+          <button class="btn btn-ghost btn-sm" onclick="copyDriveLink()">🔗 Copier le lien</button>
+        </div>
+        <div id="drive-folder-config" style="display:none">
+          <div class="form-group" style="margin-top:8px">
+            <label class="form-label">URL du dossier Google Drive</label>
+            <input type="text" id="drive-url-input" class="form-control" placeholder="https://drive.google.com/drive/folders/...">
+            <div style="font-size:11px;color:var(--soft);margin-top:4px">Admin uniquement · configuré dans Paramètres</div>
+          </div>
+          <button class="btn btn-accent btn-sm" onclick="saveDriveUrl()">Enregistrer</button>
+        </div>
+        <div style="font-size:11px;color:var(--softer);margin-top:8px;padding-top:8px;border-top:1px solid var(--mid)">
+          💡 <em>Pour ajouter un document : ouvrez le dossier Drive, faites « + Nouveau » et déposez votre fichier. Il sera immédiatement visible par tous les membres.</em>
         </div>
       </div>
     </div>
@@ -1302,10 +1326,10 @@ function renderProjects(){
       <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px">
         <span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
         <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>
+        ${p.priority==='urgent'?'<span class="priority-banner">🔴 Prioritaire</span>':''}
       </div>
       ${p.pilote?`<div class="proj-pilote">👤 Pilote : <span>${p.pilote}</span></div>`:''}
       ${isAdmin?`<button class="btn-icon" style="position:absolute;top:10px;right:22px" onclick="event.stopPropagation();deleteProj('${p.id}')">🗑</button>`:''}
-      ${p.priority==='urgent'?'<div class="priority-banner">🔴 Prioritaire</div>':''}
       <div class="proj-title" onclick="openProjDetail('${p.id}')">${p.title}</div>
       <div class="proj-desc" onclick="openProjDetail('${p.id}')">${p.desc}</div>
       <div class="proj-meta"><span class="status-pill ${p.status}">${sL[p.status]}</span>
@@ -1314,6 +1338,7 @@ function renderProjects(){
         <div class="member-chips-proj" id="chips-${p.id}">${renderMemberChips(p.id,m)}</div>
         <button class="btn-join${j?' joined':''}" onclick="joinProject('${p.id}')">${j?'✓ Inscrit·e':'+ Rejoindre'}</button></div>
       <div class="proj-budget">💶 ${p.budget}${p.subs&&p.subs!=='—'?' · '+p.subs:''}</div>
+      ${p.sophie?`<div style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;background:#FFF3E0;color:#E65100;padding:3px 9px;border-radius:20px;margin-top:4px">📣 Sophie sollicitée</div>`:''}
       ${p.source?`<div class="proj-source">${p.source}</div>`:''}
       <div style="margin-top:8px;display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap">
         ${openPtasks>0?`<span style="font-size:11px;font-weight:700;background:${overduePtasks>0?'var(--terra)':'var(--teal)'};color:white;padding:2px 8px;border-radius:20px">${overduePtasks>0?'⚠ ':'✅ '}${openPtasks} tâche${openPtasks>1?'s':''}</span>`:''}
@@ -1332,8 +1357,8 @@ function saveProj(){
   const title=document.getElementById('p-title').value.trim();if(!title)return;
   const me=getCurrentUser()||'';
   const piloteVal=document.getElementById('p-pilote').value.trim()||me;
-  const p={id:'a'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,pilote:piloteVal,status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:piloteVal?[piloteVal]:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement'};
-  const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»');closeModal('m-proj');
+  const sophieChecked=document.getElementById('p-sophie')?.checked||false;const p={id:'a'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,pilote:piloteVal,status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:piloteVal?[piloteVal]:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement',sophie:sophieChecked};
+  const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»'+(sophieChecked?' [Sophie]':''));if(sophieChecked)notifySophie(title);closeModal('m-proj');if(document.getElementById('p-sophie'))document.getElementById('p-sophie').checked=false;
   if(!fbConnected)renderAll()
 }
 window.saveProj=saveProj;
@@ -1554,6 +1579,8 @@ function openProjDetail(projId){
   document.querySelectorAll('.detail-panel').forEach(pn=>pn.classList.remove('active'));
   document.querySelector('.detail-tab').classList.add('active');
   document.getElementById('panel-notes').classList.add('active');
+  // Init Drive link
+  const driveUrl=getDriveUrl();if(driveUrl)document.getElementById('drive-folder-link').href=driveUrl;
   // Mettre à jour dot carte
   const dot=document.querySelector(`.proj-card[data-id="${projId}"] .notif-dot`);
   if(dot)dot.classList.remove('show');
@@ -1581,6 +1608,8 @@ function addComment(){
   writeProjects(arr);logAction('Commentaire','«'+p.title+'»');inp.value='';
   renderComments(_currentProjId,p.comments);
   if(!fbConnected)localData.projects=arr;
+  // Notifier les membres du projet
+  notifyCommentToMembers(p, c);
 }
 window.addComment=addComment;
 
@@ -1626,7 +1655,7 @@ function renderReunions(){
     list.appendChild(card);
   });updateStats();
 }
-function saveReunion(){const title=document.getElementById('r-title').value.trim();if(!title)return;const r={id:'r'+Date.now(),title,date:document.getElementById('r-date').value,heure:document.getElementById('r-heure').value,lieu:document.getElementById('r-lieu').value.trim()||'Mairie de Lestiac',participants:document.getElementById('r-parts').value.trim(),tags:document.getElementById('r-tags').value.trim(),notes:document.getElementById('r-notes').value.trim(),createdBy:getCurrentUser()||'Anonyme'};const arr=getReunions();arr.push(r);writeReunions(arr);logAction('Réunion planifiée','«'+title+'»');closeModal('m-reunion');['r-title','r-date','r-tags','r-notes'].forEach(id=>document.getElementById(id).value='');if(!fbConnected)renderAll()}
+function saveReunion(){const title=document.getElementById('r-title').value.trim();if(!title)return;const r={id:'r'+Date.now(),title,date:document.getElementById('r-date').value,heure:document.getElementById('r-heure').value,lieu:document.getElementById('r-lieu').value.trim()||'Mairie de Lestiac',participants:document.getElementById('r-parts').value.trim(),tags:document.getElementById('r-tags').value.trim(),notes:document.getElementById('r-notes').value.trim(),createdBy:getCurrentUser()||'Anonyme'};const arr=getReunions();arr.push(r);writeReunions(arr);logAction('Réunion planifiée','«'+title+'»');notifyMeetingToParticipants(r);closeModal('m-reunion');['r-title','r-date','r-tags','r-notes'].forEach(id=>document.getElementById(id).value='');if(!fbConnected)renderAll()}
 window.saveReunion=saveReunion;
 function deleteReunion(i){
   const arr=getReunions();const r=arr[i];
@@ -1804,6 +1833,105 @@ function updateDashShortcuts(){
   if(el('ds-reunions'))el('ds-reunions').textContent=r.length;
   if(el('ds-cr'))el('ds-cr').textContent=c.length;
 }
+
+
+// ── NOTIFICATIONS COMMENTAIRE ──
+function notifyCommentToMembers(proj, comment) {
+  const ejs = getEjsConfig();
+  if (!ejs || !ejs.pubkey || !ejs.service || !ejs.template) return; // EmailJS pas configuré, silencieux
+  emailjs.init(ejs.pubkey);
+  const members = getMembersArr(proj);
+  const me = getCurrentUser();
+  const recipients = members.filter(name => name !== me && MEMBER_EMAILS[name]);
+  if (!recipients.length) return;
+  const subject = `💬 Nouveau commentaire — ${proj.title}`;
+  const message = `${comment.who} a posté un commentaire sur le projet « ${proj.title} » :\n\n"${comment.text}"\n\nDate : ${comment.time}\n\n— Commission Affaires Scolaires · Lestiac`;
+  recipients.forEach(name => {
+    const to = MEMBER_EMAILS[name];
+    emailjs.send(ejs.service, ejs.template, {
+      to_email: to,
+      subject,
+      message,
+      from_name: 'AGORA · Affaires Scolaires',
+      date: new Date().toLocaleDateString('fr-FR')
+    }).catch(() => {});
+  });
+}
+
+// ── NOTIFICATIONS RÉUNION ──
+function notifyMeetingToParticipants(r) {
+  const ejs = getEjsConfig();
+  if (!ejs || !ejs.pubkey || !ejs.service || !ejs.template) return;
+  emailjs.init(ejs.pubkey);
+  // Récupérer les emails des participants nommés dans le champ
+  const partNames = (r.participants || '').split(',').map(s => s.trim()).filter(Boolean);
+  const me = getCurrentUser();
+  const recipients = partNames.filter(name => name !== me && MEMBER_EMAILS[name]);
+  if (!recipients.length) return;
+  const dateStr = r.date ? new Date(r.date).toLocaleDateString('fr-FR', {weekday:'long',day:'numeric',month:'long',year:'numeric'}) : 'Date à fixer';
+  const subject = `📅 Réunion planifiée — Affaires Scolaires`;
+  const message = `Une réunion a été planifiée :\n\n📋 Commission : Affaires Scolaires\n📅 Date : ${dateStr}${r.heure?' à '+r.heure:''}\n📍 Lieu : ${r.lieu||'Mairie de Lestiac'}\n\n${r.notes?'Ordre du jour :\n'+r.notes+'\n\n':''}— AGORA · Mairie de Lestiac`;
+  recipients.forEach(name => {
+    const to = MEMBER_EMAILS[name];
+    emailjs.send(ejs.service, ejs.template, {
+      to_email: to,
+      subject,
+      message,
+      from_name: 'AGORA · Affaires Scolaires',
+      date: dateStr
+    }).catch(() => {});
+  });
+}
+
+// ── SOLLICITER SOPHIE ──
+function notifySophie(projTitle) {
+  const ejs = getEjsConfig();
+  if (!ejs || !ejs.pubkey || !ejs.service || !ejs.template) return;
+  emailjs.init(ejs.pubkey);
+  const sophieEmail = MEMBER_EMAILS['Sophie'];
+  if (!sophieEmail) return;
+  const me = getCurrentUser() || 'Un membre';
+  emailjs.send(ejs.service, ejs.template, {
+    to_email: sophieEmail,
+    subject: `📣 Projet à communiquer — ${projTitle}`,
+    message: `Bonjour Sophie,\n\n${me} te sollicite pour préparer une communication sur le projet :\n\n« ${projTitle} »\n\nMerci de te rapprocher de l'équipe.\n\n— AGORA · Commission Affaires Scolaires · Lestiac`,
+    from_name: 'AGORA · Affaires Scolaires',
+    date: new Date().toLocaleDateString('fr-FR')
+  }).catch(() => {});
+}
+
+// ── GOOGLE DRIVE ──
+const K_DRIVE = 'scolaire_drive_url';
+function getDriveUrl() { return localStorage.getItem(K_DRIVE) || ''; }
+function openDriveFolder(e) {
+  const url = getDriveUrl();
+  if (!url) {
+    e.preventDefault();
+    document.getElementById('drive-folder-config').style.display = '';
+    document.getElementById('drive-url-input').value = '';
+  } else {
+    document.getElementById('drive-folder-link').href = url;
+  }
+}
+function saveDriveUrl() {
+  const url = document.getElementById('drive-url-input').value.trim();
+  if (!url) return;
+  localStorage.setItem(K_DRIVE, url);
+  document.getElementById('drive-folder-link').href = url;
+  document.getElementById('drive-folder-config').style.display = 'none';
+  window.open(url, '_blank');
+}
+function copyDriveLink() {
+  const url = getDriveUrl();
+  if (!url) { alert('Aucun lien Drive configuré. Cliquez sur « Ouvrir le dossier Drive » pour en définir un.'); return; }
+  navigator.clipboard?.writeText(url).then(() => alert('✅ Lien copié !')).catch(() => {
+    prompt('Copier ce lien :', url);
+  });
+}
+window.openDriveFolder = openDriveFolder;
+window.saveDriveUrl = saveDriveUrl;
+window.copyDriveLink = copyDriveLink;
+window.notifySophie = notifySophie;
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
