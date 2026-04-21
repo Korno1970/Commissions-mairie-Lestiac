@@ -1004,8 +1004,8 @@ body.is-admin .admin-inline{display:inline-flex}
       <!-- Panneau Documents -->
       <div class="detail-panel" id="panel-docs">
         <div style="font-size:12px;color:var(--soft);margin-bottom:12px;line-height:1.6">
-          📁 Les documents sont stockés sur Google Drive dans un dossier partagé de la commission.<br>
-          <strong>Cliquez sur « Ouvrir le dossier Drive »</strong> pour y déposer ou consulter des fichiers PDF, comptes rendus, délibérations, etc.
+          📁 Documents partagés de la commission stockés sur Google Drive.<br>
+          <strong>Cliquez sur « Ouvrir le dossier Drive »</strong> pour déposer ou consulter des fichiers PDF, comptes rendus, délibérations, etc.
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
           <a id="drive-folder-link" href="#" target="_blank" class="btn btn-navy btn-sm" onclick="openDriveFolder(event)">
@@ -1017,7 +1017,7 @@ body.is-admin .admin-inline{display:inline-flex}
           <div class="form-group" style="margin-top:8px">
             <label class="form-label">URL du dossier Google Drive</label>
             <input type="text" id="drive-url-input" class="form-control" placeholder="https://drive.google.com/drive/folders/...">
-            <div style="font-size:11px;color:var(--soft);margin-top:4px">Admin uniquement · configuré dans Paramètres</div>
+            <div style="font-size:11px;color:var(--soft);margin-top:4px">Admin uniquement · URL sauvegardée pour tous les membres via Firebase</div>
           </div>
           <button class="btn btn-accent btn-sm" onclick="saveDriveUrl()">Enregistrer</button>
         </div>
@@ -1580,7 +1580,7 @@ function openProjDetail(projId){
   document.querySelector('.detail-tab').classList.add('active');
   document.getElementById('panel-notes').classList.add('active');
   // Init Drive link
-  const driveUrl=getDriveUrl();if(driveUrl)document.getElementById('drive-folder-link').href=driveUrl;
+  if(_driveUrl)document.getElementById('drive-folder-link').href=_driveUrl;
   // Mettre à jour dot carte
   const dot=document.querySelector(`.proj-card[data-id="${projId}"] .notif-dot`);
   if(dot)dot.classList.remove('show');
@@ -1901,25 +1901,35 @@ function notifySophie(projTitle) {
 }
 
 // ── GOOGLE DRIVE ──
-const K_DRIVE = 'scolaire_drive_url';
-function getDriveUrl() { return localStorage.getItem(K_DRIVE) || ''; }
+// Drive URL stockée dans Firebase — partagée entre tous les membres
+let _driveUrl = '';
+function applyDriveUrl(url) {
+  _driveUrl = url;
+  const link = document.getElementById('drive-folder-link');
+  if (link) link.href = url || '#';
+}
+function getDriveUrl() { return _driveUrl; }
 function openDriveFolder(e) {
-  const url = getDriveUrl();
-  if (!url) {
+  if (!_driveUrl) {
     e.preventDefault();
-    document.getElementById('drive-folder-config').style.display = '';
-    document.getElementById('drive-url-input').value = '';
-  } else {
-    document.getElementById('drive-folder-link').href = url;
+    if (isAdmin || isSuperAdmin()) {
+      document.getElementById('drive-folder-config').style.display = '';
+      document.getElementById('drive-url-input').value = '';
+    } else {
+      alert('Aucun dossier Drive configuré. Demandez à un administrateur de le configurer dans Paramètres.');
+    }
   }
+  // sinon le lien href est déjà défini, le navigateur ouvre normalement
 }
 function saveDriveUrl() {
   const url = document.getElementById('drive-url-input').value.trim();
   if (!url) return;
-  localStorage.setItem(K_DRIVE, url);
-  document.getElementById('drive-folder-link').href = url;
+  // Écrire dans Firebase sous commission/config/driveUrl
+  fbSet('scolaire/config/driveUrl', url);
+  applyDriveUrl(url);
   document.getElementById('drive-folder-config').style.display = 'none';
   window.open(url, '_blank');
+  logAction('Drive configuré', url);
 }
 function copyDriveLink() {
   const url = getDriveUrl();
