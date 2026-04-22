@@ -1277,7 +1277,7 @@ function updateIdentityBtn(){const me=getCurrentUser();document.getElementById('
 document.getElementById('id-modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('id-modal-bg'))closeIdModal()});
 
 // ── MODALS ──
-function openModal(id){document.getElementById(id).classList.add('open')}
+function openModal(id){document.getElementById(id).classList.add('open');if(id==='m-reunion')populateReunionProjSelect();if(id==='m-proj'){window._newProjChefs=[];if(typeof renderChefChips==='function')renderChefChips('p-chefs-chips',[])}}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 function closeOverlay(e,id){if(e.target===document.getElementById(id))closeModal(id)}
 window.openModal=openModal;window.closeModal=closeModal;window.closeOverlay=closeOverlay;
@@ -2081,13 +2081,7 @@ function populateReunionProjSelect(){
   sel.innerHTML='<option value="">— Aucun projet spécifique —</option>';
   projs.forEach(p=>{ const opt=document.createElement('option');opt.value=p.id;opt.textContent=p.title;sel.appendChild(opt); });
 }
-const _origOpenModal=openModal;
-function openModal(id){
-  _origOpenModal(id);
-  if(id==='m-reunion')populateReunionProjSelect();
-  if(id==='m-proj'){window._newProjChefs=[];renderChefChips('p-chefs-chips',[]);}
-}
-window.openModal=openModal;
+
 
 // ── CHEFS DE PROJET ──
 function getChefsArr(p){
