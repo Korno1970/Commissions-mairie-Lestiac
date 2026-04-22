@@ -301,6 +301,15 @@ button{font-family:'Figtree',sans-serif;cursor:pointer}
 /* Pilote */
 .proj-pilote{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;position:relative;z-index:1}
 .proj-pilote span{background:var(--accent-p);padding:3px 9px;border-radius:20px}
+/* Chef de projet chips */
+.chef-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:700;background:var(--navy);color:white;border:2px solid var(--navy);cursor:pointer;transition:all .15s;user-select:none}
+.chef-chip:hover{opacity:.85}
+.chef-chip.selected{background:var(--terra);border-color:var(--terra)}
+.chef-chip.disabled{cursor:default;opacity:.6}
+.proj-chefs{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:8px;position:relative;z-index:1}
+.proj-chefs-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--softer);margin-right:2px}
+.chef-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;background:var(--navy);color:white}
+
 
 /* Card title & desc */
 .proj-title{font-family:'Sora',sans-serif;font-weight:700;font-size:15px;color:var(--navy);margin-bottom:5px;cursor:pointer;line-height:1.25;position:relative;z-index:1}
@@ -902,7 +911,11 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="modal"><div class="modal-head"><h3>Ajouter un projet</h3><button class="modal-close" onclick="closeModal('m-proj')">✕</button></div>
   <div class="modal-body">
     <div class="form-group"><label class="form-label">Titre</label><input type="text" id="p-title" class="form-control" placeholder="Intitulé"></div>
-    <div class="form-group"><label class="form-label">Pilote du projet</label><input type="text" id="p-pilote" class="form-control" placeholder="Ex : Catherine"></div>
+    <div class="form-group">
+      <label class="form-label">Chef(s) de projet <span style="font-weight:400;color:var(--softer)">(1 ou 2 max)</span></label>
+      <div id="p-chefs-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px"></div>
+      <input type="hidden" id="p-pilote" value="">
+    </div>
     <div class="form-row"><div class="form-group"><label class="form-label">Horizon</label><select id="p-horizon" class="form-control"><option value="court">Court terme</option><option value="moyen">Moyen terme</option><option value="long">Long terme</option></select></div><div class="form-group"><label class="form-label">Statut</label><select id="p-status" class="form-control"><option value="s-lancer">À lancer</option><option value="s-cours">En cours</option><option value="s-attente">En attente</option><option value="s-fait">Réalisé</option></select></div></div>
     <div class="form-group"><label class="form-label">Sous-commission</label><select id="p-axe" class="form-control"><option value="hab">🎉 Habitants & Vie locale</option><option value="com">📢 Communication</option><option value="soc">🤝 Social & Solidarité</option><option value="rh">🏛 Admin & RH</option></select></div>
     <div class="form-group"><label class="form-label">Description</label><textarea id="p-desc" class="form-control" placeholder="Décrire…"></textarea></div>
@@ -931,14 +944,34 @@ body.is-admin .admin-inline{display:inline-flex}
 
 <!-- ═══════ MODAL DÉTAIL PROJET (avec onglets) ═══════ -->
 <div class="overlay" id="m-proj-detail" onclick="closeOverlay(event,'m-proj-detail')">
-  <div class="modal" style="max-width:640px">
+  <div class="modal" style="max-width:820px">
     <div class="modal-head" id="proj-detail-head" style="background:var(--accent)">
-      <h3 id="proj-detail-title">Projet</h3><button class="modal-close" onclick="closeModal('m-proj-detail')">✕</button>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+        <h3 id="proj-detail-title" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Projet</h3>
+        <button id="btn-rename-proj" class="btn-icon" title="Renommer le projet" onclick="startRenameProj()" style="display:none;font-size:14px">✏️</button>
+      </div>
+      <button class="modal-close" onclick="closeModal('m-proj-detail')">✕</button>
+    </div>
+    <div id="rename-proj-bar" style="display:none;background:#fffde7;border-bottom:1px solid var(--mid);padding:10px 20px;display:none;gap:8px;align-items:center">
+      <input type="text" id="rename-proj-input" class="form-control" style="flex:1;font-weight:600" placeholder="Nouveau titre…">
+      <button class="btn btn-accent btn-sm" onclick="confirmRenameProj()">✓ Valider</button>
+      <button class="btn btn-ghost btn-sm" onclick="cancelRenameProj()">Annuler</button>
     </div>
     <div class="modal-body">
       <!-- Méta projet -->
       <div id="proj-detail-meta" style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"></div>
-      <div id="proj-detail-pilote" style="margin-bottom:8px"></div>
+      <div id="proj-detail-pilote" style="margin-bottom:10px">
+        <!-- Chefs de projet — affichage + édition super-admin -->
+        <div id="proj-chef-display" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"></div>
+        <div id="proj-chef-edit" style="display:none;margin-top:8px;padding:10px;background:var(--light);border-radius:var(--r);border:1px dashed var(--mid)">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:6px">Choisir 1 ou 2 chefs de projet</div>
+          <div id="proj-chef-edit-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px"></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-accent btn-sm" onclick="saveChefs()">✓ Valider</button>
+            <button class="btn btn-ghost btn-sm" onclick="cancelEditChefs()">Annuler</button>
+          </div>
+        </div>
+      </div>
       <div id="proj-detail-desc" style="font-size:13.5px;color:var(--soft);line-height:1.6;margin-bottom:10px"></div>
       <div style="font-size:12px;color:var(--soft);margin-bottom:12px" id="proj-detail-budget"></div>
       <!-- Participants -->
@@ -1331,7 +1364,12 @@ function renderProjects(){
         <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>
         ${p.priority==='urgent'?'<span class="priority-banner">🔴 Prioritaire</span>':''}
       </div>
-      ${p.pilote?`<div class="proj-pilote">👤 Pilote : <span>${p.pilote}</span></div>`:''}
+      <div class="proj-chefs">
+        <span class="proj-chefs-label">👑 Chef${getChefsArr(p).length>1?'s':''} :</span>
+        ${getChefsArr(p).length
+          ? getChefsArr(p).map(c=>`<span class="chef-badge">${c}</span>`).join('')
+          : '<span style="font-size:11px;color:var(--softer);font-style:italic">— Non défini</span>'}
+      </div>
       ${isAdmin?`<button class="btn-icon" style="position:absolute;top:10px;right:22px" onclick="event.stopPropagation();deleteProj('${p.id}')">🗑</button>`:''}
       <div class="proj-title" onclick="openProjDetail('${p.id}')">${p.title}</div>
       <div class="proj-desc" onclick="openProjDetail('${p.id}')">${p.desc}</div>
@@ -1359,9 +1397,9 @@ window.filterProj=filterProj;
 function saveProj(){
   const title=document.getElementById('p-title').value.trim();if(!title)return;
   const me=getCurrentUser()||'';
-  const piloteVal=document.getElementById('p-pilote').value.trim()||me;
-  const sophieChecked=document.getElementById('p-sophie')?.checked||false;const p={id:'a'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,pilote:piloteVal,status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:piloteVal?[piloteVal]:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement',sophie:sophieChecked};
-  const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»'+(sophieChecked?' [Sophie]':''));if(sophieChecked)notifySophie(title);closeModal('m-proj');if(document.getElementById('p-sophie'))document.getElementById('p-sophie').checked=false;
+  const chefsArr=window._newProjChefs||[];const piloteVal=chefsArr[0]||me;
+  const sophieChecked=document.getElementById('p-sophie')?.checked||false;const p={id:'a'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,pilote:piloteVal,chefs:chefsArr,status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:chefsArr.length?[...chefsArr]:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement',sophie:sophieChecked};
+  const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»'+(sophieChecked?' [Sophie]':''));if(sophieChecked)notifySophie(title);closeModal('m-proj');if(document.getElementById('p-sophie'))document.getElementById('p-sophie').checked=false;window._newProjChefs=[];renderChefChips('p-chefs-chips',[]);
   if(!fbConnected)renderAll()
 }
 window.saveProj=saveProj;
@@ -1554,8 +1592,8 @@ function openProjDetail(projId){
     `<span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
      <span class="status-pill ${p.status}">${sL[p.status]}</span>
      <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>`;
-  const piloteEl=document.getElementById('proj-detail-pilote');
-  piloteEl.innerHTML=p.pilote?`<div class="proj-pilote">👤 Pilote : <span>${p.pilote}</span></div>`:'';
+  // Chefs de projet
+  renderDetailChefs(p);
   document.getElementById('proj-detail-desc').textContent=p.desc||'';
   document.getElementById('proj-detail-budget').innerHTML=`💶 ${p.budget||''}${p.subs&&p.subs!=='—'?' · '+p.subs:''}`;
   document.getElementById('proj-detail-source').textContent=p.source?'Source : '+p.source:'';
@@ -1587,17 +1625,41 @@ function openProjDetail(projId){
   // Mettre à jour dot carte
   const dot=document.querySelector(`.proj-card[data-id="${projId}"] .notif-dot`);
   if(dot)dot.classList.remove('show');
+  // Bouton renommage visible uniquement en super-admin
+  const renameBtn=document.getElementById('btn-rename-proj');
+  if(renameBtn)renameBtn.style.display=(isSuperAdmin()||isAdmin)?'':'none';
+  document.getElementById('rename-proj-bar').style.display='none';
   openModal('m-proj-detail');
 }
 window.openProjDetail=openProjDetail;
 
 function renderComments(projId,obj){
   const cont=document.getElementById('proj-detail-comments');cont.innerHTML='';
-  const c=Object.values(obj||{}).sort((a,b)=>a.ts-b.ts);
-  if(!c.length){cont.innerHTML='<div style="font-size:12px;color:var(--soft);font-style:italic">Aucun commentaire.</div>';return}
-  c.forEach(x=>{const d=document.createElement('div');d.className='comment-item';d.innerHTML=`<span class="comment-who">${x.who||'?'}</span><span class="comment-time">${x.time||''}</span><br>${x.text}`;cont.appendChild(d)});
+  const me=getCurrentUser();
+  const entries=Object.entries(obj||{}).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
+  if(!entries.length){cont.innerHTML='<div style="font-size:12px;color:var(--soft);font-style:italic">Aucun commentaire.</div>';return}
+  entries.forEach(([key,x])=>{
+    const canDel=isAdmin||isSuperAdmin()||(me&&me===x.who);
+    const d=document.createElement('div');
+    d.className='comment-item';
+    d.style.cssText='display:flex;align-items:flex-start;justify-content:space-between;gap:8px';
+    d.innerHTML=`<div style="flex:1"><span class="comment-who">${x.who||'?'}</span><span class="comment-time">${x.time||''}</span><br>${x.text}</div>`
+      +(canDel?`<button onclick="deleteComment('${projId}','${key}')" title="Supprimer" style="background:none;border:none;color:var(--softer);font-size:13px;cursor:pointer;flex-shrink:0;padding:2px 4px;border-radius:4px;line-height:1" onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--softer)'">🗑</button>`:'');
+    cont.appendChild(d);
+  });
   cont.scrollTop=cont.scrollHeight;
 }
+
+function deleteComment(projId,key){
+  if(!confirm('Supprimer ce commentaire ?'))return;
+  const arr=getProjects(),p=arr.find(x=>x.id===projId);if(!p||!p.comments)return;
+  delete p.comments[key];
+  writeProjects(arr);
+  logAction('Commentaire supprimé','Projet: '+p.title);
+  renderComments(projId,p.comments);
+  if(!fbConnected)localData.projects=arr;
+}
+window.deleteComment=deleteComment;
 
 function addComment(){
   if(!_currentProjId)return;
@@ -1658,7 +1720,7 @@ function renderReunions(){
     list.appendChild(card);
   });updateStats();
 }
-function saveReunion(){const title=document.getElementById('r-title').value.trim();if(!title)return;const r={id:'r'+Date.now(),title,date:document.getElementById('r-date').value,heure:document.getElementById('r-heure').value,lieu:document.getElementById('r-lieu').value.trim()||'Mairie de Lestiac',participants:document.getElementById('r-parts').value.trim(),tags:document.getElementById('r-tags').value.trim(),notes:document.getElementById('r-notes').value.trim(),createdBy:getCurrentUser()||'Anonyme'};const arr=getReunions();arr.push(r);writeReunions(arr);logAction('Réunion planifiée','«'+title+'»');notifyMeetingToParticipants(r);closeModal('m-reunion');['r-title','r-date','r-tags','r-notes'].forEach(id=>document.getElementById(id).value='');if(!fbConnected)renderAll()}
+function saveReunion(){const title=document.getElementById('r-title').value.trim();if(!title)return;const projSelect=document.getElementById('r-projet');const linkedProjId=projSelect?projSelect.value:'';const r={id:'r'+Date.now(),title,date:document.getElementById('r-date').value,heure:document.getElementById('r-heure').value,lieu:document.getElementById('r-lieu').value.trim()||'Mairie de Lestiac',participants:document.getElementById('r-parts').value.trim(),tags:document.getElementById('r-tags').value.trim(),notes:document.getElementById('r-notes').value.trim(),createdBy:getCurrentUser()||'Anonyme',linkedProjId};const arr=getReunions();arr.push(r);writeReunions(arr);logAction('Réunion planifiée','«'+title+'»');notifyMeetingToParticipants(r);closeModal('m-reunion');['r-title','r-date','r-tags','r-notes'].forEach(id=>document.getElementById(id).value='');if(!fbConnected)renderAll()}
 window.saveReunion=saveReunion;
 function deleteReunion(i){
   const arr=getReunions();const r=arr[i];
@@ -1712,15 +1774,33 @@ function renderTasks(){
     (tasks[h]||[]).forEach((t,i)=>{
       const div=document.createElement('div');div.className='task-item'+(t.done?' done':'');div.onclick=()=>toggleTask(h,i);
       const tagIco={tt_com:'📢',tt_eve:'🎉',tt_adm:'🏛'}[(t.tag||'tt-com').replace('-','_')]||'📢';
-      div.innerHTML=`<input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask('${h}',${i})"><span class="task-label">${t.text}</span><span class="task-tag ${t.tag||'tt-hab'}">${tagIco}</span>${isAdmin?`<button class="btn-icon" onclick="event.stopPropagation();deleteTask('${h}',${i})" style="font-size:13px">🗑</button>`:''}`;
+      div.innerHTML=`<input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask('${h}',${i})"><span class="task-label">${t.text}</span><span class="task-tag ${t.tag||'tt-hab'}">${tagIco}</span><button class="btn-icon" onclick="event.stopPropagation();deleteTask('${h}',${i})" title="Supprimer" style="font-size:13px;color:rgba(0,0,0,.25)" onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='rgba(0,0,0,.25)'">🗑</button>`;
       cont.appendChild(div);
     });
+    if((isAdmin||isSuperAdmin())&&(tasks[h]||[]).some(t=>t.done)){
+      const doneCount=(tasks[h]||[]).filter(t=>t.done).length;
+      const btnWrap=document.createElement('div');
+      btnWrap.style.cssText='text-align:right;margin-top:8px;padding-top:6px;border-top:1px dashed var(--mid)';
+      btnWrap.innerHTML='<button class="btn btn-ghost-red btn-sm" style="font-size:11px" onclick="deleteCheckedTasks("'+h+'")">🗑 Supprimer les '+doneCount+' tâche'+(doneCount>1?'s':'')+' cochée'+(doneCount>1?'s':'')+'</button>';
+      cont.appendChild(btnWrap);
+    }
   });updateStats();
 }
 function toggleTask(h,i){const t=getTasks();if(!t[h]||!t[h][i])return;t[h][i].done=!t[h][i].done;writeTasks(t);logAction(t[h][i].done?'Tâche cochée':'Tâche décochée','«'+t[h][i].text.substring(0,50)+'»');if(!fbConnected)renderTasks()}
 window.toggleTask=toggleTask;
-function deleteTask(h,i){if(!confirm('Supprimer ?'))return;const t=getTasks();t[h].splice(i,1);writeTasks(t);if(!fbConnected)renderTasks()}
+function deleteTask(h,i){if(!confirm('Supprimer cette tâche ?'))return;const t=getTasks();t[h].splice(i,1);writeTasks(t);logAction('Tâche supprimée','');if(!fbConnected)renderTasks()}
 window.deleteTask=deleteTask;
+function deleteCheckedTasks(h){
+  const t=getTasks();
+  const count=(t[h]||[]).filter(x=>x.done).length;
+  if(!count)return;
+  if(!confirm('Supprimer les '+count+' tâche'+(count>1?'s':'')+' cochée'+(count>1?'s':'')+' ?'))return;
+  t[h]=(t[h]||[]).filter(x=>!x.done);
+  writeTasks(t);
+  logAction('Tâches cochées supprimées',h+' ('+count+')');
+  if(!fbConnected)renderTasks();
+}
+window.deleteCheckedTasks=deleteCheckedTasks;
 function addTask(h){const inp=document.getElementById('new-task-'+h),tag=document.getElementById('new-task-'+h+'-tag').value,text=inp.value.trim();if(!text)return;const t=getTasks();t[h].push({id:'at'+Date.now(),text,tag,done:false});writeTasks(t);logAction('Tâche ajoutée','«'+text+'»');inp.value='';if(!fbConnected)renderTasks()}
 window.addTask=addTask;
 
@@ -1864,27 +1944,68 @@ function notifyCommentToMembers(proj, comment) {
 // ── NOTIFICATIONS RÉUNION ──
 function notifyMeetingToParticipants(r) {
   const ejs = getEjsConfig();
-  if (!ejs || !ejs.pubkey || !ejs.service || !ejs.template) return;
+  if (!ejs || !ejs.pubkey || !ejs.service || !ejs.template) {
+    // EmailJS non configuré — on prévient discrètement
+    console.warn('EmailJS non configuré : notification réunion non envoyée.');
+    return;
+  }
   emailjs.init(ejs.pubkey);
-  // Récupérer les emails des participants nommés dans le champ
   const partNames = (r.participants || '').split(',').map(s => s.trim()).filter(Boolean);
+  // Si un projet est lié, ajouter ses membres
+  let allNames = [...partNames];
+  if (r.linkedProjId) {
+    const proj = getProjects().find(p => p.id === r.linkedProjId);
+    if (proj) {
+      const projMembers = getMembersArr(proj);
+      projMembers.forEach(m => { if (!allNames.includes(m)) allNames.push(m); });
+    }
+  }
   const me = getCurrentUser();
-  const recipients = partNames.filter(name => name !== me && MEMBER_EMAILS[name]);
-  if (!recipients.length) return;
-  const dateStr = r.date ? new Date(r.date).toLocaleDateString('fr-FR', {weekday:'long',day:'numeric',month:'long',year:'numeric'}) : 'Date à fixer';
+  const recipients = allNames.filter(name => MEMBER_EMAILS[name] && name !== me);
+  if (!recipients.length) {
+    console.info('Aucun destinataire identifié pour la notification réunion.');
+    return;
+  }
+  const dateStr = r.date
+    ? new Date(r.date).toLocaleDateString('fr-FR', {weekday:'long',day:'numeric',month:'long',year:'numeric'})
+    : 'Date à fixer';
   const subject = `📅 Réunion planifiée — Administration Générale`;
-  const message = `Une réunion a été planifiée :\n\n📋 Commission : Administration Générale\n📅 Date : ${dateStr}${r.heure?' à '+r.heure:''}\n📍 Lieu : ${r.lieu||'Mairie de Lestiac'}\n\n${r.notes?'Ordre du jour :\n'+r.notes+'\n\n':''}— AGORA · Mairie de Lestiac`;
-  recipients.forEach(name => {
-    const to = MEMBER_EMAILS[name];
+  const message = `Bonjour,\n\nUne réunion a été planifiée pour la Commission Administration Générale :\n\n📅 Date : ${dateStr}${r.heure?' à '+r.heure:''}\n📍 Lieu : ${r.lieu||'Mairie de Lestiac'}\n👥 Participants : ${r.participants||'—'}\n${r.notes?'\n📋 Ordre du jour :\n'+r.notes+'\n':''}\nVous pouvez ajouter cette réunion à votre agenda depuis AGORA.\n\n— AGORA · Commission Administration Générale · Mairie de Lestiac`;
+  const sends = recipients.map(name =>
     emailjs.send(ejs.service, ejs.template, {
-      to_email: to,
+      to_email: MEMBER_EMAILS[name],
       subject,
       message,
       from_name: 'AGORA · Administration Générale',
       date: dateStr
-    }).catch(() => {});
+    })
+  );
+  Promise.allSettled(sends).then(results => {
+    const ok = results.filter(r => r.status === 'fulfilled').length;
+    const fail = results.filter(r => r.status === 'rejected').length;
+    const msg = `✅ Notification envoyée à ${ok} participant${ok>1?'s':''}.${fail?' ⚠ '+fail+' échec(s).':''}`;
+    // Afficher un toast non bloquant
+    showToast(msg, fail ? 'warn' : 'ok');
+    logAction('Notification réunion', ok+' envoi(s) · '+r.title);
   });
 }
+
+function showToast(msg, type='ok') {
+  let t = document.getElementById('agora-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'agora-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:opacity .3s;white-space:nowrap;max-width:90vw;text-align:center';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = type==='ok' ? '#1A5C6B' : '#D4880A';
+  t.style.color = 'white';
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.style.opacity='0', 3500);
+}
+window.showToast = showToast;
 
 // ── SOLLICITER SOPHIE ──
 function notifySophie(projTitle) {
@@ -1945,6 +2066,170 @@ window.openDriveFolder = openDriveFolder;
 window.saveDriveUrl = saveDriveUrl;
 window.copyDriveLink = copyDriveLink;
 window.notifySophie = notifySophie;
+
+
+// ── RENOMMAGE PROJET (super-admin) ──
+function startRenameProj(){
+  const p=getProjects().find(x=>x.id===_currentProjId);if(!p)return;
+  const bar=document.getElementById('rename-proj-bar');
+  const inp=document.getElementById('rename-proj-input');
+  inp.value=p.title;
+  bar.style.display='flex';
+  inp.focus();inp.select();
+}
+function confirmRenameProj(){
+  const newTitle=document.getElementById('rename-proj-input').value.trim();
+  if(!newTitle){alert('Le titre ne peut pas être vide.');return}
+  const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;
+  const old=p.title;
+  p.title=newTitle;
+  writeProjects(arr);
+  logAction('Projet renommé','«'+old+'» → «'+newTitle+'»');
+  document.getElementById('proj-detail-title').textContent=newTitle;
+  document.getElementById('rename-proj-bar').style.display='none';
+  // Mettre à jour la carte dans la grille
+  const card=document.querySelector(`.proj-card[data-id="${_currentProjId}"] .proj-title`);
+  if(card)card.textContent=newTitle;
+  if(!fbConnected)renderProjects();
+  showToast('✅ Projet renommé');
+}
+function cancelRenameProj(){
+  document.getElementById('rename-proj-bar').style.display='none';
+}
+window.startRenameProj=startRenameProj;
+window.confirmRenameProj=confirmRenameProj;
+window.cancelRenameProj=cancelRenameProj;
+
+
+// Peupler le select projets dans le formulaire réunion
+function populateReunionProjSelect(){
+  const sel=document.getElementById('r-projet');if(!sel)return;
+  const projs=getProjects();
+  sel.innerHTML='<option value="">— Aucun projet spécifique —</option>';
+  projs.forEach(p=>{ const opt=document.createElement('option');opt.value=p.id;opt.textContent=p.title;sel.appendChild(opt); });
+}
+const _origOpenModal=openModal;
+function openModal(id){
+  _origOpenModal(id);
+  if(id==='m-reunion')populateReunionProjSelect();
+  if(id==='m-proj'){window._newProjChefs=[];renderChefChips('p-chefs-chips',[]);}
+}
+window.openModal=openModal;
+
+// ── CHEFS DE PROJET ──
+function getChefsArr(p){
+  if(p.chefs&&Array.isArray(p.chefs)&&p.chefs.length) return p.chefs;
+  if(p.pilote) return [p.pilote]; // compatibilité ancienne donnée
+  return [];
+}
+
+// Render chips dans le formulaire ajout projet
+function renderChefChips(containerId, selected){
+  const cont=document.getElementById(containerId);if(!cont)return;
+  cont.innerHTML='';
+  ALL_MEMBERS.forEach(name=>{
+    const isSel=selected.includes(name);
+    const chip=document.createElement('span');
+    chip.className='chef-chip'+(isSel?' selected':'');
+    chip.textContent=name;
+    chip.onclick=()=>{
+      const cur=window._newProjChefs||[];
+      if(cur.includes(name)){
+        window._newProjChefs=cur.filter(x=>x!==name);
+      } else {
+        if(cur.length>=2){showToast('⚠ Maximum 2 chefs de projet','warn');return;}
+        window._newProjChefs=[...cur,name];
+      }
+      renderChefChips(containerId,window._newProjChefs);
+    };
+    cont.appendChild(chip);
+  });
+}
+
+// Affichage dans la modale détail
+function renderDetailChefs(p){
+  const display=document.getElementById('proj-chef-display');
+  if(!display)return;
+  const chefs=getChefsArr(p);
+  const canEdit=isAdmin||isSuperAdmin();
+  display.innerHTML='';
+  if(chefs.length){
+    const label=document.createElement('span');
+    label.style.cssText='font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--softer);margin-right:2px';
+    label.textContent='👑 Chef'+(chefs.length>1?'s':'')+' :';
+    display.appendChild(label);
+    chefs.forEach(c=>{
+      const badge=document.createElement('span');
+      badge.className='chef-badge';badge.textContent=c;
+      display.appendChild(badge);
+    });
+  } else {
+    const empty=document.createElement('span');
+    empty.style.cssText='font-size:12px;color:var(--softer);font-style:italic';
+    empty.textContent='Aucun chef de projet défini';
+    display.appendChild(empty);
+  }
+  if(canEdit){
+    const editBtn=document.createElement('button');
+    editBtn.className='btn btn-ghost btn-sm';
+    editBtn.style.cssText='font-size:11px;margin-left:4px';
+    editBtn.textContent='✏️ Modifier';
+    editBtn.onclick=()=>openEditChefs(p);
+    display.appendChild(editBtn);
+  }
+}
+
+function openEditChefs(p){
+  window._editingChefs=[...getChefsArr(p)];
+  const cont=document.getElementById('proj-chef-edit-chips');
+  if(!cont)return;
+  cont.innerHTML='';
+  ALL_MEMBERS.forEach(name=>{
+    const isSel=window._editingChefs.includes(name);
+    const chip=document.createElement('span');
+    chip.className='chef-chip'+(isSel?' selected':'');
+    chip.textContent=name;
+    chip.onclick=()=>{
+      if(window._editingChefs.includes(name)){
+        window._editingChefs=window._editingChefs.filter(x=>x!==name);
+      } else {
+        if(window._editingChefs.length>=2){showToast('⚠ Maximum 2 chefs de projet','warn');return;}
+        window._editingChefs.push(name);
+      }
+      // Refresh chips
+      cont.querySelectorAll('.chef-chip').forEach((ch,i)=>{
+        ch.className='chef-chip'+(window._editingChefs.includes(ALL_MEMBERS[i])?' selected':'');
+      });
+    };
+    cont.appendChild(chip);
+  });
+  document.getElementById('proj-chef-edit').style.display='';
+}
+
+function saveChefs(){
+  if(!_currentProjId)return;
+  const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;
+  const chefs=window._editingChefs||[];
+  p.chefs=chefs;
+  if(chefs.length)p.pilote=chefs[0]; // maintenir compatibilité
+  writeProjects(arr);
+  logAction('Chefs de projet','«'+p.title+'» → '+chefs.join(', '));
+  document.getElementById('proj-chef-edit').style.display='none';
+  renderDetailChefs(p);
+  renderProjects();
+  if(!fbConnected)localData.projects=arr;
+  showToast('✅ Chef'+(chefs.length>1?'s':'')+' de projet mis à jour');
+}
+
+function cancelEditChefs(){
+  document.getElementById('proj-chef-edit').style.display='none';
+}
+
+window.renderChefChips=renderChefChips;
+window.openEditChefs=openEditChefs;
+window.saveChefs=saveChefs;
+window.cancelEditChefs=cancelEditChefs;
+window.getChefsArr=getChefsArr;
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
