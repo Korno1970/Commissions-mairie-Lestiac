@@ -1173,54 +1173,44 @@ function initFirebase(config){
     fbApp=initializeApp(config,'ag-'+Date.now());
     fbDb=getDatabase(fbApp);
     const fbAuth=getAuth(fbApp);
-    signInAnonymously(fbAuth).catch(e=>console.warn('Auth anonyme échouée:',e));
-    onValue(ref(fbDb,COMMISSION),(snap)=>{
-      if(!fbConnected){
-        fbConnected=true;
-        document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
-        console.log('[AG] Firebase connected');
-      }
-      const raw=snap.val();
-      if(raw===null){
-        // Branche Firebase vide — pas une erreur, juste pas encore de données distantes
-        console.log('[AG] No remote data found — branche '+COMMISSION+' vide, fallback sur defaults');
-        setBanner('empty','ℹ️ Firebase connecté — aucune donnée pour cette commission');
-        // Ne pas écraser localData si déjà peuplé par defaults
-        if(!localData.projects)localData.projects=null;
-        if(!localData.tasks)localData.tasks=null;
-        if(!localData.reunions)localData.reunions=null;
+    signInAnonymously(fbAuth).then(()=>{
+      fbConnected=true;
+      document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
+      onValue(ref(fbDb,COMMISSION),(snap)=>{
+        const raw=snap.val();
+        if(raw===null){
+          setBanner('empty','ℹ️ Firebase connecté — aucune donnée pour cette commission');
+          renderAll();
+          return;
+        }
+        const data=raw;
+        setBanner('ok','✅ Firebase connecté');
+        const rawProjects=safeValues(data.projects);
+        localData.projects=rawProjects?rawProjects.filter(p=>p&&p.id):null;
+        localData.tasks=data.tasks&&typeof data.tasks==='object'?data.tasks:null;
+        const rawReunions=safeValues(data.reunions);
+        localData.reunions=rawReunions?rawReunions.filter(r=>r&&r.id):null;
+        const rawLog=safeValues(data.log);
+        localData.log=rawLog?rawLog.filter(Boolean).sort((a,b)=>b.ts-a.ts):[];
+        const rawCr=safeValues(data.cr);
+        localData.cr=rawCr?rawCr.filter(Boolean).sort((a,b)=>b.ts-a.ts):[];
+        localData.budget=data.budget&&typeof data.budget==='object'?data.budget:null;
+        const rawQt=safeValues(data.quickTasks);
+        localData.quickTasks=rawQt?rawQt.filter(Boolean).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
         renderAll();
-        return;
-      }
-      const data=raw;
-      setBanner('ok','✅ Firebase connecté');
-      const rawProjects=safeValues(data.projects);
-      localData.projects=rawProjects?rawProjects.filter(p=>p&&p.id):null;
-      localData.tasks=data.tasks&&typeof data.tasks==='object'?data.tasks:null;
-      const rawReunions=safeValues(data.reunions);
-      localData.reunions=rawReunions?rawReunions.filter(r=>r&&r.id):null;
-      const rawLog=safeValues(data.log);
-      localData.log=rawLog?rawLog.filter(Boolean).sort((a,b)=>b.ts-a.ts):[];
-      const rawCr=safeValues(data.cr);
-      localData.cr=rawCr?rawCr.filter(Boolean).sort((a,b)=>b.ts-a.ts):[];
-      localData.budget=data.budget&&typeof data.budget==='object'?data.budget:null;
-      const rawQt=safeValues(data.quickTasks);
-      localData.quickTasks=rawQt?rawQt.filter(Boolean).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
-      renderAll();
-      // Si modal projet ouvert, rafraîchir tâches
-      if(_currentProjId){
-        const p=getProjects().find(x=>x.id===_currentProjId);
-        if(p)renderPtasks(_currentProjId,p.project_tasks||{});
-      }
-      onValue(ref(fbDb,'finances/global'),(snap2)=>{
-        const gb=snap2.val();
-        if(gb&&typeof gb==='object'){const el=document.getElementById('budget-global-display');if(el)el.textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
+        if(_currentProjId){
+          const p=getProjects().find(x=>x.id===_currentProjId);
+          if(p)renderPtasks(_currentProjId,p.project_tasks||{});
+        }
+        onValue(ref(fbDb,'finances/global'),(snap2)=>{
+          const gb=snap2.val();
+          if(gb&&typeof gb==='object'){const el=document.getElementById('budget-global-display');if(el)el.textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
+        });
+      },(err)=>{
+        setBanner('err','❌ Erreur Firebase : '+err.message);
+        fbConnected=false;
       });
-    },(err)=>{
-      console.error('[AG] Firebase init error:',err.message);
-      setBanner('err','❌ Erreur Firebase : '+err.message);
-      fbConnected=false;
-    });
+    }).catch(e=>{setBanner('err','❌ Auth anonyme échouée : '+e.message);console.error(e)});
   }catch(e){
     console.error('[AG] Firebase init error (exception):',e.message);
     setBanner('err','❌ Config Firebase invalide');

@@ -1170,32 +1170,32 @@ function initFirebase(config){
     fbApp=initializeApp(config,'cdv-'+Date.now());
     fbDb=getDatabase(fbApp);
     const fbAuth=getAuth(fbApp);
-    signInAnonymously(fbAuth).catch(e=>console.warn('Auth anonyme échouée:',e));
-    fbConnected=true;
     setBanner('connecting','⏳ Connexion Firebase…');
-    onValue(ref(fbDb,COMMISSION),(snap)=>{
-      setBanner('ok','✅ Connecté');
-      const data=snap.val()||{};
-      localData.projects=data.projects?Object.values(data.projects):null;
-      localData.tasks=data.tasks||null;
-      localData.reunions=data.reunions?Object.values(data.reunions):null;
-      localData.log=data.log?Object.values(data.log).sort((a,b)=>b.ts-a.ts):[];
-      localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
-      localData.budget=data.budget||null;
-      localData.quickTasks=data.quickTasks?Object.values(data.quickTasks).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
-      if(data.config&&data.config.driveUrl)applyDriveUrl(data.config.driveUrl);
-      renderAll();
-      // Si modal projet ouvert, rafraîchir tâches
-      if(_currentProjId){
-        const p=getProjects().find(x=>x.id===_currentProjId);
-        if(p)renderPtasks(_currentProjId,p.project_tasks||{});
-      }
-      onValue(ref(fbDb,'finances/global'),(snap2)=>{
-        const gb=snap2.val();
-        if(gb){document.getElementById('budget-global-display').textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
-      });
-    },(err)=>{setBanner('err','❌ '+err.message);fbConnected=false});
-    document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
+    signInAnonymously(fbAuth).then(()=>{
+      fbConnected=true;
+      onValue(ref(fbDb,COMMISSION),(snap)=>{
+        setBanner('ok','✅ Connecté');
+        const data=snap.val()||{};
+        localData.projects=data.projects?Object.values(data.projects):null;
+        localData.tasks=data.tasks||null;
+        localData.reunions=data.reunions?Object.values(data.reunions):null;
+        localData.log=data.log?Object.values(data.log).sort((a,b)=>b.ts-a.ts):[];
+        localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
+        localData.budget=data.budget||null;
+        localData.quickTasks=data.quickTasks?Object.values(data.quickTasks).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
+        if(data.config&&data.config.driveUrl)applyDriveUrl(data.config.driveUrl);
+        renderAll();
+        if(_currentProjId){
+          const p=getProjects().find(x=>x.id===_currentProjId);
+          if(p)renderPtasks(_currentProjId,p.project_tasks||{});
+        }
+        onValue(ref(fbDb,'finances/global'),(snap2)=>{
+          const gb=snap2.val();
+          if(gb){document.getElementById('budget-global-display').textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
+        });
+      },(err)=>{setBanner('err','❌ '+err.message);fbConnected=false});
+      document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
+    }).catch(e=>{setBanner('err','❌ Auth anonyme échouée : '+e.message);console.error(e)});
   }catch(e){setBanner('err','❌ Config invalide')}
 }
 function fbSet(path,val){if(!fbDb)return;set(ref(fbDb,path),val).catch(e=>console.error(e))}
