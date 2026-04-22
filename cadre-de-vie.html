@@ -1094,6 +1094,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const COMMISSION = 'cdv';
 const FB_PRESET = {
@@ -1168,6 +1169,8 @@ function initFirebase(config){
   try{
     fbApp=initializeApp(config,'cdv-'+Date.now());
     fbDb=getDatabase(fbApp);
+    const fbAuth=getAuth(fbApp);
+    signInAnonymously(fbAuth).catch(e=>console.warn('Auth anonyme échouée:',e));
     fbConnected=true;
     setBanner('connecting','⏳ Connexion Firebase…');
     onValue(ref(fbDb,COMMISSION),(snap)=>{

@@ -1091,6 +1091,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const COMMISSION = 'scolaire';
 const FB_PRESET = {
@@ -1169,6 +1170,8 @@ function initFirebase(config){
     setBanner('connecting','⏳ Connexion Firebase…');
     fbApp=initializeApp(config,'as-'+Date.now());
     fbDb=getDatabase(fbApp);
+    const fbAuth=getAuth(fbApp);
+    signInAnonymously(fbAuth).catch(e=>console.warn('Auth anonyme échouée:',e));
     onValue(ref(fbDb,COMMISSION),(snap)=>{
       if(!fbConnected){
         fbConnected=true;
