@@ -8,8 +8,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cadre de Vie">
 <title>Commission Cadre de Vie — Lestiac 2026·2032</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" async></script>
 <style>
 :root{
   --teal:#1A5C6B;--teal-d:#0f3d2e;--teal-p:#E6F3F5;
@@ -301,7 +303,7 @@ button{font-family:'Figtree',sans-serif;cursor:pointer}
 /* Pilote */
 .proj-pilote{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;position:relative;z-index:1}
 .proj-pilote span{background:var(--accent-p);padding:3px 9px;border-radius:20px}
-/* Chef de projet chips */
+/* Porteur du projet chips */
 .chef-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:700;background:var(--navy);color:white;border:2px solid var(--navy);cursor:pointer;transition:all .15s;user-select:none}
 .chef-chip:hover{opacity:.85}
 .chef-chip.selected{background:var(--terra);border-color:var(--terra)}
@@ -575,6 +577,47 @@ body.is-admin .admin-inline{display:inline-flex}
   #app{grid-template-columns:1fr;padding-top:0}
   #main{padding:0}
 }
+
+
+
+
+/* ══ DM MESSENGER ══ */
+.dm-layout{display:flex;gap:0;height:calc(100vh - 210px);min-height:400px;border:1px solid var(--mid);border-radius:var(--r);overflow:hidden}
+.dm-sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--mid);background:var(--light);display:flex;flex-direction:column}
+.dm-sidebar-head{padding:14px 14px 10px;font-family:'Sora',sans-serif;font-weight:700;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);border-bottom:1px solid var(--mid)}
+.dm-contacts{flex:1;overflow-y:auto}
+.dm-contact{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.04);transition:background .12s;position:relative}
+.dm-contact:hover{background:rgba(0,0,0,.04)}
+.dm-contact.active{background:var(--accent-p)}
+.dm-contact-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;position:relative}
+.dm-contact-avatar .dm-online{position:absolute;bottom:1px;right:1px;width:9px;height:9px;border-radius:50%;background:#9ca3af;border:2px solid var(--light)}
+.dm-contact-avatar .dm-online.on{background:#22c55e}
+.dm-contact-name{font-size:13px;font-weight:600;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dm-contact-preview{font-size:11px;color:var(--softer);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+.dm-unread{background:var(--accent);color:white;border-radius:20px;font-size:10px;font-weight:700;padding:1px 6px;min-width:18px;text-align:center}
+.dm-pane{flex:1;display:flex;flex-direction:column;background:white;min-width:0}
+.dm-pane-head{padding:12px 16px;border-bottom:1px solid var(--mid);display:flex;align-items:center;gap:10px;background:var(--light)}
+.dm-pane-head-name{font-weight:700;font-size:14px}
+.dm-pane-head-status{font-size:11px;color:var(--softer)}
+.dm-pane-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--softer);font-size:13px;gap:8px}
+.dm-pane-empty .ei{font-size:36px}
+.dm-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+.dm-msg{display:flex;flex-direction:column;max-width:75%;animation:msgIn .18s ease}
+.dm-msg.mine{align-self:flex-end;align-items:flex-end}
+.dm-msg.theirs{align-self:flex-start;align-items:flex-start}
+.dm-msg-time{font-size:10px;color:var(--softer);margin-bottom:2px}
+.dm-msg-bubble{padding:9px 14px;border-radius:18px;font-size:13px;line-height:1.5;word-break:break-word;position:relative}
+.dm-msg.mine .dm-msg-bubble{background:var(--accent);color:white;border-bottom-right-radius:4px}
+.dm-msg.theirs .dm-msg-bubble{background:var(--light);color:var(--text);border-bottom-left-radius:4px;border:1px solid var(--mid)}
+.dm-msg-receipt{font-size:10px;color:rgba(255,255,255,.65);text-align:right;margin-top:2px}
+.dm-msg-del{background:none;border:none;font-size:11px;cursor:pointer;padding:0 3px;opacity:0;transition:opacity .15s;position:absolute;top:4px;right:-20px}
+.dm-msg.mine:hover .dm-msg-del{opacity:.6}
+.dm-msg.mine .dm-msg-del:hover{opacity:1}
+.dm-input-bar{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--mid);background:var(--light)}
+.dm-input-bar textarea{flex:1;border:1px solid var(--mid);border-radius:22px;padding:9px 16px;font-size:13px;font-family:inherit;resize:none;line-height:1.4;min-height:40px;max-height:120px;outline:none;transition:border-color .15s;background:white}
+.dm-input-bar textarea:focus{border-color:var(--accent)}
+.dm-send-btn{align-self:flex-end;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;padding:0;flex-shrink:0}
+
 </style>
 </head>
 <body>
@@ -644,6 +687,7 @@ body.is-admin .admin-inline{display:inline-flex}
       <button class="tb-navbtn" onclick="nav('reunions',document.querySelector('[data-page=reunions]'))">Réunions</button>
       <button class="tb-navbtn" onclick="nav('cr',document.querySelector('[data-page=cr]'))">CR</button>
       <button class="tb-navbtn" onclick="nav('taches',document.querySelector('[data-page=taches]'))">Tâches</button>
+      <button class="tb-navbtn" onclick="nav('chat',document.querySelector('[data-page=chat]'))">Chat</button>
     </div>
     <div class="tb-actions">
       <button id="btn-identity" class="tb-btn" onclick="openIdModal()">
@@ -671,6 +715,7 @@ body.is-admin .admin-inline{display:inline-flex}
   <button class="nav-btn"        data-page="membres"     onclick="nav('membres',this)"><span class="ni">👥</span>Membres</button>
   <hr class="nav-divider">
   <span class="nav-label">Admin</span>
+  <button class="nav-btn" data-page="chat" onclick="nav('chat',this)"><span class="ni">💬</span>Chat</button>
   <button class="nav-btn admin-only" data-page="journal"    onclick="nav('journal',this)"><span class="ni">📝</span>Journal</button>
   <button class="nav-btn admin-only" data-page="admin"      onclick="nav('admin',this)"><span class="ni">⚙️</span>Paramètres</button>
   <div id="nav-locked" style="padding:8px 16px;font-size:12px;color:rgba(255,255,255,.35);font-style:italic">🔒 Accès réservé</div>
@@ -834,6 +879,45 @@ body.is-admin .admin-inline{display:inline-flex}
 </div>
 
 <!-- ▓ JOURNAL ▓ -->
+
+<div class="page" id="page-chat">
+  <div class="ph">
+    <h1>💬 Messages</h1>
+    <p>Messagerie directe entre membres de la commission</p>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="dm-layout">
+      <!-- Sidebar contacts -->
+      <div class="dm-sidebar">
+        <div class="dm-sidebar-head">👥 Membres</div>
+        <div class="dm-contacts" id="dm-contacts"></div>
+      </div>
+      <!-- Panneau conversation -->
+      <div class="dm-pane" id="dm-pane">
+        <div class="dm-pane-empty" id="dm-pane-empty">
+          <div class="ei">💬</div>
+          <div>Sélectionnez un membre<br>pour démarrer une conversation</div>
+        </div>
+        <div id="dm-conv" style="display:none;flex-direction:column;flex:1;min-height:0">
+          <div class="dm-pane-head">
+            <div class="dm-contact-avatar" id="dm-conv-avatar" style="width:30px;height:30px;font-size:11px"></div>
+            <div>
+              <div class="dm-pane-head-name" id="dm-conv-name"></div>
+              <div class="dm-pane-head-status" id="dm-conv-status"></div>
+            </div>
+          </div>
+          <div class="dm-messages" id="dm-messages"></div>
+          <div class="dm-input-bar">
+            <textarea id="dm-input" placeholder="Votre message…" rows="1"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendDM()}"></textarea>
+            <button class="btn btn-accent dm-send-btn" onclick="sendDM()" title="Envoyer">↗</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="page admin-only" id="page-journal">
   <div class="ph"><h1>📝 Journal des modifications</h1><p>Actions réalisées par les participants</p></div>
   <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn btn-ghost-red btn-sm" onclick="clearLog()">Vider</button></div>
@@ -915,7 +999,7 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="modal-body">
     <div class="form-group"><label class="form-label">Titre</label><input type="text" id="p-title" class="form-control" placeholder="Intitulé"></div>
     <div class="form-group">
-      <label class="form-label">Chef(s) de projet <span style="font-weight:400;color:var(--softer)">(1 ou 2 max)</span></label>
+      <label class="form-label">Porteur(s) du projet <span style="font-weight:400;color:var(--softer)">(1 ou 2 max)</span></label>
       <div id="p-chefs-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px"></div>
       <input type="hidden" id="p-pilote" value="">
     </div>
@@ -964,10 +1048,10 @@ body.is-admin .admin-inline{display:inline-flex}
       <!-- Méta projet -->
       <div id="proj-detail-meta" style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"></div>
       <div id="proj-detail-pilote" style="margin-bottom:10px">
-        <!-- Chefs de projet — affichage + édition super-admin -->
+        <!-- Porteurs du projet — affichage + édition super-admin -->
         <div id="proj-chef-display" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"></div>
         <div id="proj-chef-edit" style="display:none;margin-top:8px;padding:10px;background:var(--light);border-radius:var(--r);border:1px dashed var(--mid)">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:6px">Choisir 1 ou 2 chefs de projet</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:6px">Choisir 1 ou 2 porteurs du projet</div>
           <div id="proj-chef-edit-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px"></div>
           <div style="display:flex;gap:6px">
             <button class="btn btn-accent btn-sm" onclick="saveChefs()">✓ Valider</button>
@@ -989,6 +1073,7 @@ body.is-admin .admin-inline{display:inline-flex}
         <button class="detail-tab" onclick="switchDetailTab('ptasks',this)">✅ Tâches <span id="ptask-count-badge" style="font-size:10px;background:var(--terra);color:white;border-radius:20px;padding:1px 6px;margin-left:3px;display:none"></span></button>
         <button class="detail-tab" onclick="switchDetailTab('comments',this)">💬 Commentaires</button>
         <button class="detail-tab" onclick="switchDetailTab('docs',this)">📎 Documents</button>
+        <button class="detail-tab" onclick="switchDetailTab('proj-chat',this)">💬 Chat</button>
       </div>
 
       <!-- Panneau Notes -->
@@ -1061,6 +1146,19 @@ body.is-admin .admin-inline{display:inline-flex}
           💡 <em>Pour ajouter un document : ouvrez le dossier Drive, faites « + Nouveau » et déposez votre fichier. Il sera immédiatement visible par tous les membres.</em>
         </div>
       </div>
+
+      <!-- Panneau Chat projet -->
+      <div class="detail-panel" id="panel-proj-chat">
+        <div class="proj-chat-wrap">
+          <div class="chat-messages" id="chat-messages-proj"></div>
+          <div class="chat-input-bar">
+            <textarea id="chat-input-proj" placeholder="Message sur ce projet…" rows="1"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMsg('proj')}"></textarea>
+            <button class="btn btn-accent chat-send-btn" onclick="sendChatMsg('proj')">↗</button>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="modal-foot">
       <div style="font-size:11px;color:var(--soft);flex:1" id="proj-detail-source"></div>
@@ -1094,7 +1192,6 @@ body.is-admin .admin-inline{display:inline-flex}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const COMMISSION = 'cdv';
 const FB_PRESET = {
@@ -1141,6 +1238,8 @@ let isAdmin=false, fbApp=null, fbDb=null, fbConnected=false;
 let _currentProjId=null, _notesTimer=null, _pendingJoin=null;
 let localData={projects:null,tasks:null,reunions:null,log:[],cr:[],budget:null,quickTasks:null};
 let _ptAssignee=null; // assigné sélectionné dans le form tâche projet
+let _newProjChefs=[]; // porteurs sélectionnés dans le formulaire ajout projet
+let _editingChefs=[]; // porteurs en cours d'édition dans la modale détail
 
 
 // ── LOCAL HELPERS ──
@@ -1169,33 +1268,32 @@ function initFirebase(config){
   try{
     fbApp=initializeApp(config,'cdv-'+Date.now());
     fbDb=getDatabase(fbApp);
-    const fbAuth=getAuth(fbApp);
+    fbConnected=true;
     setBanner('connecting','⏳ Connexion Firebase…');
-    signInAnonymously(fbAuth).then(()=>{
-      fbConnected=true;
-      onValue(ref(fbDb,COMMISSION),(snap)=>{
-        setBanner('ok','✅ Connecté');
-        const data=snap.val()||{};
-        localData.projects=data.projects?Object.values(data.projects):null;
-        localData.tasks=data.tasks||null;
-        localData.reunions=data.reunions?Object.values(data.reunions):null;
-        localData.log=data.log?Object.values(data.log).sort((a,b)=>b.ts-a.ts):[];
-        localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
-        localData.budget=data.budget||null;
-        localData.quickTasks=data.quickTasks?Object.values(data.quickTasks).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
-        if(data.config&&data.config.driveUrl)applyDriveUrl(data.config.driveUrl);
-        renderAll();
-        if(_currentProjId){
-          const p=getProjects().find(x=>x.id===_currentProjId);
-          if(p)renderPtasks(_currentProjId,p.project_tasks||{});
-        }
-        onValue(ref(fbDb,'finances/global'),(snap2)=>{
-          const gb=snap2.val();
-          if(gb){document.getElementById('budget-global-display').textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
-        });
-      },(err)=>{setBanner('err','❌ '+err.message);fbConnected=false});
-      document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
-    }).catch(e=>{setBanner('err','❌ Auth anonyme échouée : '+e.message);console.error(e)});
+    onValue(ref(fbDb,COMMISSION),(snap)=>{
+      setBanner('ok','✅ Connecté');
+      const data=snap.val()||{};
+      localData.projects=data.projects?Object.values(data.projects):null;
+      localData.tasks=data.tasks||null;
+      localData.reunions=data.reunions?Object.values(data.reunions):null;
+      localData.log=data.log?Object.values(data.log).sort((a,b)=>b.ts-a.ts):[];
+      localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
+      localData.budget=data.budget||null;
+      localData.quickTasks=data.quickTasks?Object.values(data.quickTasks).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
+      if(data.config&&data.config.driveUrl)applyDriveUrl(data.config.driveUrl);
+      if(data.config&&data.config.emailjs)applyEmailJSConfig(data.config.emailjs);
+      renderAll();
+      // Si modal projet ouvert, rafraîchir tâches
+      if(_currentProjId){
+        const p=getProjects().find(x=>x.id===_currentProjId);
+        if(p)renderPtasks(_currentProjId,p.project_tasks||{});
+      }
+      onValue(ref(fbDb,'finances/global'),(snap2)=>{
+        const gb=snap2.val();
+        if(gb){document.getElementById('budget-global-display').textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
+      });
+    },(err)=>{setBanner('err','❌ '+err.message);fbConnected=false});
+    document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
   }catch(e){setBanner('err','❌ Config invalide')}
 }
 function fbSet(path,val){if(!fbDb)return;set(ref(fbDb,path),val).catch(e=>console.error(e))}
@@ -1217,13 +1315,32 @@ function writeReunions(arr){const obj={};arr.forEach((r,i)=>{obj[r.id||('r'+i)]=
 function writeLog(e){if(fbDb)fbPush(COMMISSION+'/log',e);else{const d=getLocal();if(!d.log)d.log=[];d.log.unshift(e);saveLocal(d);localData.log=d.log;renderLog()}}
 function deleteCR(idOrIdx){
   if(!confirm('Supprimer ce compte rendu ?'))return;
+  // Sécurisation NaN : parseInt peut échouer si idOrIdx est une string 'crXXX'
+  const numIdx = parseInt(idOrIdx, 10);
+  const hasNumIdx = !isNaN(numIdx) && numIdx >= 0;
   if(fbDb){
-    // Trouver la clé Firebase
-    const crs=getCRs();const cr=crs.find(c=>c.id===idOrIdx)||crs[parseInt(idOrIdx)];
-    if(cr&&cr.fbKey)fbRemove(COMMISSION+'/cr/'+cr.fbKey);
-    else{// fallback local
-      const d=getLocal();if(d.crs)d.crs=d.crs.filter((_,i)=>i!==parseInt(idOrIdx));saveLocal(d);localData.cr=d.crs||[];renderCRs();}
-  }else{const d=getLocal();if(d.crs){d.crs=d.crs.filter(c=>c.id!==idOrIdx&&c.id!==parseInt(idOrIdx));saveLocal(d);localData.cr=d.crs;renderCRs();}}}
+    const crs=getCRs();
+    // Chercher d'abord par id string, ensuite par index numérique si valide
+    const cr=crs.find(c=>c.id===idOrIdx)||(hasNumIdx?crs[numIdx]:null);
+    if(cr&&cr.fbKey){
+      fbRemove(COMMISSION+'/cr/'+cr.fbKey);
+    } else if(cr){
+      // CR trouvé mais sans fbKey — fallback local
+      const d=getLocal();
+      if(d.crs)d.crs=d.crs.filter(c=>c.id!==idOrIdx);
+      saveLocal(d);localData.cr=d.crs||[];renderCRs();
+    } else {
+      console.warn('[deleteCR] CR introuvable pour id/idx:', idOrIdx);
+    }
+  } else {
+    const d=getLocal();
+    if(d.crs){
+      // Filtrer par id string ET par index numérique (si valide)
+      d.crs=d.crs.filter((c,i)=>c.id!==idOrIdx&&(!hasNumIdx||i!==numIdx));
+      saveLocal(d);localData.cr=d.crs;renderCRs();
+    }
+  }
+}
 function writeCR(cr){if(fbDb)fbPush(COMMISSION+'/cr',cr);else{const d=getLocal();if(!d.crs)d.crs=[];d.crs.unshift(cr);saveLocal(d);localData.cr=d.crs;renderCRs()}}
 function writeBudget(b){if(fbDb)fbSet(COMMISSION+'/budget',b);else{const d=getLocal();d.budget=b;saveLocal(d);localData.budget=b}}
 function logAction(action,detail){const who=getCurrentUser()||'Anonyme';writeLog({who,action,detail,ts:Date.now(),time:new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})})}
@@ -1237,6 +1354,7 @@ function nav(id,btn){
   if(btn)btn.classList.add('active');
   if(id==='journal')renderLog();
   if(id==='finances')renderFinances();
+  if(id==='chat')initDMPage();
 }
 window.nav=nav;
 
@@ -1256,7 +1374,7 @@ function doLogin(){
     const cfg=getFbConfig()||FB_PRESET;
     ['apiKey','databaseURL','projectId'].forEach(k=>{const el=document.getElementById('fb-'+k);if(el&&cfg[k])el.value=cfg[k]});
     const ejs=getEjsConfig();
-    if(ejs){['pubkey','service','template'].forEach(k=>{const el=document.getElementById('ejs-'+k);if(el&&ejs[k])el.value=ejs[k]});if(ejs.emails)document.getElementById('ejs-emails').value=ejs.emails}
+    // EmailJS config pré-remplie via applyEmailJSConfig au chargement Firebase
     if(!fbConnected)initFirebase(cfg);
     renderAll();
   }else{document.getElementById('gate-err').style.display='block'}
@@ -1280,24 +1398,39 @@ function updateIdentityBtn(){const me=getCurrentUser();document.getElementById('
 document.getElementById('id-modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('id-modal-bg'))closeIdModal()});
 
 // ── MODALS ──
-function openModal(id){document.getElementById(id).classList.add('open');if(id==='m-reunion')populateReunionProjSelect();if(id==='m-proj'){window._newProjChefs=[];if(typeof renderChefChips==='function')renderChefChips('p-chefs-chips',[])}}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
+function openModal(id){document.getElementById(id).classList.add('open');if(id==='m-reunion')populateReunionProjSelect();if(id==='m-proj'){_newProjChefs=[];renderChefChips('p-chefs-chips',[])}}
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='m-proj-detail'){if(_chatProjUnsub){_chatProjUnsub();_chatProjUnsub=null;}}}
 function closeOverlay(e,id){if(e.target===document.getElementById(id))closeModal(id)}
 window.openModal=openModal;window.closeModal=closeModal;window.closeOverlay=closeOverlay;
 
 // ── RENDER ALL ──
-function renderAll(){renderProjects();renderReunions();renderTasks();renderCRs();updateStats();if(typeof renderQuickTasks==='function')renderQuickTasks();if(typeof updateDashShortcuts==='function')updateDashShortcuts()}
+function renderAll(){
+  // Guard défensif : ne pas rendre si gate encore visible (auth non établie)
+  const gate = document.getElementById('gate');
+  if (gate && gate.classList.contains('show')) return;
+  // Guard : vérifier que les conteneurs principaux existent
+  if (!document.getElementById('proj-grid')) return;
+  renderProjects();
+  renderReunions();
+  renderTasks();
+  renderCRs();
+  updateStats();
+  if(typeof renderQuickTasks==='function') renderQuickTasks();
+  if(typeof updateDashShortcuts==='function') updateDashShortcuts();
+}
 
 // ── STATS ──
 function updateStats(){
   const p=getProjects(),t=getTasks(),r=getReunions(),c=getCRs();
-  document.getElementById('s-ct').textContent=p.filter(x=>x.horizon==='court').length;
-  document.getElementById('s-mt').textContent=p.filter(x=>x.horizon==='moyen').length;
-  document.getElementById('s-lt').textContent=p.filter(x=>x.horizon==='long').length;
-  document.getElementById('s-rdv').textContent=r.length;
-  document.getElementById('s-cr').textContent=c.length;
   const done=[...(t.court||[]),...(t.moyen||[]),...(t.long||[])].filter(x=>x.done).length;
-  document.getElementById('s-tasks').textContent=done;
+  // Guard défensif : les stats peuvent ne pas être dans le DOM actif
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('s-ct', p.filter(x=>x.horizon==='court').length);
+  set('s-mt', p.filter(x=>x.horizon==='moyen').length);
+  set('s-lt', p.filter(x=>x.horizon==='long').length);
+  set('s-rdv', r.length);
+  set('s-cr', c.length);
+  set('s-tasks', done);
 }
 
 // ── PROJECTS ──
@@ -1311,7 +1444,7 @@ function renderMemberChips(projId,membersArr){
 }
 
 function renderProjects(){
-  const grid=document.getElementById('proj-grid');grid.innerHTML='';
+  const grid=document.getElementById('proj-grid');if(!grid)return;grid.innerHTML='';
   let projs=getProjects();
   if(!projs){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
   if(!Array.isArray(projs))projs=Object.values(projs);
@@ -1342,12 +1475,12 @@ function renderProjects(){
       <div class="proj-chefs">
         <span class="proj-chefs-label">👑 Chef${getChefsArr(p).length>1?'s':''} :</span>
         ${getChefsArr(p).length
-          ? getChefsArr(p).map(c=>`<span class="chef-badge">${c}</span>`).join('')
+          ? getChefsArr(p).map(c=>`<span class="chef-badge">${escapeHtml(c)}</span>`).join('')
           : '<span style="font-size:11px;color:var(--softer);font-style:italic">— Non défini</span>'}
       </div>
       ${isAdmin?`<button class="btn-icon" style="position:absolute;top:10px;right:22px" onclick="event.stopPropagation();deleteProj('${p.id}')">🗑</button>`:''}
-      <div class="proj-title" onclick="openProjDetail('${p.id}')">${p.title}</div>
-      <div class="proj-desc" onclick="openProjDetail('${p.id}')">${p.desc}</div>
+      <div class="proj-title" onclick="openProjDetail('${p.id}')">${escapeHtml(p.title)}</div>
+      <div class="proj-desc" onclick="openProjDetail('${p.id}')">${escapeHtml(p.desc||"")}</div>
       <div class="proj-meta"><span class="status-pill ${p.status}">${sL[p.status]}</span>
         ${isAdmin?`<select class="form-control" style="padding:2px 6px;font-size:11px;width:auto" onchange="changeStatus('${p.id}',this.value)"><option value="s-lancer"${p.status==='s-lancer'?' selected':''}>À lancer</option><option value="s-cours"${p.status==='s-cours'?' selected':''}>En cours</option><option value="s-attente"${p.status==='s-attente'?' selected':''}>En attente</option><option value="s-fait"${p.status==='s-fait'?' selected':''}>Réalisé</option></select>`:''}</div>
       <div style="margin-top:10px"><div class="members-zone-label">👥 Participants</div>
@@ -1355,7 +1488,7 @@ function renderProjects(){
         <button class="btn-join${j?' joined':''}" onclick="joinProject('${p.id}')">${j?'✓ Inscrit·e':'+ Rejoindre'}</button></div>
       <div class="proj-budget">💶 ${p.budget}${p.subs&&p.subs!=='—'?' · '+p.subs:''}</div>
       ${p.sophie?`<div style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;background:#FFF3E0;color:#E65100;padding:3px 9px;border-radius:20px;margin-top:4px">📣 Sophie sollicitée</div>`:''}
-      ${p.source?`<div class="proj-source">${p.source}</div>`:''}
+      ${p.source?`<div class="proj-source">${escapeHtml(p.source)}</div>`:''}
       <div style="margin-top:8px;display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap">
         ${openPtasks>0?`<span style="font-size:11px;font-weight:700;background:${overduePtasks>0?'var(--terra)':'var(--teal)'};color:white;padding:2px 8px;border-radius:20px">${overduePtasks>0?'⚠ ':'✅ '}${openPtasks} tâche${openPtasks>1?'s':''}</span>`:''}
         <button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="openProjDetail('${p.id}')">
@@ -1372,9 +1505,9 @@ window.filterProj=filterProj;
 function saveProj(){
   const title=document.getElementById('p-title').value.trim();if(!title)return;
   const me=getCurrentUser()||'';
-  const chefsArr=window._newProjChefs||[];const piloteVal=chefsArr[0]||me;
+  const chefsArr=[..._newProjChefs];const piloteVal=chefsArr[0]||me;
   const sophieChecked=document.getElementById('p-sophie')?.checked||false;const p={id:'a'+Date.now(),horizon:document.getElementById('p-horizon').value,axe:document.getElementById('p-axe').value,title,pilote:piloteVal,chefs:chefsArr,status:document.getElementById('p-status').value,desc:document.getElementById('p-desc').value.trim(),members:chefsArr.length?[...chefsArr]:[],budget:document.getElementById('p-budget').value.trim(),subs:document.getElementById('p-subs').value.trim(),source:'Ajouté manuellement',sophie:sophieChecked};
-  const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»'+(sophieChecked?' [Sophie]':''));if(sophieChecked)notifySophie(title);closeModal('m-proj');if(document.getElementById('p-sophie'))document.getElementById('p-sophie').checked=false;window._newProjChefs=[];renderChefChips('p-chefs-chips',[]);
+  const arr=getProjects();arr.push(p);writeProjects(arr);logAction('Nouveau projet','«'+title+'»'+(sophieChecked?' [Sophie]':''));if(sophieChecked)notifySophie(title);closeModal('m-proj');if(document.getElementById('p-sophie'))document.getElementById('p-sophie').checked=false;_newProjChefs=[];renderChefChips('p-chefs-chips',[]);
   if(!fbConnected)renderAll()
 }
 window.saveProj=saveProj;
@@ -1567,10 +1700,10 @@ function openProjDetail(projId){
     `<span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
      <span class="status-pill ${p.status}">${sL[p.status]}</span>
      <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>`;
-  // Chefs de projet
+  // Porteurs du projet
   renderDetailChefs(p);
   document.getElementById('proj-detail-desc').textContent=p.desc||'';
-  document.getElementById('proj-detail-budget').innerHTML=`💶 ${p.budget||''}${p.subs&&p.subs!=='—'?' · '+p.subs:''}`;
+  document.getElementById('proj-detail-budget').innerHTML=`💶 ${escapeHtml(p.budget||'')}${p.subs&&p.subs!=='—'?' · '+escapeHtml(p.subs):''}`;
   document.getElementById('proj-detail-source').textContent=p.source?'Source : '+p.source:'';
   const m=getMembersArr(p),me=getCurrentUser(),j=me&&m.includes(me);
   document.getElementById('proj-detail-chips').innerHTML=renderMemberChips(projId,m);
@@ -1680,6 +1813,7 @@ window.deleteProjFromDetail=deleteProjFromDetail;
 // ── RÉUNIONS ──
 function renderReunions(){
   const list=document.getElementById('reunion-list'),empty=document.getElementById('reunion-empty'),arr=getReunions();
+  if(!list||!empty)return;
   list.innerHTML='';empty.style.display=arr.length===0?'':'none';
   arr.forEach((r,i)=>{
     const hd=r.date&&r.date.trim();let day='À',mon='FIXER',yr='',cls='empty';
@@ -1689,7 +1823,7 @@ function renderReunions(){
     card.innerHTML=`<div class="m-date-col ${cls}"><div class="m-day">${day}</div><div class="m-month">${mon}</div>${yr?`<div class="m-year">${yr}</div>`:''}</div>
       <div class="m-body"><div class="m-title">${r.title}</div>
         <div class="m-meta">${hd?new Date(r.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}):'Date à fixer'}${r.heure?' · '+r.heure:''} · ${r.lieu||'Mairie'}</div>
-        <div class="m-tags">${tags}</div>${r.participants?`<div class="m-parts">👥 ${r.participants}</div>`:''}${r.notes?`<div class="m-notes">${r.notes}</div>`:''}</div>
+        <div class="m-tags">${tags}</div>${r.participants?`<div class="m-parts">👥 ${escapeHtml(r.participants||"")}</div>`:''}${r.notes?`<div class="m-notes">${r.notes}</div>`:''}</div>
       <div class="m-actions">${hd?`<button class="btn btn-cal btn-sm" onclick='exportGcal(${JSON.stringify(r)})'>📅 Google</button><button class="btn btn-apple btn-sm" onclick='exportIcal(${JSON.stringify(r)})'>🍎 Apple</button>`:'<span style="font-size:11px;color:var(--soft)">Date à fixer</span>'}
         ${isAdmin?`<button class="btn btn-ghost-red btn-sm" onclick="deleteReunion(${i})">🗑</button>`:''}</div>`;
     list.appendChild(card);
@@ -1731,12 +1865,13 @@ function sendCRByEmail(cr){
 }
 function renderCRs(){
   const list=document.getElementById('cr-list'),empty=document.getElementById('cr-empty');
+  if(!list||!empty)return;
   const crs=getCRs();list.innerHTML='';empty.style.display=crs.length===0?'':'none';
   crs.forEach((cr,idx)=>{
   const me=getCurrentUser();
   const canDel=isAdmin||isSuperAdmin()||(cr.who&&cr.who===me);
   const card=document.createElement('div');card.className='cr-card';
-  card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${cr.title}</div><div class="cr-meta">Publié par ${cr.who} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><div style="display:flex;align-items:center;gap:8px"><span class="cr-sent">✓ Publié</span>${canDel?`<button class="btn btn-ghost-red btn-sm" onclick="deleteCR('${cr.id||idx}')">🗑</button>`:''}</div></div><div class="cr-body">${cr.body}</div>`;
+  card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${escapeHtml(cr.title||"")}</div><div class="cr-meta">Publié par ${escapeHtml(cr.who||"?")} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><div style="display:flex;align-items:center;gap:8px"><span class="cr-sent">✓ Publié</span>${canDel?`<button class="btn btn-ghost-red btn-sm" onclick="deleteCR('${cr.id||idx}')">🗑</button>`:''}</div></div><div class="cr-body">${escapeHtml(cr.body||"")}</div>`;
   list.appendChild(card);
 });updateStats();
 }
@@ -1745,11 +1880,11 @@ function renderCRs(){
 function renderTasks(){
   const tasks=getTasks();
   ['court','moyen','long'].forEach(h=>{
-    const cont=document.getElementById('tasks-'+h);cont.innerHTML='';
+    const cont=document.getElementById('tasks-'+h);if(!cont)return;cont.innerHTML='';
     (tasks[h]||[]).forEach((t,i)=>{
       const div=document.createElement('div');div.className='task-item'+(t.done?' done':'');div.onclick=()=>toggleTask(h,i);
       const tagIco={tt_env:'🌿',tt_vie:'🎭',tt_gouv:'🗳'}[(t.tag||'tt-env').replace('-','_')]||'🌿';
-      div.innerHTML=`<input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask('${h}',${i})"><span class="task-label">${t.text}</span><span class="task-tag ${t.tag||'tt-hab'}">${tagIco}</span><button class="btn-icon" onclick="event.stopPropagation();deleteTask('${h}',${i})" title="Supprimer" style="font-size:13px;color:rgba(0,0,0,.25)" onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='rgba(0,0,0,.25)'">🗑</button>`;
+      div.innerHTML=`<input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask('${h}',${i})"><span class="task-label">${escapeHtml(t.text||"")}</span><span class="task-tag ${t.tag||'tt-hab'}">${tagIco}</span><button class="btn-icon" onclick="event.stopPropagation();deleteTask('${h}',${i})" title="Supprimer" style="font-size:13px;color:rgba(0,0,0,.25)" onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='rgba(0,0,0,.25)'">🗑</button>`;
       cont.appendChild(div);
     });
     // Bouton "Supprimer les cochées" — super-admin uniquement
@@ -1782,6 +1917,7 @@ window.addTask=addTask;
 
 // ── FINANCES ──
 function renderFinances(){
+  if(!document.getElementById('fin-total'))return;
   const b=getBudget();
   if(!b){document.getElementById('fin-total').textContent='Budget : à renseigner';document.getElementById('fin-consomme').textContent='0 € consommé';document.getElementById('fin-bar').style.width='0%';return}
   const pct=b.total>0?Math.min(100,Math.round(b.consomme/b.total*100)):0;
@@ -1790,7 +1926,7 @@ function renderFinances(){
   document.getElementById('fin-bar').style.width=pct+'%';
   if(b.annee)document.getElementById('fin-annee').textContent='Exercice '+b.annee;
   const cont=document.getElementById('fin-lignes');cont.innerHTML='';
-  if(b.comment){const card=document.createElement('div');card.className='fin-card';card.style.borderColor='var(--navy)';card.innerHTML=`<div class="fin-title" style="font-size:14px">Dernière mise à jour</div><div class="fin-meta">${b.comment}</div>`;cont.appendChild(card)}
+  if(b.comment){const card=document.createElement('div');card.className='fin-card';card.style.borderColor='var(--navy)';card.innerHTML=`<div class="fin-title" style="font-size:14px">Dernière mise à jour</div><div class="fin-meta">${escapeHtml(b.comment||"")}</div>`;cont.appendChild(card)}
 }
 function saveBudget(){
   const b={total:parseFloat(document.getElementById('fin-total-input').value)||0,consomme:parseFloat(document.getElementById('fin-consomme-input').value)||0,annee:new Date().getFullYear(),comment:document.getElementById('fin-comment').value.trim(),ts:Date.now()};
@@ -1800,15 +1936,38 @@ function saveBudget(){
 window.saveBudget=saveBudget;
 
 // ── JOURNAL ──
-function renderLog(){const list=document.getElementById('log-list');const logs=getLog();if(!logs||!logs.length){list.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucune modification.</p></div>';return}list.innerHTML='';logs.forEach(l=>{const d=document.createElement('div');d.className='log-item';d.innerHTML=`<strong>${l.who||'?'}</strong> — ${l.action||''} : ${l.detail||''}<span class="log-time">${l.time||''}</span>`;list.appendChild(d)})}
+function renderLog(){const list=document.getElementById('log-list');if(!list)return;const logs=getLog();if(!logs||!logs.length){list.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucune modification.</p></div>';return}list.innerHTML='';logs.forEach(l=>{const d=document.createElement('div');d.className='log-item';d.innerHTML=`<strong>${escapeHtml(l.who||'?')}</strong> — ${escapeHtml(l.action||'')} : ${escapeHtml(l.detail||'')} <span class="log-time">${escapeHtml(l.time||'')} </span>`;list.appendChild(d)})}
 function clearLog(){if(!confirm('Vider ?'))return;if(fbDb)fbRemove(COMMISSION+'/log');else{const d=getLocal();d.log=[];saveLocal(d);localData.log=[]}renderLog()}
 window.clearLog=clearLog;
 
 // ── ADMIN PARAMS ──
 function saveFbConfig(){const cfg={apiKey:document.getElementById('fb-apiKey').value.trim(),authDomain:'mairie-lestiac-2026.firebaseapp.com',databaseURL:document.getElementById('fb-databaseURL').value.trim(),projectId:document.getElementById('fb-projectId').value.trim()};if(!cfg.apiKey||!cfg.databaseURL){alert('apiKey et databaseURL requis.');return}localStorage.setItem(K_FB,JSON.stringify(cfg));initFirebase(cfg)}
 window.saveFbConfig=saveFbConfig;
-function saveEmailJS(){const cfg={pubkey:document.getElementById('ejs-pubkey').value.trim(),service:document.getElementById('ejs-service').value.trim(),template:document.getElementById('ejs-template').value.trim(),emails:document.getElementById('ejs-emails').value.trim()};localStorage.setItem(K_EJS,JSON.stringify(cfg));document.getElementById('ejs-status').textContent='✅ Configuration EmailJS enregistrée.';setTimeout(()=>document.getElementById('ejs-status').textContent='',3000)}
+function saveEmailJS(){
+  const cfg={pubkey:document.getElementById('ejs-pubkey').value.trim(),service:document.getElementById('ejs-service').value.trim(),template:document.getElementById('ejs-template').value.trim(),emails:document.getElementById('ejs-emails').value.trim()};
+  // Écrire dans Firebase — partagé entre tous les membres
+  if(fbDb){
+    fbSet(COMMISSION+'/config/emailjs',cfg);
+  } else {
+    // Fallback localStorage si pas de connexion Firebase
+    localStorage.setItem(K_EJS,JSON.stringify(cfg));
+  }
+  applyEmailJSConfig(cfg);
+  document.getElementById('ejs-status').textContent='✅ Configuration EmailJS enregistrée et synchronisée.';
+  setTimeout(()=>document.getElementById('ejs-status').textContent='',3000);
+}
 window.saveEmailJS=saveEmailJS;
+
+// Appliquer la config EmailJS reçue (Firebase ou localStorage)
+function applyEmailJSConfig(cfg){
+  if(!cfg)return;
+  // Mémoriser en localStorage comme cache local
+  localStorage.setItem(K_EJS,JSON.stringify(cfg));
+  // Pré-remplir les champs dans la page Paramètres si ouverte
+  ['pubkey','service','template'].forEach(k=>{const el=document.getElementById('ejs-'+k);if(el&&cfg[k])el.value=cfg[k]});
+  if(cfg.emails){const el=document.getElementById('ejs-emails');if(el)el.value=cfg.emails;}
+}
+window.applyEmailJSConfig=applyEmailJSConfig;
 function changePwd(){const p1=document.getElementById('new-pwd').value,p2=document.getElementById('new-pwd2').value;if(!p1||p1!==p2){alert('Mots de passe incorrects.');return}localStorage.setItem(K_PWD,p1);alert('Mot de passe mis à jour.');document.getElementById('new-pwd').value='';document.getElementById('new-pwd2').value=''}
 window.changePwd=changePwd;
 function exportJSON(){const blob=new Blob([JSON.stringify({projects:getProjects(),tasks:getTasks(),reunions:getReunions()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CadreDeVie_backup.json';a.click()}
@@ -2103,14 +2262,14 @@ function renderChefChips(containerId, selected){
     chip.className='chef-chip'+(isSel?' selected':'');
     chip.textContent=name;
     chip.onclick=()=>{
-      const cur=window._newProjChefs||[];
+      const cur=_newProjChefs||[];
       if(cur.includes(name)){
-        window._newProjChefs=cur.filter(x=>x!==name);
+        _newProjChefs=cur.filter(x=>x!==name);
       } else {
-        if(cur.length>=2){showToast('⚠ Maximum 2 chefs de projet','warn');return;}
-        window._newProjChefs=[...cur,name];
+        if(cur.length>=2){showToast('⚠ Maximum 2 porteurs du projet','warn');return;}
+        _newProjChefs=[...cur,name];
       }
-      renderChefChips(containerId,window._newProjChefs);
+      renderChefChips(containerId,_newProjChefs);
     };
     cont.appendChild(chip);
   });
@@ -2126,17 +2285,17 @@ function renderDetailChefs(p){
   if(chefs.length){
     const label=document.createElement('span');
     label.style.cssText='font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--softer);margin-right:2px';
-    label.textContent='👑 Chef'+(chefs.length>1?'s':'')+' :';
+    label.textContent='👑 Porteur'+(chefs.length>1?'s':'')+' :';
     display.appendChild(label);
     chefs.forEach(c=>{
       const badge=document.createElement('span');
-      badge.className='chef-badge';badge.textContent=c;
+      badge.className='chef-badge';badge.textContent=escapeHtml(c);
       display.appendChild(badge);
     });
   } else {
     const empty=document.createElement('span');
     empty.style.cssText='font-size:12px;color:var(--softer);font-style:italic';
-    empty.textContent='Aucun chef de projet défini';
+    empty.textContent='Aucun porteur du projet défini';
     display.appendChild(empty);
   }
   if(canEdit){
@@ -2150,25 +2309,25 @@ function renderDetailChefs(p){
 }
 
 function openEditChefs(p){
-  window._editingChefs=[...getChefsArr(p)];
+  _editingChefs=[...getChefsArr(p)];
   const cont=document.getElementById('proj-chef-edit-chips');
   if(!cont)return;
   cont.innerHTML='';
   ALL_MEMBERS.forEach(name=>{
-    const isSel=window._editingChefs.includes(name);
+    const isSel=_editingChefs.includes(name);
     const chip=document.createElement('span');
     chip.className='chef-chip'+(isSel?' selected':'');
     chip.textContent=name;
     chip.onclick=()=>{
-      if(window._editingChefs.includes(name)){
-        window._editingChefs=window._editingChefs.filter(x=>x!==name);
+      if(_editingChefs.includes(name)){
+        _editingChefs=_editingChefs.filter(x=>x!==name);
       } else {
-        if(window._editingChefs.length>=2){showToast('⚠ Maximum 2 chefs de projet','warn');return;}
-        window._editingChefs.push(name);
+        if(_editingChefs.length>=2){showToast('⚠ Maximum 2 porteurs du projet','warn');return;}
+        _editingChefs.push(name);
       }
       // Refresh chips
       cont.querySelectorAll('.chef-chip').forEach((ch,i)=>{
-        ch.className='chef-chip'+(window._editingChefs.includes(ALL_MEMBERS[i])?' selected':'');
+        ch.className='chef-chip'+(_editingChefs.includes(ALL_MEMBERS[i])?' selected':'');
       });
     };
     cont.appendChild(chip);
@@ -2179,16 +2338,16 @@ function openEditChefs(p){
 function saveChefs(){
   if(!_currentProjId)return;
   const arr=getProjects(),p=arr.find(x=>x.id===_currentProjId);if(!p)return;
-  const chefs=window._editingChefs||[];
+  const chefs=[..._editingChefs];
   p.chefs=chefs;
   if(chefs.length)p.pilote=chefs[0]; // maintenir compatibilité
   writeProjects(arr);
-  logAction('Chefs de projet','«'+p.title+'» → '+chefs.join(', '));
+  logAction('Porteurs du projet','«'+p.title+'» → '+chefs.join(', '));
   document.getElementById('proj-chef-edit').style.display='none';
   renderDetailChefs(p);
   renderProjects();
   if(!fbConnected)localData.projects=arr;
-  showToast('✅ Chef'+(chefs.length>1?'s':'')+' de projet mis à jour');
+  showToast('✅ Porteur'+(chefs.length>1?'s':'')+' du projet mis à jour');
 }
 
 function cancelEditChefs(){
@@ -2200,6 +2359,336 @@ window.openEditChefs=openEditChefs;
 window.saveChefs=saveChefs;
 window.cancelEditChefs=cancelEditChefs;
 window.getChefsArr=getChefsArr;
+
+
+// ══════════════════════════════════════════════════════
+// CHAT — Firebase Realtime
+// ══════════════════════════════════════════════════════
+let _chatUnsub = null;       // unsubscribe listener chat global
+let _chatProjUnsub = null;   // unsubscribe listener chat projet
+let _presenceInterval = null;
+const CHAT_LIMIT = 120;      // messages max chargés
+
+// ── Présence ──
+function registerPresence() {
+  const me = getCurrentUser();
+  if (!me || !fbDb) return;
+  const presRef = ref(fbDb, `cdv/presence/${encodeURIComponent(me)}`);
+  const data = { name: me, ts: Date.now() };
+  set(presRef, data);
+  // Mise à jour toutes les 30s + suppression à la fermeture
+  _presenceInterval = setInterval(() => set(presRef, { name: me, ts: Date.now() }), 30000);
+  window.addEventListener('beforeunload', () => remove(presRef));
+  // Écouter les présences
+  onValue(ref(fbDb, `cdv/presence`), snap => {
+    const now = Date.now();
+    const all = Object.values(snap.val() || {});
+    const online = all.filter(p => now - (p.ts || 0) < 90000); // actif < 90s
+    const bar = document.getElementById('chat-presence-bar');
+    if (!bar) return;
+    bar.innerHTML = '<span style="font-size:11px;color:var(--softer);font-weight:600;letter-spacing:.5px">EN LIGNE ·</span>';
+    if (!online.length) {
+      bar.innerHTML += `<span style="font-size:12px;color:var(--softer);font-style:italic;margin-left:6px">Personne pour l'instant</span>`;
+    } else {
+      online.forEach(p => {
+        const dot = document.createElement('span');
+        dot.className = 'presence-dot';
+        dot.textContent = p.name;
+        bar.appendChild(dot);
+      });
+    }
+  });
+}
+
+// ── Rendu d'un message ──
+function renderChatMsg(key, msg, containerId, context) {
+  const me = getCurrentUser();
+  const mine = msg.who === me;
+  const deleted = !!msg.deleted;
+  const canDel = !deleted && (mine || isAdmin || isSuperAdmin());
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + (mine ? 'mine' : 'theirs') + (deleted ? ' deleted' : '');
+  div.dataset.key = key;
+  const time = msg.ts ? new Date(msg.ts).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}) : '';
+  const date = msg.ts ? new Date(msg.ts).toLocaleDateString('fr-FR', {day:'numeric',month:'short'}) : '';
+  div.innerHTML = `
+    <div class="chat-msg-meta">
+      ${!mine ? `<strong>${msg.who||'?'}</strong>` : ''}
+      <span>${date} ${time}</span>
+      ${canDel ? `<button class="chat-msg-del" onclick="deleteChatMsg('${key}','${context}')" title="Supprimer">🗑</button>` : ''}
+    </div>
+    <div class="chat-msg-bubble">${deleted ? '🚫 Message supprimé' : escapeHtml(msg.text||'')}</div>
+  `;
+  return div;
+}
+
+function escapeHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+}
+
+// ── Envoyer un message ──
+function sendChatMsg(context) {
+  const me = getCurrentUser();
+  if (!me) { alert('Connectez-vous pour écrire dans le chat.'); return; }
+  const inputId = 'chat-input-proj'; // global supprimé, remplacé par DM
+  const inp = document.getElementById(inputId);
+  const text = inp.value.trim();
+  if (!text) return;
+  const path = `cdv/chat/proj_${_currentProjId}`;
+  fbPush(path, { who: me, text, ts: Date.now() });
+  inp.value = '';
+  inp.style.height = 'auto';
+}
+window.sendChatMsg = sendChatMsg;
+
+// ── Supprimer un message ──
+function deleteChatMsg(key, context) {
+  if (!confirm('Supprimer ce message ?')) return;
+  const path = context === 'global'
+    ? `cdv/chat/global/${key}`
+    : `cdv/chat/proj_${_currentProjId}/${key}`;
+  fbSet(path, { deleted: true, ts: Date.now() });
+}
+window.deleteChatMsg = deleteChatMsg;
+
+// ── Écouter et afficher le chat ──
+function subscribeChatGlobal() {} // remplacé par DM
+window.subscribeChatProj = subscribeChatProj;
+
+// Désabonnement chat projet intégré dans closeModal original
+
+
+// ══════════════════════════════════════════════════════════════
+// MESSAGERIE DIRECTE (DM) — style Messenger
+// ══════════════════════════════════════════════════════════════
+let _dmWith = null;          // interlocuteur actif
+let _dmUnsub = null;         // listener Firebase conversation active
+let _onlineMembers = new Set(); // membres en ligne
+
+// ── Clé de conversation (triée pour être symétrique) ──
+function dmKey(a, b) {
+  return [encodeURIComponent(a), encodeURIComponent(b)].sort().join('__');
+}
+
+// ── Présence ──
+function initPresenceDM() {
+  const me = getCurrentUser();
+  if (!me || !fbDb) return;
+  const presRef = ref(fbDb, `cdv/presence/${encodeURIComponent(me)}`);
+  const update = () => set(presRef, { name: me, ts: Date.now() });
+  update();
+  setInterval(update, 25000);
+  window.addEventListener('beforeunload', () => remove(presRef));
+
+  onValue(ref(fbDb, 'cdv/presence'), snap => {
+    const now = Date.now();
+    _onlineMembers = new Set(
+      Object.values(snap.val() || {})
+        .filter(p => now - (p.ts || 0) < 75000)
+        .map(p => p.name)
+    );
+    // Guard : ne mettre à jour les contacts que si la page DM est visible
+    const chatPage = document.getElementById('page-chat');
+    if (chatPage && chatPage.classList.contains('active')) {
+      renderDMContacts();
+    }
+    // Guard : mettre à jour le statut de conv seulement si l'élément existe
+    if (_dmWith) {
+      const statusEl = document.getElementById('dm-conv-status');
+      if (statusEl) statusEl.textContent = _onlineMembers.has(_dmWith) ? '🟢 En ligne' : '⚫ Hors ligne';
+    }
+  });
+}
+
+// ── Initialiser la liste des contacts ──
+function renderDMContacts() {
+  const me = getCurrentUser();
+  const cont = document.getElementById('dm-contacts');
+  if (!cont || !me) return;
+  cont.innerHTML = '';
+  ALL_MEMBERS.filter(name => name !== me).forEach(name => {
+    const online = _onlineMembers.has(name);
+    const initials = name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    const div = document.createElement('div');
+    div.className = 'dm-contact' + (name === _dmWith ? ' active' : '');
+    div.dataset.name = name;
+    div.onclick = () => openDMWith(name);
+    div.innerHTML = `
+      <div class="dm-contact-avatar">
+        ${initials}
+        <div class="dm-online${online ? ' on' : ''}"></div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="dm-contact-name">${escapeHtml(name)}</div>
+      </div>
+      ${_dmUnread[name] ? `<div class="dm-unread">${_dmUnread[name]}</div>` : ''}
+    `;
+    cont.appendChild(div);
+  });
+}
+
+// ── Compteurs non-lus ──
+let _dmUnread = {};
+function trackUnread(commission) {
+  const me = getCurrentUser();
+  if (!me || !fbDb) return;
+  ALL_MEMBERS.filter(n => n !== me).forEach(other => {
+    const key = dmKey(me, other);
+    onValue(ref(fbDb, `${commission}/dm/${key}`), snap => {
+      const msgs = Object.values(snap.val() || {});
+      const unread = msgs.filter(m => m.to === me && !m.read && !m.deleted).length;
+      _dmUnread[other] = unread || 0;
+      // Badge sur nav
+      updateDMBadge();
+      renderDMContacts();
+    });
+  });
+}
+
+function updateDMBadge() {
+  const total = Object.values(_dmUnread).reduce((a, b) => a + b, 0);
+  const navBtns = document.querySelectorAll('[data-page="chat"]');
+  navBtns.forEach(btn => {
+    let badge = btn.querySelector('.nav-dm-badge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'nav-dm-badge';
+      badge.style.cssText = 'background:var(--terra);color:white;border-radius:20px;font-size:9px;font-weight:700;padding:1px 5px;margin-left:4px;vertical-align:middle';
+      btn.appendChild(badge);
+    }
+    badge.textContent = total || '';
+    badge.style.display = total ? '' : 'none';
+  });
+}
+
+// ── Ouvrir une conversation ──
+function openDMWith(name) {
+  const me = getCurrentUser();
+  if (!me) { alert('Connectez-vous pour accéder aux messages.'); return; }
+  _dmWith = name;
+
+  // UI
+  document.getElementById('dm-pane-empty').style.display = 'none';
+  const conv = document.getElementById('dm-conv');
+  conv.style.display = 'flex';
+  const initials = name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  document.getElementById('dm-conv-avatar').textContent = initials;
+  document.getElementById('dm-conv-name').textContent = name;
+  document.getElementById('dm-conv-status').textContent = _onlineMembers.has(name) ? '🟢 En ligne' : '⚫ Hors ligne';
+
+  // Marquer actif dans sidebar
+  document.querySelectorAll('.dm-contact').forEach(el => {
+    el.classList.toggle('active', el.dataset.name === name);
+  });
+
+  // Reset unread
+  _dmUnread[name] = 0;
+  updateDMBadge();
+  renderDMContacts();
+
+  // Écouter Firebase
+  if (_dmUnsub) _dmUnsub();
+  const commission = typeof COMMISSION !== 'undefined' ? COMMISSION : 'cdv';
+  const key = dmKey(me, name);
+  const msgRef = ref(fbDb, `${commission}/dm/${key}`);
+  _dmUnsub = onValue(msgRef, snap => {
+    renderDMMessages(snap.val() || {}, me, name, commission, key);
+  });
+
+  // Focus input
+  setTimeout(() => document.getElementById('dm-input')?.focus(), 100);
+}
+window.openDMWith = openDMWith;
+
+// ── Rendu messages ──
+function renderDMMessages(data, me, other, commission, key) {
+  const cont = document.getElementById('dm-messages');
+  if (!cont) return;
+  const entries = Object.entries(data).sort((a, b) => (a[1].ts || 0) - (b[1].ts || 0));
+  cont.innerHTML = '';
+
+  // Marquer comme lus
+  entries.filter(([,m]) => m.to === me && !m.read).forEach(([k]) => {
+    fbSet(`${commission}/dm/${key}/${k}/read`, true);
+  });
+
+  if (!entries.length) {
+    cont.innerHTML = '<div style="text-align:center;color:var(--softer);font-size:13px;margin-top:30px">Démarrez la conversation 👋</div>';
+    return;
+  }
+
+  let lastDate = '';
+  entries.forEach(([k, m]) => {
+    const mine = m.from === me;
+    const d = m.ts ? new Date(m.ts) : null;
+    const dateStr = d ? d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+    const timeStr = d ? d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
+
+    // Séparateur de date
+    if (dateStr && dateStr !== lastDate) {
+      const sep = document.createElement('div');
+      sep.style.cssText = 'text-align:center;font-size:11px;color:var(--softer);margin:10px 0;display:flex;align-items:center;gap:8px';
+      sep.innerHTML = `<hr style="flex:1;border:none;border-top:1px solid var(--mid)"><span>${escapeHtml(dateStr)}</span><hr style="flex:1;border:none;border-top:1px solid var(--mid)">`;
+      cont.appendChild(sep);
+      lastDate = dateStr;
+    }
+
+    const div = document.createElement('div');
+    div.className = 'dm-msg ' + (mine ? 'mine' : 'theirs');
+    if (m.deleted) {
+      div.innerHTML = `<div class="dm-msg-bubble" style="opacity:.45;font-style:italic;font-size:12px">🚫 Message supprimé</div>`;
+    } else {
+      const read = m.read && mine;
+      div.innerHTML = `
+        <div class="dm-msg-time">${escapeHtml(timeStr)}</div>
+        <div class="dm-msg-bubble" style="position:relative">
+          ${escapeHtml(m.text || '')}
+          ${mine ? `<button class="dm-msg-del" onclick="deleteDMMsg('${k}','${commission}','${key}')" title="Supprimer">🗑</button>` : ''}
+        </div>
+        ${mine ? `<div class="dm-msg-receipt">${read ? '✓✓ Lu' : '✓ Envoyé'}</div>` : ''}
+      `;
+    }
+    cont.appendChild(div);
+  });
+  cont.scrollTop = cont.scrollHeight;
+}
+
+// ── Envoyer un DM ──
+function sendDM() {
+  const me = getCurrentUser();
+  if (!me || !_dmWith) return;
+  const inp = document.getElementById('dm-input');
+  const text = (inp?.value || '').trim();
+  if (!text) return;
+  const commission = typeof COMMISSION !== 'undefined' ? COMMISSION : 'cdv';
+  const key = dmKey(me, _dmWith);
+  fbPush(`${commission}/dm/${key}`, {
+    from: me,
+    to: _dmWith,
+    text,
+    ts: Date.now(),
+    read: false
+  });
+  inp.value = '';
+  inp.style.height = 'auto';
+}
+window.sendDM = sendDM;
+
+// ── Supprimer un DM ──
+function deleteDMMsg(msgKey, commission, convKey) {
+  if (!confirm('Supprimer ce message ?')) return;
+  fbSet(`${commission}/dm/${convKey}/${msgKey}/deleted`, true);
+}
+window.deleteDMMsg = deleteDMMsg;
+
+// ── Init DM quand on arrive sur la page ──
+function initDMPage() {
+  const commission = typeof COMMISSION !== 'undefined' ? COMMISSION : 'cdv';
+  initPresenceDM();
+  trackUnread(commission);
+  renderDMContacts();
+}
+window.initDMPage = initDMPage;
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
