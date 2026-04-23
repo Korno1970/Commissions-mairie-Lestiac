@@ -1072,9 +1072,8 @@ body.is-admin .admin-inline{display:inline-flex}
       <div class="detail-tab-bar">
         <button class="detail-tab active" onclick="switchDetailTab('notes',this)">📝 Notes</button>
         <button class="detail-tab" onclick="switchDetailTab('ptasks',this)">✅ Tâches <span id="ptask-count-badge" style="font-size:10px;background:var(--terra);color:white;border-radius:20px;padding:1px 6px;margin-left:3px;display:none"></span></button>
-        <button class="detail-tab" onclick="switchDetailTab('comments',this)">💬 Commentaires</button>
+        <button class="detail-tab" onclick="switchDetailTab('comments',this)">💬 Chat projet</button>
         <button class="detail-tab" onclick="switchDetailTab('docs',this)">📎 Documents</button>
-        <button class="detail-tab" onclick="switchDetailTab('proj-chat',this)">💬 Chat</button>
       </div>
 
       <!-- Panneau Notes -->
@@ -1115,12 +1114,18 @@ body.is-admin .admin-inline{display:inline-flex}
         </div>
       </div>
 
-      <!-- Panneau Commentaires -->
+      <!-- Panneau Chat projet (remplace Commentaires) -->
       <div class="detail-panel" id="panel-comments">
-        <div id="proj-detail-comments" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;max-height:200px;overflow-y:auto"></div>
-        <div style="display:flex;gap:8px">
-          <input type="text" id="proj-comment-input" class="form-control" placeholder="Ajouter un commentaire…" onkeydown="if(event.key==='Enter')addComment()" style="flex:1">
-          <button class="btn btn-accent btn-sm" onclick="addComment()">Envoyer</button>
+        <div style="display:flex;flex-direction:column;height:320px">
+          <div id="proj-detail-comments" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 0 10px;scroll-behavior:smooth"></div>
+          <div style="display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--mid)">
+            <textarea id="proj-comment-input" class="form-control" rows="1"
+              placeholder="Message sur ce projet…"
+              style="flex:1;border-radius:22px;padding:9px 16px;resize:none;min-height:40px;max-height:100px;font-size:13px"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addComment()}"></textarea>
+            <button class="btn btn-accent" onclick="addComment()"
+              style="align-self:flex-end;width:40px;height:40px;border-radius:50%;padding:0;font-size:18px;flex-shrink:0">↗</button>
+          </div>
         </div>
       </div>
       <!-- Panneau Documents -->
@@ -1147,11 +1152,6 @@ body.is-admin .admin-inline{display:inline-flex}
           💡 <em>Pour ajouter un document : ouvrez le dossier Drive, faites « + Nouveau » et déposez votre fichier. Il sera immédiatement visible par tous les membres.</em>
         </div>
       </div>
-
-      <!-- Panneau Chat projet -->
-      <div class="detail-panel" id="panel-proj-chat">
-        <div class="proj-chat-wrap">
-          <div class="chat-messages" id="chat-messages-proj"></div>
           <div class="chat-input-bar">
             <textarea id="chat-input-proj" placeholder="Message sur ce projet…" rows="1"
               onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMsg('proj')}"></textarea>
@@ -1430,7 +1430,7 @@ document.getElementById('id-modal-bg').addEventListener('click',e=>{if(e.target=
 
 // ── MODALS ──
 function openModal(id){document.getElementById(id).classList.add('open');if(id==='m-reunion')populateReunionProjSelect();if(id==='m-proj'){_newProjChefs=[];renderChefChips('p-chefs-chips',[])}}
-function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='m-proj-detail'){if(_chatProjUnsub){_chatProjUnsub();_chatProjUnsub=null;}}}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 function closeOverlay(e,id){if(e.target===document.getElementById(id))closeModal(id)}
 window.openModal=openModal;window.closeModal=closeModal;window.closeOverlay=closeOverlay;
 
@@ -1773,18 +1773,44 @@ function openProjDetail(projId){
 window.openProjDetail=openProjDetail;
 
 function renderComments(projId,obj){
-  const cont=document.getElementById('proj-detail-comments');cont.innerHTML='';
+  const cont=document.getElementById('proj-detail-comments');
+  if(!cont)return;
+  cont.innerHTML='';
   const me=getCurrentUser();
   const entries=Object.entries(obj||{}).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
-  if(!entries.length){cont.innerHTML='<div style="font-size:12px;color:var(--soft);font-style:italic">Aucun commentaire.</div>';return}
+  if(!entries.length){
+    cont.innerHTML='<div style="text-align:center;color:var(--softer);font-size:13px;margin-top:20px">Aucun message sur ce projet.</div>';
+    return;
+  }
+  let lastDate='';
   entries.forEach(([key,x])=>{
+    const mine=x.who===me;
     const canDel=isAdmin||isSuperAdmin()||(me&&me===x.who);
-    const d=document.createElement('div');
-    d.className='comment-item';
-    d.style.cssText='display:flex;align-items:flex-start;justify-content:space-between;gap:8px';
-    d.innerHTML=`<div style="flex:1"><span class="comment-who">${x.who||'?'}</span><span class="comment-time">${x.time||''}</span><br>${x.text}</div>`
-      +(canDel?`<button onclick="deleteComment('${projId}','${key}')" title="Supprimer" style="background:none;border:none;color:var(--softer);font-size:13px;cursor:pointer;flex-shrink:0;padding:2px 4px;border-radius:4px;line-height:1" onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--softer)'">🗑</button>`:'');
-    cont.appendChild(d);
+    const d=new Date(x.ts||0);
+    const dateStr=x.ts?d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}):'';
+    const timeStr=x.ts?d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'';
+    // Séparateur de date
+    if(dateStr&&dateStr!==lastDate){
+      const sep=document.createElement('div');
+      sep.style.cssText='text-align:center;font-size:11px;color:var(--softer);margin:8px 0;display:flex;align-items:center;gap:8px';
+      sep.innerHTML=`<hr style="flex:1;border:none;border-top:1px solid var(--mid)"><span>${escapeHtml(dateStr)}</span><hr style="flex:1;border:none;border-top:1px solid var(--mid)">`;
+      cont.appendChild(sep);
+      lastDate=dateStr;
+    }
+    const wrap=document.createElement('div');
+    wrap.style.cssText=`display:flex;flex-direction:column;max-width:75%;align-self:${mine?'flex-end':'flex-start'};align-items:${mine?'flex-end':'flex-start'}`;
+    const meta=document.createElement('div');
+    meta.style.cssText='font-size:10.5px;color:var(--softer);margin-bottom:2px;display:flex;align-items:center;gap:6px';
+    meta.innerHTML=(!mine?`<strong>${escapeHtml(x.who||'?')}</strong>`:'')
+      +`<span>${escapeHtml(timeStr)}</span>`
+      +(canDel?`<button onclick="deleteComment('${projId}','${key}')" title="Supprimer" style="background:none;border:none;color:var(--softer);font-size:11px;cursor:pointer;padding:0 2px" onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--softer)'">🗑</button>`:'');
+    const bubble=document.createElement('div');
+    bubble.style.cssText=`padding:9px 14px;border-radius:${mine?'18px 18px 4px 18px':'18px 18px 18px 4px'};font-size:13px;line-height:1.5;word-break:break-word;`
+      +(mine?'background:var(--accent);color:white':'background:var(--light);border:1px solid var(--mid);color:var(--text)');
+    bubble.textContent=x.text||'';
+    wrap.appendChild(meta);
+    wrap.appendChild(bubble);
+    cont.appendChild(wrap);
   });
   cont.scrollTop=cont.scrollHeight;
 }
@@ -1802,7 +1828,7 @@ window.deleteComment=deleteComment;
 
 function addComment(){
   if(!_currentProjId)return;
-  const inp=document.getElementById('proj-comment-input');const text=inp.value.trim();if(!text)return;
+  const inp=document.getElementById('proj-comment-input');const text=(inp?.value||'').trim();if(!text)return;
   const who=getCurrentUser()||'Anonyme';
   const time=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
   const c={who,text,time,ts:Date.now()};
