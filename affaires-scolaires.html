@@ -2731,7 +2731,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 
 <script>
-const manifest={name:'Commission Affaires Scolaires — Lestiac',short_name:'Aff. Scolaires',start_url:'.',display:'standalone',background_color:'#1B2F5E',theme_color:'#1B2F5E',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%231A6B5A"/><text y=".9em" font-size="80" x="10">🌿</text></svg>',sizes:'any',type:'image/svg+xml'}]};
+const manifest={name:'Commission Affaires Scolaires — Lestiac',short_name:'Aff. Scolaires',start_url:'https://commissions-lestiac.fr/affaires-scolaires.html',display:'standalone',background_color:'#1B2F5E',theme_color:'#1B2F5E',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%231A6B5A"/><text y=".9em" font-size="80" x="10">🌿</text></svg>',sizes:'any',type:'image/svg+xml'}]};
 const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
 const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(blob);document.head.appendChild(link);
 </script>
