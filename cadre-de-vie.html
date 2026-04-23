@@ -2453,7 +2453,46 @@ window.deleteChatMsg = deleteChatMsg;
 
 // ── Écouter et afficher le chat ──
 function subscribeChatGlobal() {} // remplacé par DM
+
+// ── Chat projet — listener Firebase ──
+function subscribeChatProj(projId) {
+  if (!fbDb || !projId) return;
+  if (_chatProjUnsub) { _chatProjUnsub(); _chatProjUnsub = null; }
+  const cont = document.getElementById('chat-messages-proj');
+  if (!cont) return;
+  cont.innerHTML = '';
+  const chatRef = ref(fbDb, `cdv/chat/proj_${projId}`);
+  _chatProjUnsub = onValue(chatRef, snap => {
+    const data = snap.val() || {};
+    const entries = Object.entries(data).sort((a, b) => (a[1].ts || 0) - (b[1].ts || 0));
+    cont.innerHTML = '';
+    if (!entries.length) {
+      cont.innerHTML = `<div class="chat-empty">Aucun message sur ce projet.</div>`;
+      return;
+    }
+    entries.slice(-80).forEach(([k, m]) => {
+      const me = getCurrentUser();
+      const mine = m.who === me;
+      const deleted = !!m.deleted;
+      const canDel = !deleted && (mine || isAdmin || isSuperAdmin());
+      const time = m.ts ? new Date(m.ts).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}) : '';
+      const div = document.createElement('div');
+      div.className = 'chat-msg ' + (mine ? 'mine' : 'theirs') + (deleted ? ' deleted' : '');
+      div.innerHTML = `
+        <div class="chat-msg-meta">
+          ${!mine ? `<strong>${escapeHtml(m.who||'?')}</strong>` : ''}
+          <span>${time}</span>
+          ${canDel ? `<button class="chat-msg-del" onclick="deleteChatMsg('${k}','proj')" title="Supprimer">🗑</button>` : ''}
+        </div>
+        <div class="chat-msg-bubble">${deleted ? '🚫 Message supprimé' : escapeHtml(m.text||'')}</div>
+      `;
+      cont.appendChild(div);
+    });
+    cont.scrollTop = cont.scrollHeight;
+  });
+}
 window.subscribeChatProj = subscribeChatProj;
+
 
 // Désabonnement chat projet intégré dans closeModal original
 
