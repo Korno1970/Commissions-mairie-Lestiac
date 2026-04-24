@@ -2848,6 +2848,8 @@ function openQTDetail(i) {
   // Bouton "Valider" masqué si déjà done
   const doneBtn = document.getElementById('qtd-btn-done');
   if (doneBtn) doneBtn.style.display = t.status === 'done' ? 'none' : '';
+  const reopenBtn = document.getElementById('qtd-btn-reopen');
+  if (reopenBtn) reopenBtn.style.display = t.status === 'done' ? '' : 'none';
 
   // Reset vue édition
   document.getElementById('qtd-view').style.display = '';
@@ -2921,6 +2923,21 @@ function doneQTFromDetail() {
   renderQuickTasks();
 }
 window.doneQTFromDetail = doneQTFromDetail;
+
+function reopenQTFromDetail() {
+  if (_qtDetailIdx === null) return;
+  const arr = getQuickTasks();
+  const t = arr[_qtDetailIdx];
+  if (!t) return;
+  t.status = 'todo';
+  delete t.doneAt;
+  writeQuickTasks(arr);
+  logAction('Tâche quotidien réouverte', t.title);
+  closeModal('m-qt-detail');
+  renderQuickTasks();
+  showToast('↩ Tâche réouverte');
+}
+window.reopenQTFromDetail = reopenQTFromDetail;
 
 function deleteQTFromDetail() {
   if (_qtDetailIdx === null) return;
@@ -3013,6 +3030,7 @@ const link=document.createElement('link');link.rel='manifest';link.href=URL.crea
       <button class="btn btn-ghost admin-only" id="qtd-btn-edit" onclick="toggleQTEdit()">✏️ Modifier</button>
       <button class="btn btn-accent admin-only" id="qtd-btn-save" style="display:none" onclick="saveQTEdit()">✓ Enregistrer</button>
       <button class="btn btn-accent" id="qtd-btn-done" onclick="doneQTFromDetail()">✓ Valider</button>
+      <button class="btn btn-ghost" id="qtd-btn-reopen" style="display:none" onclick="reopenQTFromDetail()">↩ Rouvrir</button>
     </div>
   </div>
 </div>
