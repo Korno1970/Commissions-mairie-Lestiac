@@ -751,7 +751,7 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="card">
     <div class="card-head" style="display:flex;align-items:center;justify-content:space-between">
       <h2>📌 Tâches du quotidien — Aff. Scolaires</h2>
-      <button class="btn btn-ghost btn-sm admin-only" onclick="openModal('m-quick-task')" style="color:white;border-color:rgba(255,255,255,.4)">+ Assigner</button>
+      <button class="btn btn-sm admin-only" onclick="openModal('m-quick-task')" style="background:white;color:var(--navy);font-weight:700;border:none;border-radius:8px;padding:6px 14px">+ Assigner</button>
     </div>
     <div class="card-body">
       <div id="quick-tasks-list"><div class="empty-state" style="padding:16px"><div class="ei" style="font-size:24px">📋</div><p>Aucune tâche du quotidien.</p></div></div>
@@ -2036,6 +2036,7 @@ function saveQuickTask(){
   const qt={id:'qt'+Date.now(),title,assignee:document.getElementById('qt-assignee').value,deadline:document.getElementById('qt-deadline').value,note:document.getElementById('qt-note').value.trim(),status:'todo',createdBy:getCurrentUser()||'Anonyme',ts:Date.now()};
   const arr=getQuickTasks();arr.unshift(qt);writeQuickTasks(arr);
   logAction('Tâche quotidien','«'+title+'»'+(qt.assignee?' → '+qt.assignee:''));
+  if(qt.assignee)notifyQTAssignee(qt);
   closeModal('m-quick-task');
   ['qt-title','qt-deadline','qt-note'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('qt-assignee').value='';
@@ -2063,6 +2064,8 @@ function renderQuickTasks(){
     }
     const row=document.createElement('div');
     row.className='quick-task-row'+(t.status==='done'?' done-qt':'');
+    row.style.cursor='pointer';
+    row.onclick=(e)=>{if(!e.target.closest('button'))openQTDetail(i);};
     row.innerHTML=`<div style="flex:1">
       <div class="qt-title">${t.title}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
@@ -2814,6 +2817,141 @@ function playDing() {
 }
 window.playDing = playDing;
 
+
+// ── TÂCHES QUOTIDIENNES — détail, édition, mail ──
+let _qtDetailIdx = null;
+
+function openQTDetail(i) {
+  const arr = getQuickTasks();
+  const t = arr[i];
+  if (!t) return;
+  _qtDetailIdx = i;
+
+  document.getElementById('qtd-title').textContent = t.title || 'Sans titre';
+
+  const dl = t.deadline ? new Date(t.deadline).toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'}) : null;
+  document.getElementById('qtd-assignee').innerHTML = t.assignee
+    ? `<span style="font-size:13px;font-weight:600">👤 Responsable : <strong>${escapeHtml(t.assignee)}</strong></span>` : '';
+  document.getElementById('qtd-deadline').innerHTML = dl
+    ? `<span style="font-size:13px">📅 Échéance : ${escapeHtml(dl)}</span>` : '';
+  document.getElementById('qtd-note').innerHTML = t.note
+    ? `📝 ${escapeHtml(t.note)}` : '';
+  document.getElementById('qtd-status').innerHTML = t.status === 'done'
+    ? '<span style="color:#2e7d32;font-weight:700;font-size:13px">✅ Tâche validée</span>'
+    : '<span style="color:var(--softer);font-size:13px">⏳ En cours</span>';
+  document.getElementById('qtd-created').textContent = t.createdBy
+    ? `Créée par ${t.createdBy}` : '';
+
+  // Bouton "Valider" masqué si déjà done
+  const doneBtn = document.getElementById('qtd-btn-done');
+  if (doneBtn) doneBtn.style.display = t.status === 'done' ? 'none' : '';
+
+  // Reset vue édition
+  document.getElementById('qtd-view').style.display = '';
+  document.getElementById('qtd-edit').style.display = 'none';
+  document.getElementById('qtd-btn-save').style.display = 'none';
+  const editBtn = document.getElementById('qtd-btn-edit');
+  if (editBtn) editBtn.style.display = '';
+
+  openModal('m-qt-detail');
+}
+window.openQTDetail = openQTDetail;
+
+function toggleQTEdit() {
+  const arr = getQuickTasks();
+  const t = arr[_qtDetailIdx];
+  if (!t) return;
+
+  // Peupler le formulaire d'édition
+  document.getElementById('qtd-edit-title').value = t.title || '';
+  document.getElementById('qtd-edit-deadline').value = t.deadline || '';
+  document.getElementById('qtd-edit-note').value = t.note || '';
+
+  // Peupler le select membres
+  const sel = document.getElementById('qtd-edit-assignee');
+  sel.innerHTML = '<option value="">— Aucun —</option>';
+  ALL_MEMBERS.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name;
+    if (name === t.assignee) opt.selected = true;
+    sel.appendChild(opt);
+  });
+
+  document.getElementById('qtd-view').style.display = 'none';
+  document.getElementById('qtd-edit').style.display = '';
+  document.getElementById('qtd-btn-edit').style.display = 'none';
+  document.getElementById('qtd-btn-save').style.display = '';
+}
+window.toggleQTEdit = toggleQTEdit;
+
+function saveQTEdit() {
+  const arr = getQuickTasks();
+  const t = arr[_qtDetailIdx];
+  if (!t) return;
+  const newTitle = document.getElementById('qtd-edit-title').value.trim();
+  if (!newTitle) { alert('Le titre est obligatoire.'); return; }
+  const oldAssignee = t.assignee;
+  t.title = newTitle;
+  t.assignee = document.getElementById('qtd-edit-assignee').value;
+  t.deadline = document.getElementById('qtd-edit-deadline').value;
+  t.note = document.getElementById('qtd-edit-note').value.trim();
+  writeQuickTasks(arr);
+  logAction('Tâche quotidien modifiée', '«' + newTitle + '»');
+  // Notifier le nouveau responsable si changement
+  if (t.assignee && t.assignee !== oldAssignee) notifyQTAssignee(t);
+  closeModal('m-qt-detail');
+  renderQuickTasks();
+  showToast('✅ Tâche mise à jour');
+}
+window.saveQTEdit = saveQTEdit;
+
+function doneQTFromDetail() {
+  if (_qtDetailIdx === null) return;
+  const arr = getQuickTasks();
+  const t = arr[_qtDetailIdx];
+  if (!t) return;
+  t.status = 'done';
+  t.doneAt = Date.now();
+  writeQuickTasks(arr);
+  logAction('Tâche quotidien ✓', t.title);
+  closeModal('m-qt-detail');
+  renderQuickTasks();
+}
+window.doneQTFromDetail = doneQTFromDetail;
+
+function deleteQTFromDetail() {
+  if (_qtDetailIdx === null) return;
+  if (!confirm('Supprimer cette tâche ?')) return;
+  const arr = getQuickTasks();
+  arr.splice(_qtDetailIdx, 1);
+  writeQuickTasks(arr);
+  closeModal('m-qt-detail');
+  renderQuickTasks();
+}
+window.deleteQTFromDetail = deleteQTFromDetail;
+
+// ── Mail au responsable ──
+function notifyQTAssignee(qt) {
+  const ejs = getEjsConfig();
+  if (!ejs || !ejs.pubkey || !ejs.service || !ejs.template) return;
+  const to = MEMBER_EMAILS[qt.assignee];
+  if (!to) return;
+  emailjs.init(ejs.pubkey);
+  const dl = qt.deadline
+    ? new Date(qt.deadline).toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'})
+    : 'Non définie';
+  const me = getCurrentUser() || 'Un membre';
+  emailjs.send(ejs.service, ejs.template, {
+    to_email: to,
+    subject: `📌 Tâche assignée — ${qt.title}`,
+    message: `Bonjour ${qt.assignee},\n\n${me} vous a assigné la tâche suivante :\n\n📌 ${qt.title}\n📅 Échéance : ${dl}\n${qt.note ? '📝 Note : ' + qt.note + '\n' : ''}\nMerci de la traiter dans les meilleurs délais.\n\n— AGORA · Commission Affaires Scolaires · Mairie de Lestiac`,
+    from_name: 'AGORA · Affaires Scolaires',
+    date: new Date().toLocaleDateString('fr-FR')
+  }).then(() => showToast('✅ Mail envoyé à ' + qt.assignee))
+     .catch(() => showToast('⚠ Mail non envoyé — vérifiez EmailJS', 'warn'));
+}
+window.notifyQTAssignee = notifyQTAssignee;
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
   updateIdentityBtn();
@@ -2832,5 +2970,49 @@ const manifest={name:'Commission Affaires Scolaires — Lestiac',short_name:'Aff
 const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
 const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(blob);document.head.appendChild(link);
 </script>
+
+<!-- ════ MODALE DÉTAIL TÂCHE QUOTIDIENNE ════ -->
+<div class="overlay" id="m-qt-detail" onclick="closeOverlay(event,'m-qt-detail')">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-head">
+      <h3 id="qtd-title">Tâche</h3>
+      <button class="modal-close" onclick="closeModal('m-qt-detail')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Vue lecture -->
+      <div id="qtd-view">
+        <div id="qtd-assignee" style="margin-bottom:8px"></div>
+        <div id="qtd-deadline" style="margin-bottom:8px"></div>
+        <div id="qtd-note" style="margin-bottom:8px;font-size:13px;color:var(--soft)"></div>
+        <div id="qtd-status" style="margin-bottom:8px"></div>
+        <div id="qtd-created" style="font-size:11px;color:var(--softer)"></div>
+      </div>
+      <!-- Vue édition (admin/super-admin) -->
+      <div id="qtd-edit" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--mid)">
+        <div class="form-group"><label class="form-label">Titre *</label>
+          <input type="text" id="qtd-edit-title" class="form-control">
+        </div>
+        <div class="form-group"><label class="form-label">Responsable</label>
+          <select id="qtd-edit-assignee" class="form-control"></select>
+        </div>
+        <div class="form-group"><label class="form-label">Date limite</label>
+          <input type="date" id="qtd-edit-deadline" class="form-control">
+        </div>
+        <div class="form-group"><label class="form-label">Note</label>
+          <textarea id="qtd-edit-note" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot" style="flex-wrap:wrap;gap:8px">
+      <button class="btn btn-ghost-red btn-sm admin-only" id="qtd-btn-del" onclick="deleteQTFromDetail()">🗑 Supprimer</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost" onclick="closeModal('m-qt-detail')">Fermer</button>
+      <button class="btn btn-ghost admin-only" id="qtd-btn-edit" onclick="toggleQTEdit()">✏️ Modifier</button>
+      <button class="btn btn-accent admin-only" id="qtd-btn-save" style="display:none" onclick="saveQTEdit()">✓ Enregistrer</button>
+      <button class="btn btn-accent" id="qtd-btn-done" onclick="doneQTFromDetail()">✓ Valider</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
