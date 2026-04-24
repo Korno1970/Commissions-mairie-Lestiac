@@ -1151,13 +1151,6 @@ body.is-admin .admin-inline{display:inline-flex}
           💡 <em>Pour ajouter un document : ouvrez le dossier Drive, faites « + Nouveau » et déposez votre fichier. Il sera immédiatement visible par tous les membres.</em>
         </div>
       </div>
-          <div class="chat-input-bar">
-            <textarea id="chat-input-proj" placeholder="Message sur ce projet…" rows="1"
-              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMsg('proj')}"></textarea>
-            <button class="btn btn-accent chat-send-btn" onclick="sendChatMsg('proj')">↗</button>
-          </div>
-        </div>
-      </div>
 
     </div>
     <div class="modal-foot">
@@ -2602,6 +2595,10 @@ function trackUnread(commission) {
     onValue(ref(fbDb, `${commission}/dm/${key}`), snap => {
       const msgs = Object.values(snap.val() || {});
       const unread = msgs.filter(m => m.to === me && !m.read && !m.deleted).length;
+      // Ding si nouveaux messages non lus (et pas premier chargement)
+      const prev = _prevUnread[other] ?? null;
+      if (prev !== null && unread > prev) playDing();
+      _prevUnread[other] = unread;
       _dmUnread[other] = unread || 0;
       // Badge sur nav
       updateDMBadge();
@@ -2754,6 +2751,41 @@ function initDMPage() {
   renderDMContacts();
 }
 window.initDMPage = initDMPage;
+
+
+// ── NOTIFICATION SONORE DM ──
+let _audioCtx = null;
+let _prevUnread = {};  // mémoriser l'état précédent pour détecter les nouveaux msgs
+
+function getDingCtx() {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return _audioCtx;
+}
+
+function playDing() {
+  try {
+    const ctx = getDingCtx();
+    // Deux tons courts — ding discret style notification
+    const notes = [
+      { freq: 880, start: 0,    dur: 0.12, vol: 0.28 },
+      { freq: 1100, start: 0.13, dur: 0.10, vol: 0.18 },
+    ];
+    notes.forEach(({ freq, start, dur, vol }) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+      gain.gain.setValueAtTime(0, ctx.currentTime + start);
+      gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + start + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + dur + 0.02);
+    });
+  } catch(e) { /* Web Audio non disponible */ }
+}
+window.playDing = playDing;
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
