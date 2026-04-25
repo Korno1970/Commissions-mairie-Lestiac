@@ -2855,6 +2855,10 @@ function openQTDetail(i) {
   const editBtn = document.getElementById('qtd-btn-edit');
   if (editBtn) editBtn.style.display = '';
 
+  // Initialiser le lien Drive
+  const qtDriveLink=document.getElementById('qtd-drive-link');
+  if(qtDriveLink&&_driveUrl)qtDriveLink.href=_driveUrl;
+  if(document.getElementById('qtd-drive-config'))document.getElementById('qtd-drive-config').style.display='none';
   openModal('m-qt-detail');
 }
 window.openQTDetail = openQTDetail;
@@ -2969,6 +2973,42 @@ function notifyQTAssignee(qt) {
 }
 window.notifyQTAssignee = notifyQTAssignee;
 
+
+// ── Drive dans modale tâches quotidiennes ──
+// Réutilise _driveUrl déjà chargé depuis Firebase par applyDriveUrl()
+function openQTDrive(e) {
+  if (!_driveUrl) {
+    e.preventDefault();
+    if (isAdmin || isSuperAdmin()) {
+      document.getElementById('qtd-drive-config').style.display = '';
+      document.getElementById('qtd-drive-url-input').value = '';
+    } else {
+      alert('Aucun dossier Drive configuré. Demandez à un administrateur.');
+    }
+  }
+}
+function saveQTDriveUrl() {
+  const url = document.getElementById('qtd-drive-url-input').value.trim();
+  if (!url) return;
+  // Même chemin Firebase que le panneau Documents des projets
+  fbSet(COMMISSION+'/config/driveUrl', url);
+  applyDriveUrl(url);
+  document.getElementById('qtd-drive-config').style.display = 'none';
+  document.getElementById('qtd-drive-link').href = url;
+  window.open(url, '_blank');
+  logAction('Drive configuré (tâches)', url);
+  showToast('✅ Lien Drive enregistré pour tous les membres');
+}
+function copyQTDriveLink() {
+  if (!_driveUrl) { alert('Aucun lien Drive configuré.'); return; }
+  navigator.clipboard?.writeText(_driveUrl)
+    .then(() => showToast('✅ Lien copié !'))
+    .catch(() => prompt('Copier ce lien :', _driveUrl));
+}
+window.openQTDrive = openQTDrive;
+window.saveQTDriveUrl = saveQTDriveUrl;
+window.copyQTDriveLink = copyQTDriveLink;
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
   updateIdentityBtn();
@@ -3017,6 +3057,28 @@ const link=document.createElement('link');link.rel='manifest';link.href=URL.crea
         </div>
         <div class="form-group"><label class="form-label">Note</label>
           <textarea id="qtd-edit-note" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <!-- Documents Drive -->
+      <div id="qtd-drive" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--mid)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:8px">📁 Documents liés</div>
+        <div style="font-size:12px;color:var(--soft);margin-bottom:10px;line-height:1.5">
+          Accédez au dossier Drive de la commission pour déposer ou consulter les documents liés à cette tâche.
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+          <a id="qtd-drive-link" href="#" target="_blank" class="btn btn-navy btn-sm" onclick="openQTDrive(event)">
+            📂 Ouvrir le dossier Drive
+          </a>
+          <button class="btn btn-ghost btn-sm" onclick="copyQTDriveLink()">🔗 Copier le lien</button>
+        </div>
+        <div id="qtd-drive-config" style="display:none;margin-top:10px">
+          <div class="form-group">
+            <label class="form-label">URL du dossier Google Drive</label>
+            <input type="text" id="qtd-drive-url-input" class="form-control" placeholder="https://drive.google.com/drive/folders/...">
+            <div style="font-size:11px;color:var(--softer);margin-top:4px">Admin uniquement · URL sauvegardée pour tous via Firebase</div>
+          </div>
+          <button class="btn btn-accent btn-sm" onclick="saveQTDriveUrl()">Enregistrer</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('qtd-drive-config').style.display='none'">Annuler</button>
         </div>
       </div>
     </div>
