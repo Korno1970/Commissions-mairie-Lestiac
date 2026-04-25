@@ -2662,7 +2662,7 @@ function trackUnread(commission) {
   if (!me || !fbDb) return;
   ALL_MEMBERS.filter(n => n !== me).forEach(other => {
     const key = dmKey(me, other);
-    onValue(ref(fbDb, `${commission}/dm/${key}`), snap => {
+    onValue(ref(fbDb, `dm/${key}`), snap => {
       const msgs = Object.values(snap.val() || {});
       const unread = msgs.filter(m => m.to === me && !m.read && !m.deleted).length;
       // Ding si nouveaux messages non lus (et pas premier chargement)
@@ -2722,7 +2722,7 @@ function openDMWith(name) {
   if (_dmUnsub) _dmUnsub();
   const commission = typeof COMMISSION !== 'undefined' ? COMMISSION : 'cdv';
   const key = dmKey(me, name);
-  const msgRef = ref(fbDb, `${commission}/dm/${key}`);
+  const msgRef = ref(fbDb, `dm/${key}`);
   _dmUnsub = onValue(msgRef, snap => {
     renderDMMessages(snap.val() || {}, me, name, commission, key);
   });
@@ -2741,7 +2741,7 @@ function renderDMMessages(data, me, other, commission, key) {
 
   // Marquer comme lus
   entries.filter(([,m]) => m.to === me && !m.read).forEach(([k]) => {
-    fbSet(`${commission}/dm/${key}/${k}/read`, true);
+    fbSet(`dm/${key}/${k}/read`, true);
   });
 
   if (!entries.length) {
@@ -2794,7 +2794,7 @@ function sendDM() {
   if (!text) return;
   const commission = typeof COMMISSION !== 'undefined' ? COMMISSION : 'cdv';
   const key = dmKey(me, _dmWith);
-  fbPush(`${commission}/dm/${key}`, {
+  fbPush(`dm/${key}`, {
     from: me,
     to: _dmWith,
     text,
@@ -2809,7 +2809,7 @@ window.sendDM = sendDM;
 // ── Supprimer un DM ──
 function deleteDMMsg(msgKey, commission, convKey) {
   if (!confirm('Supprimer ce message ?')) return;
-  fbSet(`${commission}/dm/${convKey}/${msgKey}/deleted`, true);
+  fbSet(`dm/${convKey}/${msgKey}/deleted`, true);
 }
 window.deleteDMMsg = deleteDMMsg;
 
