@@ -592,6 +592,7 @@ body.is-admin .admin-inline{display:inline-flex}
 .dm-contact-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;position:relative}
 .dm-contact-avatar .dm-online{position:absolute;bottom:1px;right:1px;width:9px;height:9px;border-radius:50%;background:#9ca3af;border:2px solid var(--light)}
 .dm-contact-avatar .dm-online.on{background:#22c55e}
+.dm-contact-avatar .dm-online.off{background:#ef4444}
 .dm-contact-name{font-size:13px;font-weight:600;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dm-contact-preview{font-size:11px;color:var(--softer);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
 .dm-unread{background:var(--accent);color:white;border-radius:20px;font-size:10px;font-weight:700;padding:1px 6px;min-width:18px;text-align:center}
@@ -783,6 +784,13 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- ▓ PROJETS ▓ -->
 <div class="page" id="page-projets">
   <div class="ph"><h1>Projets</h1><p>Court, moyen et long terme</p></div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;padding:0 4px" id="axe-filter-bar">
+      <button class="tab active" onclick="filterProjAxe('tous',this)">Tous</button>
+      <button class="tab" onclick="filterProjAxe('hab',this)">🎉 Habitants & Vie locale</button>
+      <button class="tab" onclick="filterProjAxe('rh',this)">🏛 Admin & RH</button>
+      <button class="tab" onclick="filterProjAxe('com',this)">📢 Communication</button>
+      <button class="tab" onclick="filterProjAxe('soc',this)">🤝 Social & Solidarité</button>
+  </div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
     <div class="tab-bar" style="border:none;margin:0">
       <button class="tab active" onclick="filterProj('tous',this)">Tous</button>
@@ -1230,6 +1238,7 @@ let _currentProjId=null, _notesTimer=null, _pendingJoin=null;
 let localData={projects:null,tasks:null,reunions:null,log:[],cr:[],budget:null,quickTasks:null};
 let _ptAssignee=null; // assigné sélectionné dans le form tâche projet
 let _newProjChefs=[]; // porteurs sélectionnés dans le formulaire ajout projet
+let _filterAxe='tous'; // filtre sous-commission actif
 let _editingChefs=[]; // porteurs en cours d'édition dans la modale détail
 
 
@@ -1301,6 +1310,8 @@ function initFirebase(config){
       const rawQt=safeValues(data.quickTasks);
       localData.quickTasks=rawQt?rawQt.filter(Boolean).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
       renderAll();
+      // Démarrer le suivi des messages non lus dès la connexion
+      if(typeof trackUnread==='function')trackUnread('admin');
       // Si modal projet ouvert, rafraîchir tâches
       if(_currentProjId){
         const p=getProjects().find(x=>x.id===_currentProjId);
@@ -1472,7 +1483,7 @@ function renderProjects(){
   let projs=getProjects();
   if(!projs){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
   if(!Array.isArray(projs))projs=Object.values(projs);
-  projs=projs.filter(p=>p&&p.id);
+  projs=projs.filter(p=>p&&p.id&&(_filterAxe==='tous'||!p.axe||p.axe===_filterAxe));
   if(!projs.length){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
   const hL={court:'Court terme · 2026',moyen:'Moyen terme · 2027',long:'Long terme · 2028+'};
   const hB={court:'h-court',moyen:'h-moyen',long:'h-long'};
@@ -2566,24 +2577,42 @@ function initPresenceDM() {
   const me = getCurrentUser();
   if (!me || !fbDb) return;
   const presRef = ref(fbDb, `admin/presence/${encodeURIComponent(me)}`);
-  const update = () => set(presRef, { name: me, ts: Date.now() });
+  // Écriture aussi dans le chemin partagé inter-commissions
+  const sharedRef = ref(fbDb, `presence/${encodeURIComponent(me)}`);
+  const update = () => {
+    set(presRef, { name: me, ts: Date.now(), commission: 'admin' });
+    set(sharedRef, { name: me, ts: Date.now(), commission: 'admin' });
+  };
   update();
   setInterval(update, 25000);
-  window.addEventListener('beforeunload', () => remove(presRef));
+  window.addEventListener('beforeunload', () => {
+    remove(presRef);
+    remove(sharedRef);
+  });
 
-  onValue(ref(fbDb, 'admin/presence'), snap => {
+  // Présence partagée inter-commissions
+  onValue(ref(fbDb, 'presence'), snap => {
     const now = Date.now();
     _onlineMembers = new Set(
       Object.values(snap.val() || {})
         .filter(p => now - (p.ts || 0) < 75000)
         .map(p => p.name)
     );
-    // Guard : ne mettre à jour les contacts que si la page DM est visible
     const chatPage = document.getElementById('page-chat');
-    if (chatPage && chatPage.classList.contains('active')) {
-      renderDMContacts();
+    if (chatPage && chatPage.classList.contains('active')) renderDMContacts();
+    if (_dmWith) {
+      const statusEl = document.getElementById('dm-conv-status');
+      if (statusEl) statusEl.textContent = _onlineMembers.has(_dmWith) ? '🟢 En ligne' : '⚫ Hors ligne';
     }
-    // Guard : mettre à jour le statut de conv seulement si l'élément existe
+  });
+  // Présence locale commission (complément)
+  onValue(ref(fbDb, 'admin/presence'), snap => {
+    const now = Date.now();
+    Object.values(snap.val() || {})
+      .filter(p => now - (p.ts || 0) < 75000)
+      .forEach(p => _onlineMembers.add(p.name));
+    const chatPage = document.getElementById('page-chat');
+    if (chatPage && chatPage.classList.contains('active')) renderDMContacts();
     if (_dmWith) {
       const statusEl = document.getElementById('dm-conv-status');
       if (statusEl) statusEl.textContent = _onlineMembers.has(_dmWith) ? '🟢 En ligne' : '⚫ Hors ligne';
@@ -2597,7 +2626,14 @@ function renderDMContacts() {
   const cont = document.getElementById('dm-contacts');
   if (!cont || !me) return;
   cont.innerHTML = '';
-  ALL_MEMBERS.filter(name => name !== me).forEach(name => {
+  // Trier : en ligne d'abord, puis hors ligne alphabétique
+  const members = ALL_MEMBERS.filter(name => name !== me);
+  members.sort((a, b) => {
+    const aOn = _onlineMembers.has(a), bOn = _onlineMembers.has(b);
+    if (aOn !== bOn) return aOn ? -1 : 1;
+    return a.localeCompare(b, 'fr');
+  });
+  members.forEach(name => {
     const online = _onlineMembers.has(name);
     const initials = name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
     const div = document.createElement('div');
@@ -2607,10 +2643,11 @@ function renderDMContacts() {
     div.innerHTML = `
       <div class="dm-contact-avatar">
         ${initials}
-        <div class="dm-online${online ? ' on' : ''}"></div>
+        <div class="dm-online${online ? ' on' : ' off'}"></div>
       </div>
       <div style="flex:1;min-width:0">
         <div class="dm-contact-name">${escapeHtml(name)}</div>
+        <div style="font-size:10px;color:${online ? '#22c55e' : '#9ca3af'};font-weight:600">${online ? 'En ligne' : 'Hors ligne'}</div>
       </div>
       ${_dmUnread[name] ? `<div class="dm-unread">${_dmUnread[name]}</div>` : ''}
     `;
@@ -2780,7 +2817,7 @@ window.deleteDMMsg = deleteDMMsg;
 function initDMPage() {
   const commission = typeof COMMISSION !== 'undefined' ? COMMISSION : 'cdv';
   initPresenceDM();
-  trackUnread(commission);
+  // trackUnread déjà démarré au chargement Firebase
   renderDMContacts();
 }
 window.initDMPage = initDMPage;
@@ -3011,6 +3048,15 @@ function copyQTDriveLink() {
 window.openQTDrive = openQTDrive;
 window.saveQTDriveUrl = saveQTDriveUrl;
 window.copyQTDriveLink = copyQTDriveLink;
+
+
+function filterProjAxe(axe, btn) {
+  _filterAxe = axe;
+  document.querySelectorAll('#axe-filter-bar .tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderProjects();
+}
+window.filterProjAxe = filterProjAxe;
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
