@@ -303,7 +303,7 @@ button{font-family:'Figtree',sans-serif;cursor:pointer}
 /* Pilote */
 .proj-pilote{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;position:relative;z-index:1}
 .proj-pilote span{background:var(--accent-p);padding:3px 9px;border-radius:20px}
-/* Porteur du projet chips */
+/* En charge du projet chips */
 .chef-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:700;background:var(--navy);color:white;border:2px solid var(--navy);cursor:pointer;transition:all .15s;user-select:none}
 .chef-chip:hover{opacity:.85}
 .chef-chip.selected{background:var(--terra);border-color:var(--terra)}
@@ -1008,7 +1008,7 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="modal-body">
     <div class="form-group"><label class="form-label">Titre</label><input type="text" id="p-title" class="form-control" placeholder="Intitulé"></div>
     <div class="form-group">
-      <label class="form-label">Porteur(s) du projet <span style="font-weight:400;color:var(--softer)">(1 ou 2 max)</span></label>
+      <label class="form-label">En charge du projet <span style="font-weight:400;color:var(--softer)">(1 ou 2 max)</span></label>
       <div id="p-chefs-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px"></div>
       <input type="hidden" id="p-pilote" value="">
     </div>
@@ -1057,10 +1057,10 @@ body.is-admin .admin-inline{display:inline-flex}
       <!-- Méta projet -->
       <div id="proj-detail-meta" style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"></div>
       <div id="proj-detail-pilote" style="margin-bottom:10px">
-        <!-- Porteurs du projet — affichage + édition super-admin -->
+        <!-- En charge du projet — affichage + édition super-admin -->
         <div id="proj-chef-display" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"></div>
         <div id="proj-chef-edit" style="display:none;margin-top:8px;padding:10px;background:var(--light);border-radius:var(--r);border:1px dashed var(--mid)">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:6px">Choisir 1 ou 2 porteurs du projet</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:6px">Choisir 1 ou 2 en charge du projet</div>
           <div id="proj-chef-edit-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px"></div>
           <div style="display:flex;gap:6px">
             <button class="btn btn-accent btn-sm" onclick="saveChefs()">✓ Valider</button>
@@ -1068,7 +1068,44 @@ body.is-admin .admin-inline{display:inline-flex}
           </div>
         </div>
       </div>
-      <div id="proj-detail-desc" style="font-size:13.5px;color:var(--soft);line-height:1.6;margin-bottom:10px"></div>
+      <!-- ── Édition inline du projet (admin) ── -->
+      <div id="proj-inline-edit" style="display:none;background:var(--light);border-radius:var(--r);padding:14px;margin-bottom:14px;border:1px dashed var(--accent)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:10px">✏️ Modifier le projet</div>
+        <div class="form-group"><label class="form-label">Description</label>
+          <textarea id="pie-desc" class="form-control" rows="3" style="resize:vertical"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-group"><label class="form-label">Statut</label>
+            <select id="pie-status" class="form-control">
+              <option value="s-lancer">À lancer</option>
+              <option value="s-cours">En cours</option>
+              <option value="s-attente">En attente</option>
+              <option value="s-fait">Réalisé</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Horizon</label>
+            <select id="pie-horizon" class="form-control">
+              <option value="court">Court terme</option>
+              <option value="moyen">Moyen terme</option>
+              <option value="long">Long terme</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Sous-commission</label>
+          <select id="pie-axe" class="form-control"></select>
+        </div>
+        <div class="form-group"><label class="form-label">Budget</label>
+          <input type="text" id="pie-budget" class="form-control" placeholder="Ex : 5 000 €">
+        </div>
+        <div class="form-group"><label class="form-label">Notes budgétaires</label>
+          <input type="text" id="pie-subs" class="form-control" placeholder="Ex : Subvention CDC">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn btn-accent" onclick="saveProjInlineEdit()">✓ Enregistrer</button>
+          <button class="btn btn-ghost" onclick="closeProjInlineEdit()">Annuler</button>
+        </div>
+      </div>
+      <div id="proj-detail-desc" style="font-size:13.5px;color:var(--soft);line-height:1.6;margin-bottom:10px;cursor:pointer" title="Cliquer pour modifier (admin)"></div>
       <div style="font-size:12px;color:var(--soft);margin-bottom:12px" id="proj-detail-budget"></div>
       <!-- Participants -->
       <div style="margin-bottom:14px">
@@ -1165,6 +1202,7 @@ body.is-admin .admin-inline{display:inline-flex}
     <div class="modal-foot">
       <div style="font-size:11px;color:var(--soft);flex:1" id="proj-detail-source"></div>
       <button class="btn btn-ghost" onclick="closeModal('m-proj-detail')">Fermer</button>
+      <button class="btn btn-ghost admin-only" id="proj-edit-btn" onclick="openProjInlineEdit()">✏️ Modifier</button>
       <button class="btn btn-ghost-red btn-sm admin-only" onclick="deleteProjFromDetail()">🗑 Supprimer</button>
     </div>
   </div>
@@ -1735,7 +1773,7 @@ function openProjDetail(projId){
     `<span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
      <span class="status-pill ${p.status}">${sL[p.status]}</span>
      <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>`;
-  // Porteurs du projet
+  // En charge du projet
   renderDetailChefs(p);
   document.getElementById('proj-detail-desc').textContent=p.desc||'';
   document.getElementById('proj-detail-budget').innerHTML=`💶 ${escapeHtml(p.budget||'')}${p.subs&&p.subs!=='—'?' · '+escapeHtml(p.subs):''}`;
@@ -1772,6 +1810,11 @@ function openProjDetail(projId){
   const renameBtn=document.getElementById('btn-rename-proj');
   if(renameBtn)renameBtn.style.display=(isSuperAdmin()||isAdmin)?'':'none';
   document.getElementById('rename-proj-bar').style.display='none';
+  // Reset édition inline
+  const inlineEdit=document.getElementById('proj-inline-edit');
+  if(inlineEdit)inlineEdit.style.display='none';
+  const editBtn=document.getElementById('proj-edit-btn');
+  if(editBtn)editBtn.style.display='';
   openModal('m-proj-detail');
 }
 window.openProjDetail=openProjDetail;
@@ -2329,7 +2372,7 @@ function renderChefChips(containerId, selected){
       if(cur.includes(name)){
         _newProjChefs=cur.filter(x=>x!==name);
       } else {
-        if(cur.length>=2){showToast('⚠ Maximum 2 porteurs du projet','warn');return;}
+        if(cur.length>=2){showToast('⚠ Maximum 2 en charge du projet','warn');return;}
         _newProjChefs=[...cur,name];
       }
       renderChefChips(containerId,_newProjChefs);
@@ -2348,7 +2391,7 @@ function renderDetailChefs(p){
   if(chefs.length){
     const label=document.createElement('span');
     label.style.cssText='font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--softer);margin-right:2px';
-    label.textContent='👑 Porteur'+(chefs.length>1?'s':'')+' :';
+    label.textContent='🎯 En charge'+(chefs.length>1?'s':'')+' :';
     display.appendChild(label);
     chefs.forEach(c=>{
       const badge=document.createElement('span');
@@ -2358,7 +2401,7 @@ function renderDetailChefs(p){
   } else {
     const empty=document.createElement('span');
     empty.style.cssText='font-size:12px;color:var(--softer);font-style:italic';
-    empty.textContent='Aucun porteur du projet défini';
+    empty.textContent='Aucun en charge du projet défini';
     display.appendChild(empty);
   }
   if(canEdit){
@@ -2385,7 +2428,7 @@ function openEditChefs(p){
       if(_editingChefs.includes(name)){
         _editingChefs=_editingChefs.filter(x=>x!==name);
       } else {
-        if(_editingChefs.length>=2){showToast('⚠ Maximum 2 porteurs du projet','warn');return;}
+        if(_editingChefs.length>=2){showToast('⚠ Maximum 2 en charge du projet','warn');return;}
         _editingChefs.push(name);
       }
       // Refresh chips
@@ -2405,12 +2448,12 @@ function saveChefs(){
   p.chefs=chefs;
   if(chefs.length)p.pilote=chefs[0]; // maintenir compatibilité
   writeProjects(arr);
-  logAction('Porteurs du projet','«'+p.title+'» → '+chefs.join(', '));
+  logAction('En charge du projet','«'+p.title+'» → '+chefs.join(', '));
   document.getElementById('proj-chef-edit').style.display='none';
   renderDetailChefs(p);
   renderProjects();
   if(!fbConnected)localData.projects=arr;
-  showToast('✅ Porteur'+(chefs.length>1?'s':'')+' du projet mis à jour');
+  showToast('✅ En charge'+(chefs.length>1?'s':'')+' du projet mis à jour');
 }
 
 function cancelEditChefs(){
@@ -3057,6 +3100,68 @@ function filterProjAxe(axe, btn) {
   renderProjects();
 }
 window.filterProjAxe = filterProjAxe;
+
+
+// ── ÉDITION INLINE PROJET ──
+function openProjInlineEdit() {
+  const p = getProjects().find(x => x.id === _currentProjId);
+  if (!p) return;
+
+  // Peupler les champs
+  document.getElementById('pie-desc').value    = p.desc    || '';
+  document.getElementById('pie-status').value  = p.status  || 's-lancer';
+  document.getElementById('pie-horizon').value = p.horizon || 'court';
+  document.getElementById('pie-budget').value  = p.budget  || '';
+  document.getElementById('pie-subs').value    = p.subs    || '';
+
+  // Peupler le select axe
+  const sel = document.getElementById('pie-axe');
+  sel.innerHTML = '<option value="">— Aucune —</option>';
+        sel.innerHTML += `<option value='hab'>Habitants & Vie locale</option>`;
+        sel.innerHTML += `<option value='rh'>Admin & RH</option>`;
+        sel.innerHTML += `<option value='com'>Communication</option>`;
+        sel.innerHTML += `<option value='soc'>Social & Solidarité</option>`;
+
+  sel.value = p.axe || '';
+
+  // Afficher le panneau édition
+  document.getElementById('proj-inline-edit').style.display = '';
+  document.getElementById('proj-edit-btn').style.display    = 'none';
+  document.getElementById('pie-desc').focus();
+}
+window.openProjInlineEdit = openProjInlineEdit;
+
+function closeProjInlineEdit() {
+  document.getElementById('proj-inline-edit').style.display = 'none';
+  document.getElementById('proj-edit-btn').style.display    = '';
+}
+window.closeProjInlineEdit = closeProjInlineEdit;
+
+function saveProjInlineEdit() {
+  const arr = getProjects();
+  const p   = arr.find(x => x.id === _currentProjId);
+  if (!p) return;
+
+  p.desc    = document.getElementById('pie-desc').value.trim();
+  p.status  = document.getElementById('pie-status').value;
+  p.horizon = document.getElementById('pie-horizon').value;
+  p.axe     = document.getElementById('pie-axe').value;
+  p.budget  = document.getElementById('pie-budget').value.trim();
+  p.subs    = document.getElementById('pie-subs').value.trim();
+
+  writeProjects(arr);
+  logAction('Projet modifié', '«' + p.title + '»');
+
+  // Mettre à jour l'affichage sans fermer la modale
+  document.getElementById('proj-detail-desc').textContent = p.desc;
+  document.getElementById('proj-detail-budget').innerHTML =
+    `💶 ${escapeHtml(p.budget)}${p.subs && p.subs !== '—' ? ' · ' + escapeHtml(p.subs) : ''}`;
+
+  closeProjInlineEdit();
+  renderProjects(); // Mettre à jour la carte dans la grille
+  showToast('✅ Projet mis à jour');
+}
+window.saveProjInlineEdit = saveProjInlineEdit;
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
