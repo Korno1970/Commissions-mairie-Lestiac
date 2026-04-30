@@ -752,7 +752,12 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="card">
     <div class="card-head" style="display:flex;align-items:center;justify-content:space-between">
       <h2>📌 Tâches du quotidien — Admin Générale</h2>
-      <button class="btn btn-sm admin-only" onclick="openModal('m-quick-task')" style="background:white;color:var(--navy);font-weight:700;border:none;border-radius:8px;padding:6px 14px">+ Assigner</button>
+      <a id="bord-drive-link" href="#" target="_blank"
+          onclick="openBordDrive(event)"
+          style="background:rgba(255,255,255,.15);color:white;font-weight:700;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 14px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:5px">
+          📂 Drive
+        </a>
+        <button class="btn btn-sm admin-only" onclick="openModal('m-quick-task')" style="background:white;color:var(--navy);font-weight:700;border:none;border-radius:8px;padding:6px 14px">+ Assigner</button>
     </div>
     <div class="card-body">
       <div id="quick-tasks-list"><div class="empty-state" style="padding:16px"><div class="ei" style="font-size:24px">📋</div><p>Aucune tâche du quotidien.</p></div></div>
@@ -2267,24 +2272,30 @@ function notifySophie(projTitle) {
 
 // ── GOOGLE DRIVE ──
 // Drive URL stockée dans Firebase — partagée entre tous les membres
-let _driveUrl = '';
+let _driveUrl = localStorage.getItem('lestiac_drive_admin') || '';
 function applyDriveUrl(url) {
-  _driveUrl = url;
-  const link = document.getElementById('drive-folder-link');
-  if (link) link.href = url || '#';
+  _driveUrl = url || '';
+  // Mettre à jour tous les liens Drive dans la page
+  ['drive-folder-link', 'qtd-drive-link', 'bord-drive-link'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.href = _driveUrl || '#';
+  });
+  // Stocker aussi en localStorage comme cache de session
+  if (_driveUrl) localStorage.setItem('lestiac_drive_' + COMMISSION, _driveUrl);
 }
 function getDriveUrl() { return _driveUrl; }
 function openDriveFolder(e) {
-  if (!_driveUrl) {
-    e.preventDefault();
-    if (isAdmin || isSuperAdmin()) {
-      document.getElementById('drive-folder-config').style.display = '';
-      document.getElementById('drive-url-input').value = '';
-    } else {
-      alert('Aucun dossier Drive configuré. Demandez à un administrateur de le configurer dans Paramètres.');
-    }
+  if (_driveUrl) {
+    // URL connue — ouvrir directement (ne pas bloquer le lien)
+    return;
   }
-  // sinon le lien href est déjà défini, le navigateur ouvre normalement
+  e.preventDefault();
+  if (isAdmin || isSuperAdmin()) {
+    document.getElementById('drive-folder-config').style.display = '';
+    document.getElementById('drive-url-input').value = '';
+  } else {
+    showToast('⚠ Aucun dossier Drive configuré. Demandez à un administrateur.', 'warn');
+  }
 }
 function saveDriveUrl() {
   const url = document.getElementById('drive-url-input').value.trim();
@@ -3060,14 +3071,16 @@ window.notifyQTAssignee = notifyQTAssignee;
 // ── Drive dans modale tâches quotidiennes ──
 // Réutilise _driveUrl déjà chargé depuis Firebase par applyDriveUrl()
 function openQTDrive(e) {
-  if (!_driveUrl) {
-    e.preventDefault();
-    if (isAdmin || isSuperAdmin()) {
-      document.getElementById('qtd-drive-config').style.display = '';
-      document.getElementById('qtd-drive-url-input').value = '';
-    } else {
-      alert('Aucun dossier Drive configuré. Demandez à un administrateur.');
-    }
+  if (_driveUrl) {
+    // URL connue — ouvrir directement
+    return;
+  }
+  e.preventDefault();
+  if (isAdmin || isSuperAdmin()) {
+    document.getElementById('qtd-drive-config').style.display = '';
+    document.getElementById('qtd-drive-url-input').value = '';
+  } else {
+    showToast('⚠ Aucun dossier Drive configuré. Demandez à un administrateur.', 'warn');
   }
 }
 function saveQTDriveUrl() {
@@ -3163,8 +3176,19 @@ function saveProjInlineEdit() {
 }
 window.saveProjInlineEdit = saveProjInlineEdit;
 
+
+// ── Drive bouton landing page ──
+function openBordDrive(e) {
+  if (_driveUrl) return; // laisser le lien s'ouvrir normalement
+  e.preventDefault();
+  showToast('⚠ Dossier Drive non configuré. Ouvrez un projet → Documents pour le définir.', 'warn');
+}
+window.openBordDrive = openBordDrive;
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
+  // Init Drive depuis cache localStorage
+  if(_driveUrl) applyDriveUrl(_driveUrl);
   updateIdentityBtn();
   const cfg=getFbConfig()||FB_PRESET;
   initFirebase(cfg);
