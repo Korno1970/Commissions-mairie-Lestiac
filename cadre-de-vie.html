@@ -752,10 +752,13 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="card">
     <div class="card-head" style="display:flex;align-items:center;justify-content:space-between">
       <h2>📌 Tâches du quotidien</h2>
-      <a id="bord-drive-link" href="#" target="_blank"
-          onclick="openBordDrive(event)"
+      <a id="bord-drive-link" href="https://drive.google.com/drive/u/0/folders/1lDN-UMwFqsMlyirWKXE-5NjDjCKzvi2m" target="_blank"
           style="background:rgba(255,255,255,.15);color:white;font-weight:700;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 14px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:5px">
           📂 Drive
+        </a>
+        <a href="https://docs.google.com/spreadsheets/d/1neybqqBthe-sFcKhnfbJNoTf9VSaEl1w/edit?gid=1641869499#gid=1641869499" target="_blank"
+          style="background:rgba(255,255,255,.15);color:white;font-weight:700;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 14px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:5px">
+          📊 Dossiers courants
         </a>
         <button class="btn btn-sm admin-only" onclick="openModal('m-quick-task')" style="background:white;color:var(--navy);font-weight:700;border:none;border-radius:8px;padding:6px 14px">+ Assigner</button>
     </div>
@@ -2241,7 +2244,8 @@ function notifySophie(projTitle) {
 
 // ── GOOGLE DRIVE ──
 // Drive URL stockée dans Firebase — partagée entre tous les membres
-let _driveUrl = localStorage.getItem('lestiac_drive_cdv') || '';
+let _driveUrl = 'https://drive.google.com/drive/u/0/folders/1lDN-UMwFqsMlyirWKXE-5NjDjCKzvi2m'; // URL Drive partagée — hardcodée
+localStorage.setItem('lestiac_drive_cdv', _driveUrl);
 function applyDriveUrl(url) {
   _driveUrl = url || '';
   // Mettre à jour tous les liens Drive dans la page
