@@ -1046,7 +1046,7 @@ body.is-admin .admin-inline{display:inline-flex}
 
 <!-- ═══════ MODAL DÉTAIL PROJET (avec onglets) ═══════ -->
 <div class="overlay" id="m-proj-detail" onclick="closeOverlay(event,'m-proj-detail')">
-  <div class="modal" style="max-width:820px">
+  <div class="modal" style="max-width:960px;max-height:96vh">
     <div class="modal-head" id="proj-detail-head" style="background:var(--accent)">
       <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
         <h3 id="proj-detail-title" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Projet</h3>
@@ -1130,7 +1130,7 @@ body.is-admin .admin-inline{display:inline-flex}
       <!-- Panneau Notes -->
       <div class="detail-panel active" id="panel-notes">
         <div id="proj-notes-author" class="note-author-line" style="display:none"></div>
-        <textarea id="proj-detail-notes" class="form-control" rows="5" placeholder="Notes, liens, informations partagées…" oninput="autoSaveNotes()"></textarea>
+        <textarea id="proj-detail-notes" class="form-control" rows="12" placeholder="Notes, liens, informations partagées…" style="min-height:180px;resize:vertical" oninput="autoSaveNotes()"></textarea>
         <div style="font-size:11px;color:var(--soft);margin-top:4px" id="proj-notes-status"></div>
       </div>
 
@@ -1209,6 +1209,7 @@ body.is-admin .admin-inline{display:inline-flex}
       <div style="font-size:11px;color:var(--soft);flex:1" id="proj-detail-source"></div>
       <button class="btn btn-ghost" onclick="closeModal('m-proj-detail')">Fermer</button>
       <button class="btn btn-ghost admin-only" id="proj-edit-btn" onclick="openProjInlineEdit()">✏️ Modifier</button>
+      <button class="btn btn-sophie" onclick="solliciterSophieProjet()" title="Notifier Sophie pour ce projet" style="background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px">📣 Sophie</button>
       <button class="btn btn-ghost-red btn-sm admin-only" onclick="deleteProjFromDetail()">🗑 Supprimer</button>
     </div>
   </div>
@@ -2226,20 +2227,25 @@ function showToast(msg, type='ok') {
 window.showToast = showToast;
 
 // ── SOLLICITER SOPHIE ──
-function notifySophie(projTitle) {
+function notifySophie(projTitle, commissionLabel) {
   const ejs = getEjsConfig();
-  if (!ejs || !ejs.pubkey || !ejs.service || !ejs.template) return;
+  if (!ejs || !ejs.pubkey || !ejs.service || !ejs.template) {
+    showToast('⚠ EmailJS non configuré — notification non envoyée', 'warn');
+    return;
+  }
   emailjs.init(ejs.pubkey);
   const sophieEmail = MEMBER_EMAILS['Sophie'];
   if (!sophieEmail) return;
   const me = getCurrentUser() || 'Un membre';
+  const comm = commissionLabel || 'Cadre de Vie';
   emailjs.send(ejs.service, ejs.template, {
     to_email: sophieEmail,
-    subject: `📣 Projet à communiquer — ${projTitle}`,
-    message: `Bonjour Sophie,\n\n${me} te sollicite pour préparer une communication sur le projet :\n\n« ${projTitle} »\n\nMerci de te rapprocher de l'équipe.\n\n— AGORA · Commission Cadre de Vie · Lestiac`,
-    from_name: 'AGORA · Cadre de Vie',
+    subject: `📣 [${comm}] Projet à communiquer — ${projTitle}`,
+    message: `Bonjour Sophie,\n\n${me} te sollicite pour préparer une communication sur le projet :\n\n« ${projTitle} »\nCommission : ${comm}\n\nMerci de te rapprocher de l'équipe.\n\n— AGORA · Mairie de Lestiac`,
+    from_name: 'AGORA · ' + comm,
     date: new Date().toLocaleDateString('fr-FR')
-  }).catch(() => {});
+  }).then(() => showToast('✅ Sophie notifiée par mail'))
+     .catch(() => showToast('⚠ Envoi à Sophie échoué — vérifiez EmailJS', 'warn'));
 }
 
 // ── GOOGLE DRIVE ──
@@ -3156,6 +3162,24 @@ function openBordDrive(e) {
   showToast('⚠ Dossier Drive non configuré. Ouvrez un projet → Documents pour le définir.', 'warn');
 }
 window.openBordDrive = openBordDrive;
+
+
+// ── Solliciter Sophie depuis la modale détail projet ──
+function solliciterSophieProjet() {
+  const arr = getProjects();
+  const p = arr.find(x => x.id === _currentProjId);
+  if (!p) return;
+  if (!confirm(`Envoyer un mail à Sophie pour le projet "\n${p.title}" ?`)) return;
+  // Marquer le projet comme "Sophie sollicitée"
+  p.sophie = true;
+  writeProjects(arr);
+  renderProjects();
+  // Envoyer le mail avec le nom de la commission
+  notifySophie(p.title, 'Cadre de Vie');
+  // Mettre à jour le badge sur la carte
+  logAction('Sophie sollicitée', '«' + p.title + '»');
+}
+window.solliciterSophieProjet = solliciterSophieProjet;
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
