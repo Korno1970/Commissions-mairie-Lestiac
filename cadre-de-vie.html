@@ -220,6 +220,7 @@ button{font-family:'Figtree',sans-serif;cursor:pointer}
 
 /* ═══ PROJECT CARDS — MINNETONKA STYLE ═══ */
 .proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.proj-card.archived{opacity:.6;filter:grayscale(.35)}.proj-card.archived:hover{opacity:.85}
 
 .proj-card{
   background:white;border-radius:var(--r);box-shadow:var(--sh);
@@ -619,6 +620,98 @@ body.is-admin .admin-inline{display:inline-flex}
 .dm-input-bar textarea:focus{border-color:var(--accent)}
 .dm-send-btn{align-self:flex-end;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;padding:0;flex-shrink:0}
 
+/* ════ SOUS-COMMISSIONS — badge de rattachement + panneau Babouchka ════ */
+.proj-card.open-bab{grid-column:1/-1}
+.sub-attach{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px;position:relative;z-index:1}
+.sub-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:var(--r);background:var(--accent-p);border:1.5px solid var(--accent);color:var(--accent);font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s;user-select:none;text-align:left;-webkit-tap-highlight-color:transparent}
+.sub-badge:hover{background:var(--accent);color:#fff}
+.sub-badge:hover .sb-icon rect{stroke:#fff}.sub-badge:hover .sb-chev{color:#fff}
+.sub-badge .sb-icon{flex-shrink:0;display:block}
+.sub-badge .sb-icon rect{fill:none;stroke:var(--accent);stroke-width:1.6;transition:stroke .15s}
+.sub-badge .sb-label-wrap{display:flex;flex-direction:column;gap:1px;line-height:1.15;min-width:0}
+.sub-badge .sb-kicker{font-size:8.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;opacity:.7}
+.sub-badge .sb-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.sub-badge .sb-chev{font-size:13px;margin-left:1px;color:var(--accent);transition:transform .2s,color .15s}
+.proj-card.open-bab .sub-badge.is-open .sb-chev{transform:rotate(90deg)}
+.sub-badge.transversal{border-style:dashed}
+.sub-cross{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border-radius:var(--r);background:#fff;border:1.5px dashed var(--accent);color:var(--soft);font-size:10.5px;font-weight:700}
+.sub-cross b{color:var(--accent)}
+.babouchka{position:relative;z-index:2;margin-top:14px;border:1.5px solid var(--accent);border-radius:var(--r-lg);background:#fff;overflow:hidden;box-shadow:inset 0 0 0 4px var(--accent-p);animation:bab-in .22s ease both}
+@keyframes bab-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.bab-head{background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 14px}
+.bab-back{display:inline-flex;align-items:center;gap:5px;flex-shrink:0;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.9);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;transition:background .15s}
+.bab-back:hover{background:rgba(255,255,255,.22);color:#fff}
+.bab-crumb{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;min-width:0}
+.bab-crumb-item{color:rgba(255,255,255,.55);font-weight:600;background:none;border:none;padding:2px 2px;font-size:12px;transition:color .15s}
+.bab-crumb-item.link{color:rgba(255,255,255,.78);cursor:pointer}
+.bab-crumb-item.link:hover{color:#fff;text-decoration:underline}
+.bab-crumb-item.current{color:#fff;font-weight:800;font-family:'Sora',sans-serif}
+.bab-crumb-sep{color:rgba(255,255,255,.3);font-size:12px}
+.bab-close{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.55);font-size:18px;line-height:1;padding:2px 6px;flex-shrink:0}
+.bab-close:hover{color:#fff}
+.bab-body{padding:16px}
+.bab-level{display:none;animation:bab-fade .18s ease both}
+.bab-level.active{display:block}
+@keyframes bab-fade{from{opacity:0}to{opacity:1}}
+.bab-sub-title{font-family:'Sora',sans-serif;font-weight:800;font-size:16px;color:var(--navy);margin-bottom:3px}
+.bab-sub-rattach{font-size:11.5px;color:var(--soft);margin-bottom:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.bab-pill{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--accent-p);color:var(--accent)}
+.bab-block-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--softer);margin:0 0 7px}
+.bab-empty{font-size:12px;color:var(--softer);font-style:italic;padding:4px 0 14px}
+.bab-members{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.bab-mem{display:inline-flex;align-items:center;gap:6px;padding:4px 11px 4px 4px;border-radius:20px;background:var(--light);border:1px solid var(--mid);font-size:12px;font-weight:600;color:var(--text)}
+.bab-av{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.bab-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bab-tile{text-align:left;background:#fff;border:1.5px solid var(--mid);border-radius:var(--r);padding:12px 13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px}
+.bab-tile:hover{border-color:var(--accent);background:var(--accent-p)}
+.bab-tile-ic{font-size:20px;flex-shrink:0}
+.bab-tile-num{font-family:'Sora',sans-serif;font-weight:800;font-size:20px;color:var(--navy);line-height:1}
+.bab-tile-lab{font-size:11.5px;color:var(--soft);font-weight:600;margin-top:2px}
+.bab-tile-sub{font-size:10.5px;font-weight:700;color:var(--terra);margin-top:3px}
+.bab-tile-go{margin-left:auto;color:var(--accent);font-size:16px;font-weight:700}
+.devis-row{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--mid);border-radius:var(--r);margin-bottom:8px;background:#fff}
+.devis-main{flex:1;min-width:0}
+.devis-four{font-size:13px;font-weight:700;color:var(--navy)}
+.devis-date{font-size:10.5px;color:var(--softer);margin-top:2px}
+.devis-amt{font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:var(--text);white-space:nowrap}
+.devis-status{padding:3px 9px;border-radius:20px;font-weight:700;font-size:10.5px;white-space:nowrap}
+.ds-demande{background:#fff4d9;color:#7a5800}.ds-recu{background:#e3f2fd;color:#1565c0}
+.ds-valide{background:#e5f4ee;color:#2e7d32}.ds-refuse{background:#fde8df;color:var(--terra)}
+.devis-file{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--accent);text-decoration:none;white-space:nowrap}
+.devis-file:hover{text-decoration:underline}.devis-file.none{color:var(--softer);font-style:italic;font-weight:600}
+.devis-total{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--mid);font-size:12px;color:var(--soft)}
+.devis-total b{font-family:'Sora',sans-serif;color:var(--navy);font-size:14px}
+.dec-row{position:relative;padding:0 0 14px 22px;border-left:2px solid var(--mid);margin-left:6px}
+.dec-row:last-child{border-left-color:transparent;padding-bottom:0}
+.dec-row::before{content:'';position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--accent)}
+.dec-date{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+.dec-text{font-size:13px;color:var(--text);line-height:1.5;margin-bottom:5px}
+.dec-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--softer)}
+.dec-by{display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--soft)}
+.dec-cr{display:inline-flex;align-items:center;gap:3px;font-weight:700;color:var(--accent);text-decoration:none}
+.dec-cr:hover{text-decoration:underline}
+.bab-admin-cta{margin-top:14px;padding-top:13px;border-top:1px dashed var(--mid);display:none}
+body.is-admin .bab-admin-cta{display:flex;gap:8px;flex-wrap:wrap}
+.sub-tabs{display:flex;gap:2px;border-bottom:2px solid var(--mid);margin-bottom:16px}
+.sub-tab{padding:8px 14px;border:none;background:none;font-size:13px;font-weight:700;color:var(--softer);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s}
+.sub-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.sub-panel{display:none}.sub-panel.active{display:block}
+.multi-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid var(--mid);background:#fff;color:var(--soft);cursor:pointer;transition:all .15s;user-select:none}
+.multi-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.upload-zone{border:1.5px dashed var(--mid);border-radius:var(--r);padding:16px;text-align:center;color:var(--softer);font-size:12.5px;cursor:pointer;transition:all .15s;background:var(--light)}
+.upload-zone:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-p)}
+.upload-zone .uz-ic{font-size:22px;display:block;margin-bottom:4px}
+.upload-zone .uz-note{font-size:10.5px;font-style:italic;margin-top:5px;opacity:.8}
+.mini-list{margin-top:14px;border-top:1px solid var(--mid);padding-top:12px}
+.mini-list:empty{display:none}
+.mini-list-row{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--mid)}
+.mini-list-row:last-child{border-bottom:none}
+.mini-list-row b{color:var(--navy)}
+.mini-del{margin-left:auto;background:none;border:none;color:var(--softer);font-size:14px;padding:2px 6px;border-radius:4px}
+.mini-del:hover{color:var(--terra);background:#fde8df}
+.sc-helper{font-size:11px;color:var(--softer);margin-top:5px;line-height:1.4}
+@media(max-width:600px){.bab-summary{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -805,7 +898,10 @@ body.is-admin .admin-inline{display:inline-flex}
       <button class="tab" onclick="filterProj('moyen',this)">Moyen terme</button>
       <button class="tab" onclick="filterProj('long',this)">Long terme</button>
     </div>
-    <button class="btn btn-terra btn-sm" onclick="openModal('m-proj')">+ Ajouter</button>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" id="archive-toggle" onclick="toggleArchiveView(this)" style="font-size:11px">📦 Voir les archives</button>
+      <button class="btn btn-terra btn-sm" onclick="openModal('m-proj')">+ Ajouter</button>
+    </div>
   </div>
   <div class="proj-grid" id="proj-grid"></div>
 </div>
@@ -1044,6 +1140,65 @@ body.is-admin .admin-inline{display:inline-flex}
   <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-cr')">Annuler</button><button class="btn btn-accent" onclick="publishCR()">📤 Publier &amp; Envoyer</button></div></div>
 </div>
 
+<!-- ═══════ MODAL GESTION SOUS-COMMISSION ═══════ -->
+<div class="overlay" id="m-sub" onclick="closeOverlay(event,'m-sub')">
+  <div class="modal">
+    <div class="modal-head"><h3 id="sub-modal-title">Sous-commission</h3><button class="modal-close" onclick="closeModal('m-sub')">✕</button></div>
+    <div class="modal-body">
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="switchSubTab('infos',this)">Infos &amp; membres</button>
+        <button class="sub-tab" onclick="switchSubTab('devis',this)">Devis</button>
+        <button class="sub-tab" onclick="switchSubTab('dec',this)">Décisions</button>
+      </div>
+      <div class="sub-panel active" id="sp-infos">
+        <div class="form-group">
+          <label class="form-label">Nom de la sous-commission</label>
+          <input class="form-control" id="sf-name">
+          <div class="sc-helper">✏️ Nom librement modifiable à tout moment — aucun nom n'est figé par le code.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Commissions rattachées <span style="text-transform:none;font-weight:600;color:var(--softer)">(plusieurs = transversale)</span></label>
+          <div class="member-chips-proj" id="sf-commissions" style="gap:6px"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Membres <span style="text-transform:none;font-weight:600;color:var(--softer)">(élus AGORA uniquement)</span></label>
+          <div class="member-chips-proj" id="sf-members" style="gap:5px"></div>
+        </div>
+      </div>
+      <div class="sub-panel" id="sp-devis">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Fournisseur</label><input class="form-control" id="sf-dv-four" placeholder="Ex : SARL Toiture Garonne"></div>
+          <div class="form-group"><label class="form-label">Montant (€)</label><input class="form-control" id="sf-dv-amt" type="number" placeholder="0"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Statut</label>
+          <select class="form-control" id="sf-dv-status">
+            <option value="demande">Demandé</option><option value="recu">Reçu</option>
+            <option value="valide">Validé</option><option value="refuse">Refusé</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pièce jointe</label>
+          <div class="upload-zone"><span class="uz-ic">📎</span>Glisser un fichier ou cliquer pour parcourir<div class="uz-note">UI seule — branchement Firebase Storage à venir</div></div>
+        </div>
+        <button class="btn btn-accent btn-sm" onclick="scAddDevis()">+ Ajouter le devis</button>
+        <div class="mini-list" id="sf-devis-list"></div>
+      </div>
+      <div class="sub-panel" id="sp-dec">
+        <div class="form-group"><label class="form-label">Texte de la décision</label><textarea class="form-control" id="sf-dc-text" placeholder="Ce qui a été décidé…"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Date</label><input class="form-control" id="sf-dc-date" type="date"></div>
+          <div class="form-group"><label class="form-label">Décidé par</label><input class="form-control" id="sf-dc-by" placeholder="Ex : Bureau du 12/03"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Lien compte-rendu <span style="text-transform:none;font-weight:600;color:var(--softer)">(optionnel)</span></label><input class="form-control" id="sf-dc-cr" placeholder="https://…"></div>
+        <button class="btn btn-accent btn-sm" onclick="scAddDecision()">+ Ajouter la décision</button>
+        <div class="mini-list" id="sf-dec-list"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-sub')">Fermer</button><button class="btn btn-accent" onclick="scSaveInfos()">Enregistrer</button></div>
+  </div>
+</div>
+
 <!-- ═══════ MODAL DÉTAIL PROJET (avec onglets) ═══════ -->
 <div class="overlay" id="m-proj-detail" onclick="closeOverlay(event,'m-proj-detail')">
   <div class="modal" style="max-width:960px;max-height:96vh">
@@ -1098,7 +1253,11 @@ body.is-admin .admin-inline{display:inline-flex}
           </div>
         </div>
         <div class="form-group"><label class="form-label">Sous-commission</label>
-          <select id="pie-axe" class="form-control"></select>
+          <select id="pie-axe" class="form-control" onchange="window._pieRenderSubcoms&&_pieRenderSubcoms(this.value)"></select>
+        </div>
+        <div class="form-group"><label class="form-label">Aussi rattaché à <span style="text-transform:none;font-weight:600;color:var(--softer)">(autres sous-commissions — transversal)</span></label>
+          <div class="member-chips-proj" id="pie-subcoms" style="gap:6px"></div>
+          <div class="sc-helper">Le projet garde sa sous-commission principale ci-dessus ; coche ici pour le partager avec d'autres — y compris d'autres commissions (🔗) quand Firebase est connecté.</div>
         </div>
         <div class="form-group"><label class="form-label">Budget</label>
           <input type="text" id="pie-budget" class="form-control" placeholder="Ex : 5 000 €">
@@ -1118,6 +1277,16 @@ body.is-admin .admin-inline{display:inline-flex}
         <div class="members-zone-label" style="margin-bottom:6px">👥 Participants</div>
         <div class="member-chips-proj" id="proj-detail-chips"></div>
         <button class="btn-join" id="proj-detail-join" onclick="joinFromDetail()">+ Rejoindre</button>
+      </div>
+      <!-- ─── SECRÉTARIAT DE MAIRIE — ÉLODIE ─── -->
+      <div style="background:var(--navy-p);border:1px solid var(--mid);border-radius:var(--r);padding:12px 14px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px">🏛 Secrétariat de mairie — Élodie</div>
+        <div style="font-size:11.5px;color:var(--soft);line-height:1.5;margin-bottom:10px">Informez Élodie quand le projet est activé, puis transmettez-lui le résultat finalisé (devis validé, décisions…) pour mise en œuvre.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" style="font-size:12px" onclick="notifyElodie(_currentProjId)">📧 Informer Élodie</button>
+          <button class="btn btn-accent btn-sm" style="font-size:12px" onclick="sendResultToElodie(_currentProjId)">📤 Transmettre le résultat</button>
+        </div>
+        <div id="elodie-status" style="font-size:11px;color:var(--softer);margin-top:8px"></div>
       </div>
       <!-- ─── ONGLETS Notes / Tâches / Commentaires ─── -->
       <div class="detail-tab-bar">
@@ -1262,6 +1431,48 @@ const MEMBER_EMAILS = {'Daniel':'daniel.bouchet@lestiac.fr','Catherine':'catheri
 const AXE_LABELS = {env:'🌿 Environnement',vie:'🎭 Vie du village',gouv:'🗳 Gouvernance'};
 const AXE_CLASSES = {env:'cat-hab',vie:'cat-com',gouv:'cat-rh'};
 
+/* ════ SOUS-COMMISSIONS ════
+   Modèle : { id, nom (librement modifiable), commissions[], membres[], devis[], decisions[] }
+   Persistance locale pour l'instant (clé K_SUBCOM) ; à brancher sur Firebase
+   (/subcommissions) ultérieurement — partagé entre les 3 fichiers pour le transversal. */
+const COMMISSIONS = {cdv:'Cadre de Vie', adm:'Administration Générale', sco:'Affaires Scolaires'};
+const COMMISSION_COURANTE = 'cdv'; // ⚠ adapter dans chaque fichier : 'adm' / 'sco'
+const DEVIS_STATUS = {demande:{label:'Demandé',cls:'ds-demande'},recu:{label:'Reçu',cls:'ds-recu'},valide:{label:'Validé',cls:'ds-valide'},refuse:{label:'Refusé',cls:'ds-refuse'}};
+// Amorces reprises des labels d'axe — noms 100% renommables, ids stables
+const SUBCOM_DEFAULTS = {
+  vie:{id:'vie', nom:'Vie du village', commissions:['cdv'], membres:[], devis:[], decisions:[]},
+  env:{id:'env', nom:'Environnement', commissions:['cdv'], membres:[], devis:[], decisions:[]},
+  gouv:{id:'gouv',nom:'Gouvernance', commissions:['cdv'], membres:[], devis:[], decisions:[]},
+};
+const K_SUBCOM = 'cdv_subcoms';
+const SUBCOM_NODE='subcommissions'; // ⚠ nœud PARTAGÉ entre les 3 commissions (hors COMMISSION) — c'est lui qui rend le transversal réel
+const ELODIE_EMAIL='accueil-lestiac@lestiac.fr'; // secrétariat mairie — destinataire rebouclage
+let _subcomData=null;                // peuplé en temps réel par subscribeSubcoms() dès que Firebase est connecté
+function getSubcoms(){
+  if(_subcomData) return {...SUBCOM_DEFAULTS,..._subcomData};
+  try{const o=JSON.parse(localStorage.getItem(K_SUBCOM));return o&&typeof o==='object'?{...SUBCOM_DEFAULTS,...o}:{...SUBCOM_DEFAULTS}}catch{return {...SUBCOM_DEFAULTS}}
+}
+function writeSubcoms(o){
+  if(fbDb){fbSet(SUBCOM_NODE,o);}                        // écriture sur le nœud partagé (sync temps réel inter-commissions)
+  else{localStorage.setItem(K_SUBCOM,JSON.stringify(o));} // repli hors-ligne, propre à la commission
+}
+let _subcomSub=false;
+function subscribeSubcoms(){
+  if(!fbDb||_subcomSub)return;_subcomSub=true;
+  onValue(ref(fbDb,SUBCOM_NODE),snap=>{
+    _subcomData=snap.val()||{};
+    // amorçage : crée les sous-commissions de CETTE commission si absentes, sans jamais écraser l'existant
+    Object.keys(SUBCOM_DEFAULTS).forEach(id=>{if(!_subcomData[id])fbSet(SUBCOM_NODE+'/'+id,SUBCOM_DEFAULTS[id]);});
+    if(typeof renderProjects==='function')renderProjects();
+    if(typeof _refreshOpenBabs==='function')_refreshOpenBabs();
+  },()=>{});
+}
+// rattachement d'un projet : champ subcoms[] si présent, sinon dérivé de l'axe
+function getProjSubcomIds(p){const ids=[];if(p.axe)ids.push(p.axe);(Array.isArray(p.subcoms)?p.subcoms:[]).forEach(id=>{if(id&&!ids.includes(id))ids.push(id)});return ids}
+const _scEur=n=>{const v=parseFloat(n)||0;return v.toLocaleString('fr-FR')+' €'};
+const _scInit=n=>(n||'?').slice(0,2).toUpperCase();
+const _scDate=d=>{try{return new Date(d+'T00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'})}catch{return d}};
+
 const DEFAULT_PROJECTS = [
   {id:'p1',horizon:'court',axe:'env',title:'Transition éclairage 100% LED',pilote:'Vivien',desc:'Remplacement des points lumineux (éclairage public + bâtiments communaux). Sobriété énergétique.',members:['Vivien','Roger'],budget:'À chiffrer',subs:'Fonds Vert, DETR',status:'s-lancer',source:'Programme officiel'},
   {id:'p2',horizon:'court',axe:'env',title:'Sécurité route de Bordeaux (D10)',pilote:'Sylvain',desc:'Amélioration de la D10 avec les services du Département. Concertation citoyenne sur les aménagements.',members:['Sylvain','Roger','Vivien'],budget:'À définir',subs:'Département 33',status:'s-lancer',source:'Programme officiel'},
@@ -1287,6 +1498,7 @@ let localData={projects:null,tasks:null,reunions:null,log:[],cr:[],budget:null,q
 let _ptAssignee=null; // assigné sélectionné dans le form tâche projet
 let _newProjChefs=[]; // porteurs sélectionnés dans le formulaire ajout projet
 let _filterAxe='tous'; // filtre sous-commission actif
+let _showArchived=false; // bascule : afficher les projets archivés au lieu des actifs
 let _editingChefs=[]; // porteurs en cours d'édition dans la modale détail
 
 
@@ -1304,30 +1516,58 @@ function getVisited(){try{return JSON.parse(localStorage.getItem(K_VISITED))||{}
 function markVisited(projId){const v=getVisited();v[projId]=Date.now();localStorage.setItem(K_VISITED,JSON.stringify(v))}
 function hasNew(p){
   const v=getVisited();const lastVisit=v[p.id]||0;
-  const lastComment=p.comments?Math.max(...Object.values(p.comments).map(c=>c.ts||0)):0;
+  const lastComment=(p.comments&&typeof p.comments==="object"&&!Array.isArray(p.comments))?Math.max(...Object.values(p.comments).map(c=>c.ts||0)):0;
   const lastNote=p.notesTs||0;
-  const lastPtask=p.project_tasks?Math.max(...Object.values(p.project_tasks).map(t=>t.ts||0)):0;
+  const lastPtask=(p.project_tasks&&typeof p.project_tasks==="object"&&!Array.isArray(p.project_tasks))?Math.max(...Object.values(p.project_tasks).map(t=>t.ts||0)):0;
   return Math.max(lastComment,lastNote,lastPtask)>lastVisit;
 }
 
 // ── FIREBASE ──
+function safeValues(obj){
+  if(!obj||typeof obj!=='object'||Array.isArray(obj))return null;
+  return Object.values(obj);
+}
 function initFirebase(config){
-  if(!config||!config.apiKey||!config.databaseURL){return}
+  if(!config||!config.apiKey||!config.databaseURL){
+    console.warn('[CDV] initFirebase: config manquante ou incomplète');
+    return;
+  }
   try{
+    console.log('[CDV] Firebase init start');
+    setBanner('connecting','⏳ Connexion Firebase…');
     fbApp=initializeApp(config,'cdv-'+Date.now());
     fbDb=getDatabase(fbApp);
-    fbConnected=true;
-    setBanner('connecting','⏳ Connexion Firebase…');
     onValue(ref(fbDb,COMMISSION),(snap)=>{
-      setBanner('ok','✅ Connecté');
-      const data=snap.val()||{};
-      localData.projects=data.projects?Object.values(data.projects):null;
-      localData.tasks=data.tasks||null;
-      localData.reunions=data.reunions?Object.values(data.reunions):null;
-      localData.log=data.log?Object.values(data.log).sort((a,b)=>b.ts-a.ts):[];
-      localData.cr=data.cr?Object.values(data.cr).sort((a,b)=>b.ts-a.ts):[];
-      localData.budget=data.budget||null;
-      localData.quickTasks=data.quickTasks?Object.values(data.quickTasks).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
+      if(!fbConnected){
+        fbConnected=true;subscribeSubcoms();
+        document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
+        console.log('[CDV] Firebase connected');
+      }
+      const raw=snap.val();
+      if(raw===null){
+        // Branche Firebase vide — pas une erreur, juste pas encore de données distantes
+        console.log('[CDV] No remote data found — branche '+COMMISSION+' vide, fallback sur defaults');
+        setBanner('empty','ℹ️ Firebase connecté — aucune donnée pour cette commission');
+        if(!localData.projects)localData.projects=null;
+        if(!localData.tasks)localData.tasks=null;
+        if(!localData.reunions)localData.reunions=null;
+        renderAll();
+        return;
+      }
+      const data=raw;
+      setBanner('ok','✅ Firebase connecté');
+      const rawProjects=safeValues(data.projects);
+      localData.projects=rawProjects?rawProjects.filter(p=>p&&p.id):null;
+      localData.tasks=data.tasks&&typeof data.tasks==='object'?data.tasks:null;
+      const rawReunions=safeValues(data.reunions);
+      localData.reunions=rawReunions?rawReunions.filter(r=>r&&r.id):null;
+      const rawLog=safeValues(data.log);
+      localData.log=rawLog?rawLog.filter(Boolean).sort((a,b)=>b.ts-a.ts):[];
+      const rawCr=safeValues(data.cr);
+      localData.cr=rawCr?rawCr.filter(Boolean).sort((a,b)=>b.ts-a.ts):[];
+      localData.budget=data.budget&&typeof data.budget==='object'?data.budget:null;
+      const rawQt=safeValues(data.quickTasks);
+      localData.quickTasks=rawQt?rawQt.filter(Boolean).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
       if(data.config&&data.config.driveUrl)applyDriveUrl(data.config.driveUrl);
       if(data.config&&data.config.emailjs)applyEmailJSConfig(data.config.emailjs);
       renderAll();
@@ -1340,16 +1580,22 @@ function initFirebase(config){
       }
       onValue(ref(fbDb,'finances/global'),(snap2)=>{
         const gb=snap2.val();
-        if(gb){document.getElementById('budget-global-display').textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
+        if(gb&&typeof gb==='object'){const el=document.getElementById('budget-global-display');if(el)el.textContent=`Budget global commune : ${gb.total||'—'} € · Consommé : ${gb.consomme||'—'} €`;}
       });
-    },(err)=>{setBanner('err','❌ '+err.message);fbConnected=false});
-    document.getElementById('fb-config-status').textContent='✅ Connecté : '+config.projectId;
-  }catch(e){setBanner('err','❌ Config invalide')}
+    },(err)=>{
+      console.error('[CDV] Firebase init error:',err.message);
+      setBanner('err','❌ Erreur Firebase : '+err.message);
+      fbConnected=false;
+    });
+  }catch(e){
+    console.error('[CDV] Firebase init error (exception):',e.message);
+    setBanner('err','❌ Config Firebase invalide');
+  }
 }
-function fbSet(path,val){if(!fbDb)return;set(ref(fbDb,path),val).catch(e=>console.error(e))}
-function fbPush(path,val){if(!fbDb)return;push(ref(fbDb,path),val).catch(e=>console.error(e))}
-function fbRemove(path){if(!fbDb)return;remove(ref(fbDb,path)).catch(e=>console.error(e))}
-function setBanner(type,msg){const b=document.getElementById('fb-banner');b.className=type;b.textContent=msg;if(type==='ok')setTimeout(()=>{b.style.display='none'},4000)}
+function fbSet(path,val){if(!fbDb)return;set(ref(fbDb,path),val).catch(e=>console.error('[CDV] fbSet error:',e))}
+function fbPush(path,val){if(!fbDb)return;push(ref(fbDb,path),val).catch(e=>console.error('[CDV] fbPush error:',e))}
+function fbRemove(path){if(!fbDb)return;remove(ref(fbDb,path)).catch(e=>console.error('[CDV] fbRemove error:',e))}
+function setBanner(type,msg){const b=document.getElementById('fb-banner');if(!b)return;b.className=type;b.textContent=msg;if(type==='ok')setTimeout(()=>{b.style.opacity='0';setTimeout(()=>{b.style.display='none';b.style.opacity=''},600)},3000);else{b.style.display='';b.style.opacity=''}}
 
 // ── DATA ACCESS ──
 function getProjects(){if(localData.projects)return localData.projects;return getLocal().projects||JSON.parse(JSON.stringify(DEFAULT_PROJECTS))}
@@ -1475,9 +1721,9 @@ function updateStats(){
   const done=[...(t.court||[]),...(t.moyen||[]),...(t.long||[])].filter(x=>x.done).length;
   // Guard défensif : les stats peuvent ne pas être dans le DOM actif
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-  set('s-ct', p.filter(x=>x.horizon==='court').length);
-  set('s-mt', p.filter(x=>x.horizon==='moyen').length);
-  set('s-lt', p.filter(x=>x.horizon==='long').length);
+  set('s-ct', p.filter(x=>x.horizon==='court'&&!x.archived).length);
+  set('s-mt', p.filter(x=>x.horizon==='moyen'&&!x.archived).length);
+  set('s-lt', p.filter(x=>x.horizon==='long'&&!x.archived).length);
   set('s-rdv', r.length);
   set('s-cr', c.length);
   set('s-tasks', done);
@@ -1498,8 +1744,8 @@ function renderProjects(){
   let projs=getProjects();
   if(!projs){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
   if(!Array.isArray(projs))projs=Object.values(projs);
-  projs=projs.filter(p=>p&&p.id&&(_filterAxe==='tous'||!p.axe||p.axe===_filterAxe));
-  if(!projs.length){grid.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Aucun projet.</p></div>';return}
+  projs=projs.filter(p=>p&&p.id&&(_showArchived?p.archived:!p.archived)&&(_filterAxe==='tous'||!p.axe||p.axe===_filterAxe));
+  if(!projs.length){grid.innerHTML='<div class="empty-state"><div class="ei">📦</div><p>'+(_showArchived?'Aucun projet archivé.':'Aucun projet.')+'</p></div>';return}
   const hL={court:'Court terme · 2026',moyen:'Moyen terme · 2027',long:'Long terme · 2028+'};
   const hB={court:'h-court',moyen:'h-moyen',long:'h-long'};
   const aC={env:'',vie:'purple',gouv:'navy'};
@@ -1514,13 +1760,14 @@ function renderProjects(){
     const openPtasks=ptasks.filter(t=>t.status!=='done').length;
     const overduePtasks=ptasks.filter(t=>t.status!=='done'&&t.deadline&&new Date(t.deadline)<new Date()).length;
     const card=document.createElement('div');
-    card.className=`proj-card ${aC[p.axe]||''}`;card.dataset.horizon=p.horizon;card.dataset.id=p.id;
+    card.className=`proj-card ${aC[p.axe]||''}${p.archived?' archived':''}`;card.dataset.horizon=p.horizon;card.dataset.id=p.id;
     card.innerHTML=`
       <div class="notif-dot${newActivity?' show':''}"></div>
       <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px">
         <span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
         <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>
         ${p.priority==='urgent'?'<span class="priority-banner">🔴 Prioritaire</span>':''}
+        ${p.archived?'<span class="proj-horizon" style="background:#8a949f;color:#fff">📦 Archivé</span>':''}
       </div>
       <div class="proj-chefs">
         <span class="proj-chefs-label">👑 Chef${getChefsArr(p).length>1?'s':''} :</span>
@@ -1528,9 +1775,11 @@ function renderProjects(){
           ? getChefsArr(p).map(c=>`<span class="chef-badge">${escapeHtml(c)}</span>`).join('')
           : '<span style="font-size:11px;color:var(--softer);font-style:italic">— Non défini</span>'}
       </div>
+      ${isSuperAdmin()?`<button class="btn-icon" style="position:absolute;top:10px;right:${isAdmin?'48':'22'}px" title="${p.archived?'Désarchiver':'Archiver'}" onclick="event.stopPropagation();toggleArchiveProj('${p.id}')">${p.archived?'♻️':'📦'}</button>`:''}
       ${isAdmin?`<button class="btn-icon" style="position:absolute;top:10px;right:22px" onclick="event.stopPropagation();deleteProj('${p.id}')">🗑</button>`:''}
       <div class="proj-title" onclick="openProjDetail('${p.id}')">${escapeHtml(p.title)}</div>
       <div class="proj-desc" onclick="openProjDetail('${p.id}')">${escapeHtml(p.desc||"")}</div>
+      ${renderSubAttach(p)}
       <div class="proj-meta"><span class="status-pill ${p.status}">${sL[p.status]}</span>
         ${isAdmin?`<select class="form-control" style="padding:2px 6px;font-size:11px;width:auto" onchange="changeStatus('${p.id}',this.value)"><option value="s-lancer"${p.status==='s-lancer'?' selected':''}>À lancer</option><option value="s-cours"${p.status==='s-cours'?' selected':''}>En cours</option><option value="s-attente"${p.status==='s-attente'?' selected':''}>En attente</option><option value="s-fait"${p.status==='s-fait'?' selected':''}>Réalisé</option></select>`:''}</div>
       <div style="margin-top:10px"><div class="members-zone-label">👥 Participants</div>
@@ -1544,9 +1793,12 @@ function renderProjects(){
         <button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="openProjDetail('${p.id}')">
           Détail${newActivity?' 🔴':''} →
         </button>
-      </div>`;
+      </div>
+      <div class="bab-mount" id="bab-${p.id}"></div>`;
     grid.appendChild(card);
   });
+  // ré-affiche les panneaux Babouchka restés ouverts après un re-render
+  Object.keys(_babState).forEach(pid=>{ if(document.getElementById('bab-'+pid)) renderBab(pid); });
 }
 
 function filterProj(h,btn){document.querySelectorAll('#page-projets .tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('#proj-grid .proj-card').forEach(c=>{c.style.display=(h==='tous'||c.dataset.horizon===h)?'':'none'})}
@@ -1563,6 +1815,10 @@ function saveProj(){
 window.saveProj=saveProj;
 function deleteProj(id){if(!confirm('Supprimer ?'))return;const arr=getProjects().filter(p=>p.id!==id);writeProjects(arr);logAction('Projet supprimé','ID:'+id);if(!fbConnected)renderAll()}
 window.deleteProj=deleteProj;
+function toggleArchiveProj(id){const arr=getProjects(),p=arr.find(x=>x.id===id);if(!p)return;p.archived=!p.archived;if(p.archived){p.archivedTs=Date.now();p.archivedBy=getCurrentUser()||'';}else{delete p.archivedTs;delete p.archivedBy;}writeProjects(arr);logAction(p.archived?'Projet archivé':'Projet désarchivé','«'+p.title+'»');if(!fbConnected)renderAll();else renderProjects();}
+window.toggleArchiveProj=toggleArchiveProj;
+function toggleArchiveView(btn){_showArchived=!_showArchived;if(btn){btn.textContent=_showArchived?'← Projets actifs':'📦 Voir les archives';btn.classList.toggle('active',_showArchived);}renderProjects();}
+window.toggleArchiveView=toggleArchiveView;
 function changeStatus(id,val){const arr=getProjects(),p=arr.find(x=>x.id===id);if(p){p.status=val;writeProjects(arr);logAction('Statut','«'+p.title+'» → '+val)}if(!fbConnected)renderAll()}
 window.changeStatus=changeStatus;
 function changePriority(id,val){const arr=getProjects(),p=arr.find(x=>x.id===id);if(p){p.priority=val;writeProjects(arr);logAction('Priorité','«'+p.title+'» → '+val)}if(!fbConnected)renderAll()}
@@ -1636,6 +1892,8 @@ function renderPtasks(projId,obj){
 
     const delBtn=canEdit
       ?`<button class="ptask-del" onclick="deletePtask('${projId}','${key}')" title="Supprimer">✕</button>`:'';
+    const editBtn=canEdit
+      ?`<button class="ptask-del" onclick="editPtask('${projId}','${key}')" title="Modifier" style="margin-right:2px">✎</button>`:'';
 
     row.innerHTML=`
       <div class="ptask-main">
@@ -1646,7 +1904,7 @@ function renderPtasks(projId,obj){
           ${statusSel}
         </div>
       </div>
-      ${delBtn}`;
+      ${editBtn}${delBtn}`;
     list.appendChild(row);
   });
 }
@@ -1676,6 +1934,8 @@ function deletePtask(projId,key){
   if(!fbConnected)localData.projects=arr;
 }
 window.deletePtask=deletePtask;
+function editPtask(projId,key){const arr=getProjects(),p=arr.find(x=>x.id===projId);if(!p||!p.project_tasks||!p.project_tasks[key])return;const v=prompt('Modifier la tâche :',p.project_tasks[key].title||'');if(v===null)return;const nv=v.trim();if(!nv)return;p.project_tasks[key].title=nv;p.project_tasks[key].ts=Date.now();writeProjects(arr);logAction('Tâche projet modifiée','«'+nv.substring(0,50)+'»');renderPtasks(projId,p.project_tasks);renderProjects();if(!fbConnected)localData.projects=arr;}
+window.editPtask=editPtask;
 
 function showPtaskForm(){
   const me=getCurrentUser();
@@ -1755,6 +2015,7 @@ function openProjDetail(projId){
   document.getElementById('proj-detail-desc').textContent=p.desc||'';
   document.getElementById('proj-detail-budget').innerHTML=`💶 ${escapeHtml(p.budget||'')}${p.subs&&p.subs!=='—'?' · '+escapeHtml(p.subs):''}`;
   document.getElementById('proj-detail-source').textContent=p.source?'Source : '+p.source:'';
+  renderElodieStatus(p);
   const m=getMembersArr(p),me=getCurrentUser(),j=me&&m.includes(me);
   document.getElementById('proj-detail-chips').innerHTML=renderMemberChips(projId,m);
   const jb=document.getElementById('proj-detail-join');jb.textContent=j?'✓ Inscrit·e':'+ Rejoindre';jb.className='btn-join'+(j?' joined':'');
@@ -1965,7 +2226,7 @@ function renderTasks(){
     (tasks[h]||[]).forEach((t,i)=>{
       const div=document.createElement('div');div.className='task-item'+(t.done?' done':'');div.onclick=()=>toggleTask(h,i);
       const tagIco={tt_env:'🌿',tt_vie:'🎭',tt_gouv:'🗳'}[(t.tag||'tt-env').replace('-','_')]||'🌿';
-      div.innerHTML=`<input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask('${h}',${i})"><span class="task-label">${escapeHtml(t.text||"")}</span><span class="task-tag ${t.tag||'tt-hab'}">${tagIco}</span><button class="btn-icon" onclick="event.stopPropagation();deleteTask('${h}',${i})" title="Supprimer" style="font-size:13px;color:rgba(0,0,0,.25)" onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='rgba(0,0,0,.25)'">🗑</button>`;
+      div.innerHTML=`<input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask('${h}',${i})"><span class="task-label">${escapeHtml(t.text||"")}</span><span class="task-tag ${t.tag||'tt-hab'}">${tagIco}</span><button class="btn-icon" onclick="event.stopPropagation();editTask('${h}',${i})" title="Modifier" style="font-size:13px;color:rgba(0,0,0,.25)" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='rgba(0,0,0,.25)'">✏️</button><button class="btn-icon" onclick="event.stopPropagation();deleteTask('${h}',${i})" title="Supprimer" style="font-size:13px;color:rgba(0,0,0,.25)" onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='rgba(0,0,0,.25)'">🗑</button>`;
       cont.appendChild(div);
     });
     // Bouton "Supprimer les cochées" — super-admin uniquement
@@ -1980,6 +2241,8 @@ function renderTasks(){
 }
 function toggleTask(h,i){const t=getTasks();if(!t[h]||!t[h][i])return;t[h][i].done=!t[h][i].done;writeTasks(t);logAction(t[h][i].done?'Tâche cochée':'Tâche décochée','«'+t[h][i].text.substring(0,50)+'»');if(!fbConnected)renderTasks()}
 window.toggleTask=toggleTask;
+function editTask(h,i){const t=getTasks();if(!t[h]||!t[h][i])return;const v=prompt('Modifier la tâche :',t[h][i].text||'');if(v===null)return;const nv=v.trim();if(!nv)return;t[h][i].text=nv;writeTasks(t);logAction('Tâche modifiée','«'+nv.substring(0,50)+'»');if(!fbConnected)renderTasks()}
+window.editTask=editTask;
 function deleteTask(h,i){if(!confirm('Supprimer cette tâche ?'))return;const t=getTasks();t[h].splice(i,1);writeTasks(t);logAction('Tâche supprimée','');if(!fbConnected)renderTasks()}
 window.deleteTask=deleteTask;
 function deleteCheckedTasks(h){
@@ -2129,7 +2392,7 @@ window.doneQuickTask=doneQuickTask;window.deleteQuickTask=deleteQuickTask;
 function updateDashShortcuts(){
   const p=getProjects(),t=getTasks(),r=getReunions(),c=getCRs();
   const el=id=>document.getElementById(id);
-  if(el('ds-projets'))el('ds-projets').textContent=p.length;
+  if(el('ds-projets'))el('ds-projets').textContent=p.filter(x=>!x.archived).length;
   const taskCount=[...(t.court||[]),...(t.moyen||[]),...(t.long||[])].filter(x=>!x.done).length;
   if(el('ds-taches'))el('ds-taches').textContent=taskCount||'0';
   if(el('ds-reunions'))el('ds-reunions').textContent=r.length;
@@ -2247,6 +2510,108 @@ function notifySophie(projTitle, commissionLabel) {
   }).then(() => showToast('✅ Sophie notifiée par mail'))
      .catch(() => showToast('⚠ Envoi à Sophie échoué — vérifiez EmailJS', 'warn'));
 }
+
+function _elodiePayload(p){
+  const comm=(typeof COMMISSIONS==='object'&&COMMISSIONS[COMMISSION_COURANTE])||'Commission';
+  const statut=({'s-lancer':'À lancer','s-cours':'En cours','s-attente':'En attente','s-fait':'Réalisé'})[p.status]||p.status||'—';
+  const chefsArr=(typeof getChefsArr==='function')?getChefsArr(p):[];
+  const membersArr=(typeof getMembersArr==='function')?getMembersArr(p):[];
+  const axe=(typeof AXE_LABELS==='object'&&AXE_LABELS[p.axe])?AXE_LABELS[p.axe].replace(/^\S+\s/,''):(p.axe||'—');
+  const notes=(typeof p.notes==='object'&&p.notes)?(p.notes.text||''):(p.notes||'');
+  return {comm,statut,chefs:chefsArr.length?chefsArr.join(', '):'—',members:membersArr.length?membersArr.join(', '):'—',axe,notes};
+}
+function _sendToElodie(subject,message,comm){
+  const ejs=getEjsConfig();
+  if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template){showToast('⚠ EmailJS non configuré — mail à Élodie non envoyé','warn');return false}
+  try{
+    emailjs.init(ejs.pubkey);
+    emailjs.send(ejs.service,ejs.template,{to_email:ELODIE_EMAIL,subject,message,from_name:'AGORA · '+comm,date:new Date().toLocaleDateString('fr-FR')})
+      .then(()=>showToast('✅ Mail envoyé à Élodie (secrétariat mairie)'))
+      .catch(()=>showToast('⚠ Envoi à Élodie échoué — vérifiez EmailJS','warn'));
+    return true;
+  }catch(e){showToast('⚠ Envoi à Élodie échoué','warn');return false}
+}
+function notifyElodie(projId){
+  const arr=getProjects(),p=arr.find(x=>x.id===projId);if(!p){alert('Projet introuvable.');return}
+  if(!confirm('Informer Élodie (secrétariat de mairie) que le projet « '+p.title+' » est activé ?'))return;
+  const pl=_elodiePayload(p),me=getCurrentUser()||'Un membre';
+  const subject=`🏛 [${pl.comm}] Projet activé — ${p.title}`;
+  const message=`Bonjour Élodie,
+
+Le projet suivant vient d'être activé par la commission ${pl.comm} :
+
+« ${p.title} »
+Sous-commission : ${pl.axe}
+Statut : ${pl.statut}
+Porteur(s) : ${pl.chefs}
+Budget : ${p.budget||'—'}${p.subs&&p.subs!=='—'?'\nFinancement : '+p.subs:''}
+
+${p.desc?'Objet : '+p.desc+'\n\n':''}Merci d'en prendre note. Le résultat finalisé te sera transmis pour application le moment venu.
+
+Informé par : ${me}
+— AGORA · Mairie de Lestiac`;
+  if(_sendToElodie(subject,message,pl.comm)){p.elodieInfoTs=Date.now();p.elodieInfoBy=me;writeProjects(arr);logAction('Élodie informée','«'+p.title+'»');if(!fbConnected)localData.projects=arr;renderElodieStatus(p)}
+}
+window.notifyElodie=notifyElodie;
+function sendResultToElodie(projId){
+  const arr=getProjects(),p=arr.find(x=>x.id===projId);if(!p){alert('Projet introuvable.');return}
+  if(!confirm('Transmettre le résultat finalisé du projet « '+p.title+' » à Élodie pour application (devis validé, décisions…) ?'))return;
+  const pl=_elodiePayload(p),me=getCurrentUser()||'Un membre';
+  const ptasks=p.project_tasks?Object.values(p.project_tasks):[];
+  const tasksDone=ptasks.filter(t=>t&&t.status==='done').map(t=>'  ✓ '+t.title).join('\n');
+  const subject=`📤 [${pl.comm}] Résultat à appliquer — ${p.title}`;
+  const message=`Bonjour Élodie,
+
+Voici le résultat finalisé du projet, à appliquer (devis validé, décisions à mettre en œuvre, etc.) :
+
+« ${p.title} »
+Commission : ${pl.comm}
+Sous-commission : ${pl.axe}
+Statut : ${pl.statut}
+Budget : ${p.budget||'—'}${p.subs&&p.subs!=='—'?'\nFinancement / devis : '+p.subs:''}
+Porteur(s) : ${pl.chefs}
+Participants : ${pl.members}
+${tasksDone?'\nTâches réalisées :\n'+tasksDone+'\n':''}${pl.notes?'\nNotes / décisions :\n'+pl.notes+'\n':''}
+Documents : ${(typeof _driveUrl!=='undefined'&&_driveUrl)?_driveUrl:'(Drive non configuré)'}
+
+Merci d'assurer la mise en œuvre. Pour toute question, rapproche-toi de ${pl.chefs.split(',')[0]||me}.
+
+Transmis par : ${me}
+— AGORA · Mairie de Lestiac`;
+  if(_sendToElodie(subject,message,pl.comm)){p.elodieResultTs=Date.now();p.elodieResultBy=me;writeProjects(arr);logAction('Résultat transmis à Élodie','«'+p.title+'»');if(!fbConnected)localData.projects=arr;renderElodieStatus(p)}
+}
+window.sendResultToElodie=sendResultToElodie;
+function renderElodieStatus(p){
+  const el=document.getElementById('elodie-status');if(!el)return;
+  const fmt=ts=>new Date(ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'2-digit'});
+  const parts=[];
+  if(p&&p.elodieInfoTs)parts.push('📧 Informée le '+fmt(p.elodieInfoTs)+(p.elodieInfoBy?' · '+p.elodieInfoBy:''));
+  if(p&&p.elodieResultTs)parts.push('📤 Résultat transmis le '+fmt(p.elodieResultTs)+(p.elodieResultBy?' · '+p.elodieResultBy:''));
+  el.innerHTML=parts.length?parts.join('  ·  '):'Aucune notification envoyée à Élodie pour ce projet.';
+}
+window.renderElodieStatus=renderElodieStatus;
+function notifyElodieTask(i){
+  const arr=getQuickTasks();const t=(i!=null&&i>=0)?arr[i]:null;if(!t){alert('Tâche introuvable.');return}
+  if(!confirm('Informer Élodie (secrétariat de mairie) au sujet de la tâche « '+t.title+' » ?'))return;
+  const comm=(typeof COMMISSIONS==='object'&&COMMISSIONS[COMMISSION_COURANTE])||'Commission';
+  const me=getCurrentUser()||'Un membre';
+  const dl=t.deadline?new Date(t.deadline+'T00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'—';
+  const subject=`🏛 [${comm}] Tâche à suivre — ${t.title}`;
+  const message=`Bonjour Élodie,
+
+La commission ${comm} t'informe de la tâche suivante :
+
+« ${t.title} »
+Responsable : ${t.assignee||'—'}
+Échéance : ${dl}${t.note?'\nNote : '+t.note:''}
+
+Merci d'en prendre note.
+
+Informé par : ${me}
+— AGORA · Mairie de Lestiac`;
+  if(_sendToElodie(subject,message,comm)){t.elodieInfoTs=Date.now();t.elodieInfoBy=me;writeQuickTasks(arr);logAction('Élodie informée (tâche)','«'+t.title+'»');renderQuickTasks()}
+}
+window.notifyElodieTask=notifyElodieTask;
 
 // ── GOOGLE DRIVE ──
 // Drive URL stockée dans Firebase — partagée entre tous les membres
@@ -2453,6 +2818,164 @@ function cancelEditChefs(){
 window.renderChefChips=renderChefChips;
 window.openEditChefs=openEditChefs;
 window.saveChefs=saveChefs;
+
+/* ════════════════════════════════════════════════════════════════
+   SOUS-COMMISSIONS — badge de rattachement + panneau Babouchka + admin
+   (vanilla, sans dépendance ; voir styles .sub- / .bab- et modale #m-sub)
+   ════════════════════════════════════════════════════════════════ */
+function renderSubAttach(p){
+  const store=getSubcoms();
+  const subs=getProjSubcomIds(p).map(id=>store[id]).filter(Boolean);
+  if(!subs.length) return '';
+  return `<div class="sub-attach">`+subs.map(s=>{
+    const foreign=Array.isArray(s.commissions)&&!s.commissions.includes(COMMISSION_COURANTE);
+    const cross=(Array.isArray(s.commissions)&&s.commissions.length>1)||foreign;
+    const other=(s.commissions||[]).filter(c=>c!==COMMISSION_COURANTE).map(c=>COMMISSIONS[c]).filter(Boolean);
+    const icon=`<svg class="sb-icon" width="16" height="16" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="9" height="9" rx="2"/><rect x="5.5" y="5.5" width="9" height="9" rx="2"/></svg>`;
+    let badge=`<button class="sub-badge${cross?' transversal':''}" id="sb-${p.id}-${s.id}" onclick="event.stopPropagation();toggleBabouchka('${p.id}','${s.id}')">${icon}<span class="sb-label-wrap"><span class="sb-kicker">Porté par${cross?' · transversale':''}</span><span class="sb-name">${escapeHtml(s.nom)}</span></span><span class="sb-chev">›</span></button>`;
+    if(cross&&other.length) badge+=`<span class="sub-cross">🔗 aussi <b>${other.map(escapeHtml).join(' · ')}</b></span>`;
+    return badge;
+  }).join('')+`</div>`;
+}
+
+const _babState={}; // projId -> {subId, level}
+const _babLevelLabel={root:"Vue d'ensemble",devis:'Devis',dec:'Décisions'};
+
+function toggleBabouchka(projId,subId){
+  const mount=document.getElementById('bab-'+projId);if(!mount)return;
+  const card=mount.closest('.proj-card');
+  if(_babState[projId]&&_babState[projId].subId===subId){closeBabouchka(projId);return;}
+  _babState[projId]={subId,level:'root'};
+  card.classList.add('open-bab');
+  renderBab(projId);
+}
+window.toggleBabouchka=toggleBabouchka;
+function closeBabouchka(projId){
+  const mount=document.getElementById('bab-'+projId);
+  if(mount){mount.innerHTML='';const c=mount.closest('.proj-card');if(c)c.classList.remove('open-bab');}
+  delete _babState[projId];
+}
+window.closeBabouchka=closeBabouchka;
+function babGo(projId,level){if(_babState[projId]){_babState[projId].level=level;renderBab(projId);}}
+window.babGo=babGo;
+function babBack(projId){const st=_babState[projId];if(!st)return;if(st.level==='root')closeBabouchka(projId);else babGo(projId,'root');}
+window.babBack=babBack;
+
+function renderBab(projId){
+  const st=_babState[projId];if(!st)return;
+  const s=getSubcoms()[st.subId];const mount=document.getElementById('bab-'+projId);
+  if(!s||!mount){return;}
+  const badge=document.getElementById('sb-'+projId+'-'+st.subId);if(badge)badge.classList.add('is-open');
+  let crumb=`<button class="bab-crumb-item ${st.level==='root'?'current':'link'}" ${st.level!=='root'?`onclick="babGo('${projId}','root')"`:''}>Vue d'ensemble</button>`;
+  if(st.level!=='root')crumb+=`<span class="bab-crumb-sep">›</span><span class="bab-crumb-item current">${_babLevelLabel[st.level]}</span>`;
+  mount.innerHTML=`<div class="babouchka">
+    <div class="bab-head">
+      <button class="bab-back" onclick="babBack('${projId}')">← ${st.level==='root'?'Fermer':'Retour'}</button>
+      <div class="bab-crumb">${crumb}</div>
+      <button class="bab-close" title="Fermer" onclick="closeBabouchka('${projId}')">✕</button>
+    </div>
+    <div class="bab-body">${_babRoot(projId,s)}${_babDevis(s)}${_babDec(s)}</div>
+  </div>`;
+  mount.querySelectorAll('.bab-level').forEach(l=>l.classList.toggle('active',l.dataset.level===st.level));
+}
+function _babRoot(projId,s){
+  const enAtt=s.devis.filter(d=>d.statut==='demande').length;
+  return `<div class="bab-level" data-level="root">
+    <div class="bab-sub-title">${escapeHtml(s.nom)}</div>
+    <div class="bab-sub-rattach">${s.commissions.length>1?'<span class="bab-pill">🔗 Transversale</span>':''}Rattachée à ${s.commissions.map(c=>COMMISSIONS[c]).filter(Boolean).map(escapeHtml).join(' · ')||'—'}</div>
+    <div class="bab-block-label">Membres · ${s.membres.length}</div>
+    ${s.membres.length?`<div class="bab-members">${s.membres.map(m=>`<span class="bab-mem"><span class="bab-av">${_scInit(m)}</span>${escapeHtml(m)}</span>`).join('')}</div>`:`<div class="bab-empty">Aucun membre défini.</div>`}
+    <div class="bab-summary">
+      <button class="bab-tile" onclick="babGo('${projId}','devis')"><span class="bab-tile-ic">🧾</span><span><span class="bab-tile-num">${s.devis.length}</span><span class="bab-tile-lab">Devis</span>${enAtt?`<span class="bab-tile-sub">${enAtt} en attente</span>`:''}</span><span class="bab-tile-go">→</span></button>
+      <button class="bab-tile" onclick="babGo('${projId}','dec')"><span class="bab-tile-ic">⚖️</span><span><span class="bab-tile-num">${s.decisions.length}</span><span class="bab-tile-lab">Décisions</span></span><span class="bab-tile-go">→</span></button>
+    </div>
+    <div class="bab-admin-cta"><button class="btn btn-ghost btn-sm" onclick="openSubAdmin('${s.id}')">⚙ Gérer cette sous-commission</button></div>
+  </div>`;
+}
+function _babDevis(s){
+  const total=s.devis.reduce((a,d)=>a+(parseFloat(d.montant)||0),0);
+  return `<div class="bab-level" data-level="devis">${s.devis.length?s.devis.map(d=>{const st=DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande;return `<div class="devis-row"><div class="devis-main"><div class="devis-four">${escapeHtml(d.four)}</div><div class="devis-date">${_scDate(d.date)}</div></div><span class="devis-amt">${_scEur(d.montant)}</span><span class="devis-status ${st.cls}">${st.label}</span>${d.fichier?`<a class="devis-file" href="${escapeHtml(d.fichier)}" target="_blank" rel="noopener">📎 Pièce</a>`:`<span class="devis-file none">— aucune</span>`}</div>`}).join('')+`<div class="devis-total"><span>Total devis</span><b>${_scEur(total)}</b></div>`:`<div class="bab-empty">Aucun devis enregistré.</div>`}</div>`;
+}
+function _babDec(s){
+  return `<div class="bab-level" data-level="dec">${s.decisions.length?s.decisions.map(d=>`<div class="dec-row"><div class="dec-date">${_scDate(d.date)}</div><div class="dec-text">${escapeHtml(d.texte)}</div><div class="dec-foot"><span class="dec-by">👤 ${escapeHtml(d.par||'—')}</span>${d.cr?`<a class="dec-cr" href="${escapeHtml(d.cr)}" target="_blank" rel="noopener">📄 Compte-rendu</a>`:''}</div></div>`).join(''):`<div class="bab-empty">Aucune décision enregistrée.</div>`}</div>`;
+}
+function _refreshOpenBabs(){Object.keys(_babState).forEach(pid=>{if(document.getElementById('bab-'+pid))renderBab(pid);});}
+
+/* ── Formulaire admin sous-commission ── */
+let _scEditId=null,_scCommissions=[],_scMembers=[];
+function openSubAdmin(subId){
+  if(!isSuperAdmin()&&!isAdmin){showToast('Réservé aux adjoints (mode admin)','warn');return;}
+  const s=getSubcoms()[subId];if(!s)return;
+  _scEditId=subId;_scCommissions=[...s.commissions];_scMembers=[...s.membres];
+  document.getElementById('sub-modal-title').textContent='Sous-commission — '+s.nom;
+  document.getElementById('sf-name').value=s.nom;
+  _scRenderCommissions();_scRenderMembers();_scRenderDevisList();_scRenderDecList();
+  const dd=document.getElementById('sf-dc-date');if(dd)dd.valueAsDate=new Date();
+  document.querySelectorAll('#m-sub .sub-tab').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('#m-sub .sub-panel').forEach((p,i)=>p.classList.toggle('active',i===0));
+  openModal('m-sub');
+}
+window.openSubAdmin=openSubAdmin;
+function _scRenderCommissions(){
+  const c=document.getElementById('sf-commissions');if(!c)return;c.innerHTML='';
+  Object.entries(COMMISSIONS).forEach(([id,nom])=>{
+    const on=_scCommissions.includes(id);const chip=document.createElement('span');
+    chip.className='multi-chip'+(on?' on':'');chip.textContent=(on?'✓ ':'')+nom;
+    chip.onclick=()=>{_scCommissions=on?_scCommissions.filter(x=>x!==id):[..._scCommissions,id];_scRenderCommissions();};
+    c.appendChild(chip);
+  });
+}
+function _scRenderMembers(){
+  const c=document.getElementById('sf-members');if(!c)return;c.innerHTML='';
+  ALL_MEMBERS.forEach(name=>{
+    const on=_scMembers.includes(name);const chip=document.createElement('span');
+    chip.className='chef-chip'+(on?' selected':'');chip.textContent=name;
+    chip.onclick=()=>{_scMembers=on?_scMembers.filter(x=>x!==name):[..._scMembers,name];_scRenderMembers();};
+    c.appendChild(chip);
+  });
+}
+function _scRenderDevisList(){
+  const el=document.getElementById('sf-devis-list');if(!el)return;const s=getSubcoms()[_scEditId];
+  el.innerHTML=(s.devis||[]).map((d,i)=>`<div class="mini-list-row"><b>${escapeHtml(d.four)}</b> · ${_scEur(d.montant)}<span class="devis-status ${(DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande).cls}" style="margin-left:6px">${(DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande).label}</span><button class="mini-del" title="Retirer" onclick="scDelDevis(${i})">🗑</button></div>`).join('');
+}
+function _scRenderDecList(){
+  const el=document.getElementById('sf-dec-list');if(!el)return;const s=getSubcoms()[_scEditId];
+  el.innerHTML=(s.decisions||[]).map((d,i)=>`<div class="mini-list-row"><span style="flex:1">${escapeHtml(d.texte)}</span><span style="color:var(--softer);font-size:11px">${_scDate(d.date)}</span><button class="mini-del" title="Retirer" onclick="scDelDecision(${i})">🗑</button></div>`).join('');
+}
+function switchSubTab(panel,btn){
+  document.querySelectorAll('#m-sub .sub-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#m-sub .sub-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('sp-'+panel).classList.add('active');
+}
+window.switchSubTab=switchSubTab;
+function scAddDevis(){
+  const four=document.getElementById('sf-dv-four').value.trim();if(!four){showToast('Fournisseur requis','warn');return;}
+  const store=getSubcoms();store[_scEditId].devis.push({four,montant:document.getElementById('sf-dv-amt').value||0,statut:document.getElementById('sf-dv-status').value,date:new Date().toISOString().slice(0,10),fichier:null});
+  writeSubcoms(store);logAction('Devis ajouté','«'+four+'» → '+store[_scEditId].nom);
+  document.getElementById('sf-dv-four').value='';document.getElementById('sf-dv-amt').value='';
+  _scRenderDevisList();_refreshOpenBabs();
+}
+window.scAddDevis=scAddDevis;
+function scDelDevis(i){const store=getSubcoms();store[_scEditId].devis.splice(i,1);writeSubcoms(store);_scRenderDevisList();_refreshOpenBabs();}
+window.scDelDevis=scDelDevis;
+function scAddDecision(){
+  const texte=document.getElementById('sf-dc-text').value.trim();if(!texte){showToast('Texte requis','warn');return;}
+  const store=getSubcoms();store[_scEditId].decisions.unshift({texte,date:document.getElementById('sf-dc-date').value||new Date().toISOString().slice(0,10),par:document.getElementById('sf-dc-by').value.trim()||(getCurrentUser()||'—'),cr:document.getElementById('sf-dc-cr').value.trim()||null});
+  writeSubcoms(store);logAction('Décision ajoutée',store[_scEditId].nom);
+  document.getElementById('sf-dc-text').value='';document.getElementById('sf-dc-by').value='';document.getElementById('sf-dc-cr').value='';
+  _scRenderDecList();_refreshOpenBabs();
+}
+window.scAddDecision=scAddDecision;
+function scDelDecision(i){const store=getSubcoms();store[_scEditId].decisions.splice(i,1);writeSubcoms(store);_scRenderDecList();_refreshOpenBabs();}
+window.scDelDecision=scDelDecision;
+function scSaveInfos(){
+  const store=getSubcoms();const s=store[_scEditId];
+  const nom=document.getElementById('sf-name').value.trim();if(!nom){showToast('Nom requis','warn');return;}
+  s.nom=nom;s.commissions=_scCommissions.length?[..._scCommissions]:[COMMISSION_COURANTE];s.membres=[..._scMembers];
+  writeSubcoms(store);logAction('Sous-commission enregistrée',nom);
+  closeModal('m-sub');renderProjects();
+}
+window.scSaveInfos=scSaveInfos;
 window.cancelEditChefs=cancelEditChefs;
 window.getChefsArr=getChefsArr;
 
@@ -3094,6 +3617,26 @@ function filterProjAxe(axe, btn) {
 window.filterProjAxe = filterProjAxe;
 
 
+// ── Rattachements transversaux (multi sous-commissions) ──
+let _pieSubcoms=[];
+function _pieRenderSubcoms(ownAxe){
+  const c=document.getElementById('pie-subcoms');if(!c)return;c.innerHTML='';
+  const store=getSubcoms();
+  Object.values(store).forEach(s=>{
+    if(!s||s.id===ownAxe)return;
+    const on=_pieSubcoms.includes(s.id);
+    const foreign=Array.isArray(s.commissions)&&!s.commissions.includes(COMMISSION_COURANTE);
+    const chip=document.createElement('span');
+    chip.className='multi-chip'+(on?' on':'');
+    chip.innerHTML=(on?'✓ ':'')+(foreign?'🔗 ':'')+escapeHtml(s.nom);
+    if(foreign)chip.title='Sous-commission d\'une autre commission : '+(s.commissions||[]).map(c=>COMMISSIONS[c]).filter(Boolean).join(', ');
+    chip.onclick=()=>{_pieSubcoms=on?_pieSubcoms.filter(x=>x!==s.id):[..._pieSubcoms,s.id];_pieRenderSubcoms(ownAxe);};
+    c.appendChild(chip);
+  });
+  if(!c.children.length)c.innerHTML='<span style="font-size:12px;color:var(--softer);font-style:italic">Aucune autre sous-commission disponible.</span>';
+}
+window._pieRenderSubcoms=_pieRenderSubcoms;
+
 // ── ÉDITION INLINE PROJET ──
 function openProjInlineEdit() {
   const p = getProjects().find(x => x.id === _currentProjId);
@@ -3114,6 +3657,10 @@ function openProjInlineEdit() {
         sel.innerHTML += `<option value='gouv'>Gouvernance</option>`;
 
   sel.value = p.axe || '';
+
+  // rattachements transversaux : extras (hors axe principal)
+  _pieSubcoms = Array.isArray(p.subcoms) ? p.subcoms.filter(id=>id&&id!==p.axe) : [];
+  _pieRenderSubcoms(p.axe);
 
   // Afficher le panneau édition
   document.getElementById('proj-inline-edit').style.display = '';
@@ -3137,6 +3684,7 @@ function saveProjInlineEdit() {
   p.status  = document.getElementById('pie-status').value;
   p.horizon = document.getElementById('pie-horizon').value;
   p.axe     = document.getElementById('pie-axe').value;
+  p.subcoms = _pieSubcoms.filter(id=>id&&id!==p.axe);
   p.budget  = document.getElementById('pie-budget').value.trim();
   p.subs    = document.getElementById('pie-subs').value.trim();
 
@@ -3197,7 +3745,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 
 <script>
-const manifest={name:'Commission Cadre de Vie — Lestiac',short_name:'Cadre de Vie',start_url:'https://commissions-lestiac.fr/cadre-de-vie.html',display:'standalone',background_color:'#1B2F5E',theme_color:'#1B2F5E',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%231A6B5A"/><text y=".9em" font-size="80" x="10">🌿</text></svg>',sizes:'any',type:'image/svg+xml'}]};
+const manifest={name:'Commission Cadre de Vie — Lestiac',short_name:'Cadre de Vie',start_url:'https://commissions-lestiac.fr/cadre-de-vie.html',display:'standalone',background_color:'#1B2F5E',theme_color:'#1B2F5E',icons:[{src:'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2220%22%20fill%3D%22%231A5C6B%22%2F%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2280%22%20x%3D%2210%22%3E%F0%9F%8C%BF%3C%2Ftext%3E%3C%2Fsvg%3E',sizes:'any',type:'image/svg+xml'}]};
 const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
 const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(blob);document.head.appendChild(link);
 </script>
@@ -3259,6 +3807,7 @@ const link=document.createElement('link');link.rel='manifest';link.href=URL.crea
     <div class="modal-foot" style="flex-wrap:wrap;gap:8px">
       <button class="btn btn-ghost-red btn-sm admin-only" id="qtd-btn-del" onclick="deleteQTFromDetail()">🗑 Supprimer</button>
       <div style="flex:1"></div>
+      <button class="btn btn-ghost btn-sm" onclick="notifyElodieTask(_qtDetailIdx)">🏛 Informer Élodie</button>
       <button class="btn btn-ghost" onclick="closeModal('m-qt-detail')">Fermer</button>
       <button class="btn btn-ghost admin-only" id="qtd-btn-edit" onclick="toggleQTEdit()">✏️ Modifier</button>
       <button class="btn btn-accent admin-only" id="qtd-btn-save" style="display:none" onclick="saveQTEdit()">✓ Enregistrer</button>

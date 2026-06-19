@@ -1,27 +1,78 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Commissions - Mairie de Lestiac-sur-Garonne</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; background: #f5f5f5; color: #333; }
-    h1 { color: #1a3c6e; border-bottom: 2px solid #1a3c6e; padding-bottom: 10px; }
-    ul { list-style: none; padding: 0; }
-    li { margin: 15px 0; }
-    a { display: block; padding: 15px 20px; background: #fff; border-left: 4px solid #1a3c6e; text-decoration: none; color: #1a3c6e; font-size: 1.1em; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background 0.2s; }
-    a:hover { background: #e8f0fe; }
-    footer { margin-top: 40px; font-size: 0.85em; color: #888; text-align: center; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1B2F5E">
+<title>Commissions municipales — Lestiac-sur-Garonne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Figtree',sans-serif;color:#1A2530;
+    background:#1B2F5E;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:64px 20px 48px;
+  }
+  .wordmark{font-family:'Sora',sans-serif;font-weight:800;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:10px}
+  h1{font-family:'Sora',sans-serif;font-weight:700;font-size:30px;color:#fff;text-align:center;line-height:1.15}
+  .sub{color:rgba(255,255,255,.6);font-size:15px;margin-top:8px;margin-bottom:44px;text-align:center}
+  .grid{display:grid;gap:18px;width:100%;max-width:560px}
+  a.card{
+    display:flex;align-items:center;gap:18px;
+    background:#fff;border-radius:14px;padding:22px 24px;
+    text-decoration:none;color:#1A2530;
+    box-shadow:0 4px 20px rgba(0,0,0,.18);
+    border-left:5px solid var(--c);
+    transition:transform .16s ease, box-shadow .16s ease;
+  }
+  a.card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.28)}
+  .ico{
+    width:52px;height:52px;border-radius:12px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    background:var(--cp);
+  }
+  .meta{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .meta .name{font-family:'Sora',sans-serif;font-weight:700;font-size:17px;color:var(--c)}
+  .meta .desc{font-size:13px;color:#5B6B7A}
+  .arrow{margin-left:auto;color:var(--c);font-size:20px;flex-shrink:0}
+  footer{margin-top:40px;font-size:12px;color:rgba(255,255,255,.4);text-align:center}
+</style>
 </head>
 <body>
+  <div class="wordmark">AGORA · Mairie de Lestiac-sur-Garonne</div>
   <h1>Commissions municipales</h1>
-  <p>Mairie de Lestiac-sur-Garonne</p>
-  <ul>
-    <li><a href="administration-generale.html">Administration g&#233;n&#233;rale</a></li>
-    <li><a href="cadre-de-vie.html">Cadre de vie</a></li>
-    <li><a href="affaires-scolaires.html">Affaires scolaires</a></li>
-  </ul>
-  <footer>Mairie de Lestiac-sur-Garonne &mdash; Commissions municipales</footer>
+  <div class="sub">Mandat 2026·2032 — espaces de travail des commissions</div>
+
+  <div class="grid">
+    <a class="card" href="cadre-de-vie.html" style="--c:#1A5C6B;--cp:#E6F3F5">
+      <div class="ico">🌿</div>
+      <div class="meta">
+        <div class="name">Cadre de Vie</div>
+        <div class="desc">Environnement · Vie du village · Gouvernance</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="card" href="affaires-scolaires.html" style="--c:#5B2F8C;--cp:#F2EAF7">
+      <div class="ico">🏫</div>
+      <div class="meta">
+        <div class="name">Affaires Scolaires</div>
+        <div class="desc">SIELP &amp; Scolarité · Périscolaire · Bâti scolaire</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="card" href="administration-generale.html" style="--c:#2358A4;--cp:#E8F0FB">
+      <div class="ico">🏛</div>
+      <div class="meta">
+        <div class="name">Administration Générale</div>
+        <div class="desc">Habitants · Communication · Social · Admin &amp; RH</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+
+  <footer>Mairie de Lestiac-sur-Garonne — Commissions municipales · Sous-commissions transversales partagées</footer>
 </body>
 </html>
