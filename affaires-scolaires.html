@@ -1179,8 +1179,13 @@ body.is-admin .bab-admin-cta{display:flex;gap:8px;flex-wrap:wrap}
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Pièce jointe</label>
-          <div class="upload-zone"><span class="uz-ic">📎</span>Glisser un fichier ou cliquer pour parcourir<div class="uz-note">UI seule — branchement Firebase Storage à venir</div></div>
+          <label class="form-label">Pièce jointe — devis</label>
+          <input class="form-control" id="sf-dv-file" type="url" placeholder="Lien du devis (Google Drive, PDF en ligne…)">
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+            <label class="btn btn-ghost btn-sm" style="font-size:11px;cursor:pointer">📎 Choisir un fichier<input type="file" id="sf-dv-fileinput" accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx" style="display:none" onchange="scPickDevisFile(this)"></label>
+            <span id="sf-dv-filename" style="font-size:11px;color:var(--soft)"></span>
+          </div>
+          <div style="font-size:10.5px;color:var(--softer);margin-top:5px;line-height:1.4">Collez un lien Drive, ou choisissez un petit fichier (≤ 1 Mo, intégré directement). Pour un fichier volumineux, déposez-le sur le Drive et collez son lien.</div>
         </div>
         <button class="btn btn-accent btn-sm" onclick="scAddDevis()">+ Ajouter le devis</button>
         <div class="mini-list" id="sf-devis-list"></div>
@@ -2897,7 +2902,7 @@ function _babRoot(projId,s){
 }
 function _babDevis(s){
   const total=s.devis.reduce((a,d)=>a+(parseFloat(d.montant)||0),0);
-  return `<div class="bab-level" data-level="devis">${s.devis.length?s.devis.map(d=>{const st=DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande;return `<div class="devis-row"><div class="devis-main"><div class="devis-four">${escapeHtml(d.four)}</div><div class="devis-date">${_scDate(d.date)}</div></div><span class="devis-amt">${_scEur(d.montant)}</span><span class="devis-status ${st.cls}">${st.label}</span>${d.fichier?`<a class="devis-file" href="${escapeHtml(d.fichier)}" target="_blank" rel="noopener">📎 Pièce</a>`:`<span class="devis-file none">— aucune</span>`}</div>`}).join('')+`<div class="devis-total"><span>Total devis</span><b>${_scEur(total)}</b></div>`:`<div class="bab-empty">Aucun devis enregistré.</div>`}</div>`;
+  return `<div class="bab-level" data-level="devis">${s.devis.length?s.devis.map(d=>{const st=DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande;return `<div class="devis-row"><div class="devis-main"><div class="devis-four">${escapeHtml(d.four)}</div><div class="devis-date">${_scDate(d.date)}</div></div><span class="devis-amt">${_scEur(d.montant)}</span><span class="devis-status ${st.cls}">${st.label}</span>${d.fichier?`<a class="devis-file" href="${escapeHtml(d.fichier)}" target="_blank" rel="noopener">📎 ${escapeHtml(d.fichierNom||'Pièce')}</a>`:`<span class="devis-file none">— aucune</span>`}</div>`}).join('')+`<div class="devis-total"><span>Total devis</span><b>${_scEur(total)}</b></div>`:`<div class="bab-empty">Aucun devis enregistré.</div>`}</div>`;
 }
 function _babDec(s){
   return `<div class="bab-level" data-level="dec">${s.decisions.length?s.decisions.map(d=>`<div class="dec-row"><div class="dec-date">${_scDate(d.date)}</div><div class="dec-text">${escapeHtml(d.texte)}</div><div class="dec-foot"><span class="dec-by">👤 ${escapeHtml(d.par||'—')}</span>${d.cr?`<a class="dec-cr" href="${escapeHtml(d.cr)}" target="_blank" rel="noopener">📄 Compte-rendu</a>`:''}</div></div>`).join(''):`<div class="bab-empty">Aucune décision enregistrée.</div>`}</div>`;
@@ -2939,7 +2944,7 @@ function _scRenderMembers(){
 }
 function _scRenderDevisList(){
   const el=document.getElementById('sf-devis-list');if(!el)return;const s=getSubcoms()[_scEditId];
-  el.innerHTML=(s.devis||[]).map((d,i)=>`<div class="mini-list-row"><b>${escapeHtml(d.four)}</b> · ${_scEur(d.montant)}<span class="devis-status ${(DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande).cls}" style="margin-left:6px">${(DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande).label}</span><button class="mini-del" title="Retirer" onclick="scDelDevis(${i})">🗑</button></div>`).join('');
+  el.innerHTML=(s.devis||[]).map((d,i)=>`<div class="mini-list-row"><b>${escapeHtml(d.four)}</b> · ${_scEur(d.montant)}<span class="devis-status ${(DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande).cls}" style="margin-left:6px">${(DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande).label}</span>${d.fichier?`<a class="devis-file" href="${escapeHtml(d.fichier)}" target="_blank" rel="noopener" style="margin-left:6px">📎 ${escapeHtml(d.fichierNom||'Pièce')}</a>`:''}<button class="mini-del" title="Retirer" onclick="scDelDevis(${i})">🗑</button></div>`).join('');
 }
 function _scRenderDecList(){
   const el=document.getElementById('sf-dec-list');if(!el)return;const s=getSubcoms()[_scEditId];
@@ -2953,12 +2958,27 @@ function switchSubTab(panel,btn){
 window.switchSubTab=switchSubTab;
 function scAddDevis(){
   const four=document.getElementById('sf-dv-four').value.trim();if(!four){showToast('Fournisseur requis','warn');return;}
-  const store=getSubcoms();store[_scEditId].devis.push({four,montant:document.getElementById('sf-dv-amt').value||0,statut:document.getElementById('sf-dv-status').value,date:new Date().toISOString().slice(0,10),fichier:null});
+  const _dvLink=(document.getElementById('sf-dv-file')?document.getElementById('sf-dv-file').value:'').trim();
+  const _dvFichier=(_scDevisFileData&&_scDevisFileData.data)||(_dvLink||null);
+  const _dvNom=(_scDevisFileData&&_scDevisFileData.name)||(_dvLink?'Lien externe':null);
+  const store=getSubcoms();store[_scEditId].devis.push({four,montant:document.getElementById('sf-dv-amt').value||0,statut:document.getElementById('sf-dv-status').value,date:new Date().toISOString().slice(0,10),fichier:_dvFichier,fichierNom:_dvNom});
   writeSubcoms(store);logAction('Devis ajouté','«'+four+'» → '+store[_scEditId].nom);
   document.getElementById('sf-dv-four').value='';document.getElementById('sf-dv-amt').value='';
+  const _dvf=document.getElementById('sf-dv-file');if(_dvf)_dvf.value='';const _dvfn=document.getElementById('sf-dv-filename');if(_dvfn)_dvfn.textContent='';const _dvfi=document.getElementById('sf-dv-fileinput');if(_dvfi)_dvfi.value='';_scDevisFileData=null;
   _scRenderDevisList();_refreshOpenBabs();
 }
 window.scAddDevis=scAddDevis;
+let _scDevisFileData=null;
+function scPickDevisFile(input){
+  const f=input.files&&input.files[0];const lbl=document.getElementById('sf-dv-filename');
+  if(!f){_scDevisFileData=null;if(lbl)lbl.textContent='';return}
+  if(f.size>1024*1024){showToast('Fichier trop lourd (> 1 Mo) — déposez-le sur le Drive et collez le lien','warn');input.value='';_scDevisFileData=null;if(lbl)lbl.textContent='';return}
+  const r=new FileReader();
+  r.onload=()=>{_scDevisFileData={name:f.name,data:r.result};if(lbl)lbl.textContent='📎 '+f.name+' prêt';};
+  r.onerror=()=>{showToast('Lecture du fichier impossible','warn');_scDevisFileData=null};
+  r.readAsDataURL(f);
+}
+window.scPickDevisFile=scPickDevisFile;
 function scDelDevis(i){const store=getSubcoms();store[_scEditId].devis.splice(i,1);writeSubcoms(store);_scRenderDevisList();_refreshOpenBabs();}
 window.scDelDevis=scDelDevis;
 function scAddDecision(){
