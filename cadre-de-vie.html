@@ -270,9 +270,10 @@ button{font-family:'Figtree',sans-serif;cursor:pointer}
 .h-moyen{background:rgba(255,255,255,.20);color:rgba(255,255,255,.9)}
 .h-long{background:rgba(27,47,94,.5);color:rgba(255,255,255,.85)}
 
-/* Category badge on gradient */
+/* Category badge on gradient — placé sous la rangée des icônes admin (archiver/supprimer)
+   pour ne jamais se chevaucher, quelle que soit la largeur du libellé d'axe */
 .proj-cat-badge{
-  position:absolute;top:12px;right:26px;z-index:5;
+  position:absolute;top:40px;right:14px;z-index:5;
   display:inline-flex;align-items:center;gap:4px;
   font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
   padding:3px 9px;border-radius:20px;
@@ -280,6 +281,7 @@ button{font-family:'Figtree',sans-serif;cursor:pointer}
   border:1px solid rgba(255,255,255,.15);
 }
 .cat-hab{background:rgba(0,0,0,.25);color:rgba(255,255,255,.85)}
+.proj-cat-badge.inline{position:static} /* usage hors carte (modale détail) : reste dans le flux, pas d'ancrage absolu */
 .cat-com{background:rgba(0,0,0,.25);color:rgba(255,255,255,.85)}
 .cat-rh{background:rgba(0,0,0,.25);color:rgba(255,255,255,.85)}
 .cat-soc{background:rgba(0,0,0,.25);color:rgba(255,255,255,.85)}
@@ -634,6 +636,10 @@ body.is-admin .admin-inline{display:inline-flex}
 .sub-badge .sb-chev{font-size:13px;margin-left:1px;color:var(--accent);transition:transform .2s,color .15s}
 .proj-card.open-bab .sub-badge.is-open .sb-chev{transform:rotate(90deg)}
 .sub-badge.transversal{border-style:dashed}
+.sub-badge.draft{border-style:dotted;background:#fff8e1;border-color:#c98f00;color:#7a5800}
+.sub-badge.draft:hover{background:#c98f00;color:#fff}
+.sub-badge.draft .sb-icon rect{stroke:#c98f00}
+.bab-draft-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:var(--r);background:#fff8e1;border:1.5px solid #c98f00;color:#7a5800;font-size:12px;font-weight:700;margin-bottom:14px}
 .sub-cross{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border-radius:var(--r);background:#fff;border:1.5px dashed var(--accent);color:var(--soft);font-size:10.5px;font-weight:700}
 .sub-cross b{color:var(--accent)}
 .babouchka{position:relative;z-index:2;margin-top:14px;border:1.5px solid var(--accent);border-radius:var(--r-lg);background:#fff;overflow:hidden;box-shadow:inset 0 0 0 4px var(--accent-p);animation:bab-in .22s ease both}
@@ -690,12 +696,9 @@ body.is-admin .admin-inline{display:inline-flex}
 .dec-by{display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--soft)}
 .dec-cr{display:inline-flex;align-items:center;gap:3px;font-weight:700;color:var(--accent);text-decoration:none}
 .dec-cr:hover{text-decoration:underline}
-.bab-admin-cta{margin-top:14px;padding-top:13px;border-top:1px dashed var(--mid);display:none}
-body.is-admin .bab-admin-cta{display:flex;gap:8px;flex-wrap:wrap}
-.sub-tabs{display:flex;gap:2px;border-bottom:2px solid var(--mid);margin-bottom:16px}
-.sub-tab{padding:8px 14px;border:none;background:none;font-size:13px;font-weight:700;color:var(--softer);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s}
-.sub-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.sub-panel{display:none}.sub-panel.active{display:block}
+.bab-edit-pencil{background:none;border:none;cursor:pointer;font-size:13px;margin-left:8px;opacity:.5;transition:opacity .15s;vertical-align:middle}
+.bab-edit-pencil:hover{opacity:1}
+.bab-inline-form{margin-top:10px;padding:14px;border:1.5px dashed var(--mid);border-radius:var(--r);background:var(--light)}
 .multi-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid var(--mid);background:#fff;color:var(--soft);cursor:pointer;transition:all .15s;user-select:none}
 .multi-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .upload-zone{border:1.5px dashed var(--mid);border-radius:var(--r);padding:16px;text-align:center;color:var(--softer);font-size:12.5px;cursor:pointer;transition:all .15s;background:var(--light)}
@@ -705,6 +708,9 @@ body.is-admin .bab-admin-cta{display:flex;gap:8px;flex-wrap:wrap}
 .mini-list{margin-top:14px;border-top:1px solid var(--mid);padding-top:12px}
 .mini-list:empty{display:none}
 .mini-list-row{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--mid)}
+.bab-settings-row{border-bottom:1px solid var(--mid)}
+.bab-settings-row .mini-list-row{border-bottom:none}
+.bab-settings-row:has(.babouchka){background:var(--light)}
 .mini-list-row:last-child{border-bottom:none}
 .mini-list-row b{color:var(--navy)}
 .mini-del{margin-left:auto;background:none;border:none;color:var(--softer);font-size:14px;padding:2px 6px;border-radius:4px}
@@ -1060,6 +1066,13 @@ body.is-admin .bab-admin-cta{display:flex;gap:8px;flex-wrap:wrap}
     <button class="btn btn-accent btn-sm" onclick="saveEmailJS()">Enregistrer</button>
     <div id="ejs-status" style="margin-top:8px;font-size:12px;color:var(--soft)"></div>
   </div>
+  <div class="config-card">
+    <h3>🗂 Sous-commissions</h3>
+    <p style="font-size:13px;color:var(--soft);margin-bottom:12px">Vue d'ensemble — y compris les amorces non confirmées, invisibles ailleurs pour les non-admins.</p>
+    <div id="subcom-admin-list"><div class="bab-empty">Chargement…</div></div>
+    <h3 style="margin-top:18px;font-size:14px">🗑 Corbeille <span style="font-weight:600;color:var(--softer);font-size:12px">— restauration possible pendant 30 jours, purge automatique ensuite</span></h3>
+    <div id="subcom-trash-list"><div class="bab-empty">Chargement…</div></div>
+  </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
     <div class="card"><div class="card-head"><h2>🔑 Mot de passe</h2></div><div class="card-body">
       <div class="form-group"><input type="password" id="new-pwd" class="form-control" placeholder="Nouveau"></div>
@@ -1140,69 +1153,7 @@ body.is-admin .bab-admin-cta{display:flex;gap:8px;flex-wrap:wrap}
   <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-cr')">Annuler</button><button class="btn btn-accent" onclick="publishCR()">📤 Publier &amp; Envoyer</button></div></div>
 </div>
 
-<!-- ═══════ MODAL GESTION SOUS-COMMISSION ═══════ -->
-<div class="overlay" id="m-sub" onclick="closeOverlay(event,'m-sub')">
-  <div class="modal">
-    <div class="modal-head"><h3 id="sub-modal-title">Sous-commission</h3><button class="modal-close" onclick="closeModal('m-sub')">✕</button></div>
-    <div class="modal-body">
-      <div class="sub-tabs">
-        <button class="sub-tab active" onclick="switchSubTab('infos',this)">Infos &amp; membres</button>
-        <button class="sub-tab" onclick="switchSubTab('devis',this)">Devis</button>
-        <button class="sub-tab" onclick="switchSubTab('dec',this)">Décisions</button>
-      </div>
-      <div class="sub-panel active" id="sp-infos">
-        <div class="form-group">
-          <label class="form-label">Nom de la sous-commission</label>
-          <input class="form-control" id="sf-name">
-          <div class="sc-helper">✏️ Nom librement modifiable à tout moment — aucun nom n'est figé par le code.</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Commissions rattachées <span style="text-transform:none;font-weight:600;color:var(--softer)">(plusieurs = transversale)</span></label>
-          <div class="member-chips-proj" id="sf-commissions" style="gap:6px"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Membres <span style="text-transform:none;font-weight:600;color:var(--softer)">(élus AGORA uniquement)</span></label>
-          <div class="member-chips-proj" id="sf-members" style="gap:5px"></div>
-        </div>
-      </div>
-      <div class="sub-panel" id="sp-devis">
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Fournisseur</label><input class="form-control" id="sf-dv-four" placeholder="Ex : SARL Toiture Garonne"></div>
-          <div class="form-group"><label class="form-label">Montant (€)</label><input class="form-control" id="sf-dv-amt" type="number" placeholder="0"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Statut</label>
-          <select class="form-control" id="sf-dv-status">
-            <option value="demande">Demandé</option><option value="recu">Reçu</option>
-            <option value="valide">Validé</option><option value="refuse">Refusé</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Pièce jointe — devis</label>
-          <input class="form-control" id="sf-dv-file" type="url" placeholder="Lien du devis (Google Drive, PDF en ligne…)">
-          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
-            <label class="btn btn-ghost btn-sm" style="font-size:11px;cursor:pointer">📎 Choisir un fichier<input type="file" id="sf-dv-fileinput" accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx" style="display:none" onchange="scPickDevisFile(this)"></label>
-            <span id="sf-dv-filename" style="font-size:11px;color:var(--soft)"></span>
-          </div>
-          <div style="font-size:10.5px;color:var(--softer);margin-top:5px;line-height:1.4">Collez un lien Drive, ou choisissez un petit fichier (≤ 1 Mo, intégré directement). Pour un fichier volumineux, déposez-le sur le Drive et collez son lien.</div>
-        </div>
-        <button class="btn btn-accent btn-sm" onclick="scAddDevis()">+ Ajouter le devis</button>
-        <div class="mini-list" id="sf-devis-list"></div>
-      </div>
-      <div class="sub-panel" id="sp-dec">
-        <div class="form-group"><label class="form-label">Texte de la décision</label><textarea class="form-control" id="sf-dc-text" placeholder="Ce qui a été décidé…"></textarea></div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Date</label><input class="form-control" id="sf-dc-date" type="date"></div>
-          <div class="form-group"><label class="form-label">Décidé par</label><input class="form-control" id="sf-dc-by" placeholder="Ex : Bureau du 12/03"></div>
-        </div>
-        <div class="form-group"><label class="form-label">Lien compte-rendu <span style="text-transform:none;font-weight:600;color:var(--softer)">(optionnel)</span></label><input class="form-control" id="sf-dc-cr" placeholder="https://…"></div>
-        <button class="btn btn-accent btn-sm" onclick="scAddDecision()">+ Ajouter la décision</button>
-        <div class="mini-list" id="sf-dec-list"></div>
-      </div>
-    </div>
-    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-sub')">Fermer</button><button class="btn btn-accent" onclick="scSaveInfos()">Enregistrer</button></div>
-  </div>
-</div>
+
 
 <!-- ═══════ MODAL DÉTAIL PROJET (avec onglets) ═══════ -->
 <div class="overlay" id="m-proj-detail" onclick="closeOverlay(event,'m-proj-detail')">
@@ -1452,24 +1403,52 @@ const SUBCOM_DEFAULTS = {
 const K_SUBCOM = 'cdv_subcoms';
 const SUBCOM_NODE='subcommissions'; // ⚠ nœud PARTAGÉ entre les 3 commissions (hors COMMISSION) — c'est lui qui rend le transversal réel
 const ELODIE_EMAIL='accueil-lestiac@lestiac.fr'; // secrétariat mairie — destinataire rebouclage
+const TRASH_NODE='subcommissions_trash'; // ⚠ nœud PARTAGÉ — corbeille des sous-commissions supprimées (toutes commissions)
+const TRASH_RETENTION_DAYS=30;
+const TRASH_RETENTION_MS=TRASH_RETENTION_DAYS*24*60*60*1000;
 let _subcomData=null;                // peuplé en temps réel par subscribeSubcoms() dès que Firebase est connecté
+let _trashData=null;                 // peuplé en temps réel par subscribeTrash() dès que Firebase est connecté
 function getSubcoms(){
   if(_subcomData) return {...SUBCOM_DEFAULTS,..._subcomData};
   try{const o=JSON.parse(localStorage.getItem(K_SUBCOM));return o&&typeof o==='object'?{...SUBCOM_DEFAULTS,...o}:{...SUBCOM_DEFAULTS}}catch{return {...SUBCOM_DEFAULTS}}
 }
-function writeSubcoms(o){
-  if(fbDb){fbSet(SUBCOM_NODE,o);}                        // écriture sur le nœud partagé (sync temps réel inter-commissions)
-  else{localStorage.setItem(K_SUBCOM,JSON.stringify(o));} // repli hors-ligne, propre à la commission
+let _subcomSub=false, _trashSub=false;
+/* Phase 1 — amorçage différé : on n'écrit les amorces par défaut qu'une fois les DEUX flux
+   (sous-commissions + corbeille) chargés, et seulement si l'amorce n'a jamais été supprimée
+   explicitement par un admin (présente dans la corbeille). Corrige l'auto-création silencieuse. */
+function maybeSeedDefaults(){
+  if(_subcomData===null||_trashData===null)return; // attendre les deux flux avant d'agir
+  Object.keys(SUBCOM_DEFAULTS).forEach(id=>{
+    if(_subcomData[id])return;   // déjà existante (amorce ou confirmée) — jamais écrasée
+    if(_trashData[id])return;    // supprimée explicitement par un admin — ne pas la ré-amorcer
+    fbSet(SUBCOM_NODE+'/'+id,{...SUBCOM_DEFAULTS[id],_draft:true});
+  });
 }
-let _subcomSub=false;
+function purgeOldTrash(){
+  if(!_trashData)return;
+  const now=Date.now();
+  Object.entries(_trashData).forEach(([id,item])=>{
+    if(item&&item._deletedAt&&(now-item._deletedAt)>TRASH_RETENTION_MS)fbRemove(TRASH_NODE+'/'+id);
+  });
+}
 function subscribeSubcoms(){
   if(!fbDb||_subcomSub)return;_subcomSub=true;
   onValue(ref(fbDb,SUBCOM_NODE),snap=>{
     _subcomData=snap.val()||{};
-    // amorçage : crée les sous-commissions de CETTE commission si absentes, sans jamais écraser l'existant
-    Object.keys(SUBCOM_DEFAULTS).forEach(id=>{if(!_subcomData[id])fbSet(SUBCOM_NODE+'/'+id,SUBCOM_DEFAULTS[id]);});
+    maybeSeedDefaults();
     if(typeof renderProjects==='function')renderProjects();
     if(typeof _refreshOpenBabs==='function')_refreshOpenBabs();
+    if(typeof renderSubcomAdmin==='function')renderSubcomAdmin();
+  },()=>{});
+  subscribeTrash();
+}
+function subscribeTrash(){
+  if(!fbDb||_trashSub)return;_trashSub=true;
+  onValue(ref(fbDb,TRASH_NODE),snap=>{
+    _trashData=snap.val()||{};
+    purgeOldTrash();
+    maybeSeedDefaults();
+    if(typeof renderSubcomAdmin==='function')renderSubcomAdmin();
   },()=>{});
 }
 // rattachement d'un projet : champ subcoms[] si présent, sinon dérivé de l'axe
@@ -1656,6 +1635,7 @@ function nav(id,btn){
   if(id==='journal')renderLog();
   if(id==='finances')renderFinances();
   if(id==='chat')initDMPage();
+  if(id==='admin')renderSubcomAdmin();
 }
 window.nav=nav;
 
@@ -2014,7 +1994,7 @@ function openProjDetail(projId){
   document.getElementById('proj-detail-meta').innerHTML=
     `<span class="proj-horizon ${hB[p.horizon]}">${hL[p.horizon]}</span>
      <span class="status-pill ${p.status}">${sL[p.status]}</span>
-     <span class="proj-cat-badge ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>`;
+     <span class="proj-cat-badge inline ${AXE_CLASSES[p.axe]||''}">${AXE_LABELS[p.axe]||p.axe}</span>`;
   // En charge du projet
   renderDetailChefs(p);
   document.getElementById('proj-detail-desc').textContent=p.desc||'';
@@ -2621,6 +2601,7 @@ window.notifyElodieTask=notifyElodieTask;
 // ── GOOGLE DRIVE ──
 // Drive URL stockée dans Firebase — partagée entre tous les membres
 let _driveUrl = 'https://drive.google.com/drive/u/0/folders/1lDN-UMwFqsMlyirWKXE-5NjDjCKzvi2m'; // URL Drive partagée — hardcodée
+const DEVIS_DRIVE_URL = 'https://drive.google.com/drive/folders/1u18BxPe794fHrCas1EGVNTad-QVApake?usp=share_link'; // sous-dossier "Factures" dédié aux PJ devis — partagé entre les 3 commissions
 localStorage.setItem('lestiac_drive_cdv', _driveUrl);
 function applyDriveUrl(url) {
   _driveUrl = url || '';
@@ -2825,177 +2806,381 @@ window.openEditChefs=openEditChefs;
 window.saveChefs=saveChefs;
 
 /* ════════════════════════════════════════════════════════════════
-   SOUS-COMMISSIONS — badge de rattachement + panneau Babouchka + admin
-   (vanilla, sans dépendance ; voir styles .sub- / .bab- et modale #m-sub)
+   SOUS-COMMISSIONS — badge de rattachement + panneau Babouchka
+   édition entièrement in-place (Phase 1bis) : plus de modale séparée,
+   tout se fait dans le panneau lui-même (infos, devis, décisions).
    ════════════════════════════════════════════════════════════════ */
 function renderSubAttach(p){
   const store=getSubcoms();
-  const subs=getProjSubcomIds(p).map(id=>store[id]).filter(Boolean);
+  const subs=getProjSubcomIds(p).map(id=>store[id]).filter(Boolean)
+    .filter(s=>!s._draft||isAdmin||isSuperAdmin()); // amorces non confirmées invisibles aux non-admins
   if(!subs.length) return '';
   return `<div class="sub-attach">`+subs.map(s=>{
     const foreign=Array.isArray(s.commissions)&&!s.commissions.includes(COMMISSION_COURANTE);
     const cross=(Array.isArray(s.commissions)&&s.commissions.length>1)||foreign;
     const other=(s.commissions||[]).filter(c=>c!==COMMISSION_COURANTE).map(c=>COMMISSIONS[c]).filter(Boolean);
     const icon=`<svg class="sb-icon" width="16" height="16" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="9" height="9" rx="2"/><rect x="5.5" y="5.5" width="9" height="9" rx="2"/></svg>`;
-    let badge=`<button class="sub-badge${cross?' transversal':''}" id="sb-${p.id}-${s.id}" onclick="event.stopPropagation();toggleBabouchka('${p.id}','${s.id}')">${icon}<span class="sb-label-wrap"><span class="sb-kicker">Porté par${cross?' · transversale':''}</span><span class="sb-name">${escapeHtml(s.nom)}</span></span><span class="sb-chev">›</span></button>`;
+    let badge=`<button class="sub-badge${cross?' transversal':''}${s._draft?' draft':''}" id="sb-${p.id}-${s.id}" onclick="event.stopPropagation();toggleBabouchka('${p.id}','${s.id}')">${icon}<span class="sb-label-wrap"><span class="sb-kicker">${s._draft?'🌱 Amorce · ':''}Porté par${cross?' · transversale':''}</span><span class="sb-name">${escapeHtml(s.nom)}</span></span><span class="sb-chev">›</span></button>`;
     if(cross&&other.length) badge+=`<span class="sub-cross">🔗 aussi <b>${other.map(escapeHtml).join(' · ')}</b></span>`;
     return badge;
   }).join('')+`</div>`;
 }
 
-const _babState={}; // projId -> {subId, level}
+const _babState={}; // panelId -> {subId, level}   panelId = projId (carte projet) ou 'settings-<subId>' (Paramètres)
 const _babLevelLabel={root:"Vue d'ensemble",devis:'Devis',dec:'Décisions'};
+const _babEditing={};   // subId -> bool : édition des infos (nom/commissions/membres) en cours
+const _babEditWork={};  // subId -> {commissions:[],membres:[]} copie de travail pendant l'édition
+const _babAddDevis={};  // subId -> bool : formulaire d'ajout de devis ouvert
+const _babAddDec={};    // subId -> bool : formulaire d'ajout de décision ouvert
+const _babDevisFile={}; // subId -> {name,data} fichier devis sélectionné, en attente d'ajout
+const _canEditSub=()=>isAdmin||isSuperAdmin();
 
-function toggleBabouchka(projId,subId){
-  const mount=document.getElementById('bab-'+projId);if(!mount)return;
-  const card=mount.closest('.proj-card');
-  if(_babState[projId]&&_babState[projId].subId===subId){closeBabouchka(projId);return;}
-  _babState[projId]={subId,level:'root'};
-  card.classList.add('open-bab');
-  renderBab(projId);
+function toggleBabouchka(panelId,subId){
+  const mount=document.getElementById('bab-'+panelId);if(!mount)return;
+  const card=mount.closest('.proj-card'); // null hors carte projet (ex: liste Paramètres) — géré ci-dessous
+  if(_babState[panelId]&&_babState[panelId].subId===subId){closeBabouchka(panelId);return;}
+  _babState[panelId]={subId,level:'root'};
+  if(card)card.classList.add('open-bab');
+  renderBab(panelId);
 }
 window.toggleBabouchka=toggleBabouchka;
-function closeBabouchka(projId){
-  const mount=document.getElementById('bab-'+projId);
+function closeBabouchka(panelId){
+  const mount=document.getElementById('bab-'+panelId);
   if(mount){mount.innerHTML='';const c=mount.closest('.proj-card');if(c)c.classList.remove('open-bab');}
-  delete _babState[projId];
+  delete _babState[panelId];
 }
 window.closeBabouchka=closeBabouchka;
-function babGo(projId,level){if(_babState[projId]){_babState[projId].level=level;renderBab(projId);}}
+function babGo(panelId,level){if(_babState[panelId]){_babState[panelId].level=level;renderBab(panelId);}}
 window.babGo=babGo;
-function babBack(projId){const st=_babState[projId];if(!st)return;if(st.level==='root')closeBabouchka(projId);else babGo(projId,'root');}
+function babBack(panelId){const st=_babState[panelId];if(!st)return;if(st.level==='root')closeBabouchka(panelId);else babGo(panelId,'root');}
 window.babBack=babBack;
 
-function renderBab(projId){
-  const st=_babState[projId];if(!st)return;
-  const s=getSubcoms()[st.subId];const mount=document.getElementById('bab-'+projId);
+function renderBab(panelId){
+  const st=_babState[panelId];if(!st)return;
+  const s=getSubcoms()[st.subId];const mount=document.getElementById('bab-'+panelId);
   if(!s||!mount){return;}
-  const badge=document.getElementById('sb-'+projId+'-'+st.subId);if(badge)badge.classList.add('is-open');
-  let crumb=`<button class="bab-crumb-item ${st.level==='root'?'current':'link'}" ${st.level!=='root'?`onclick="babGo('${projId}','root')"`:''}>Vue d'ensemble</button>`;
+  const badge=document.getElementById('sb-'+panelId+'-'+st.subId);if(badge)badge.classList.add('is-open');
+  let crumb=`<button class="bab-crumb-item ${st.level==='root'?'current':'link'}" ${st.level!=='root'?`onclick="babGo('${panelId}','root')"`:''}>Vue d'ensemble</button>`;
   if(st.level!=='root')crumb+=`<span class="bab-crumb-sep">›</span><span class="bab-crumb-item current">${_babLevelLabel[st.level]}</span>`;
   mount.innerHTML=`<div class="babouchka">
     <div class="bab-head">
-      <button class="bab-back" onclick="babBack('${projId}')">← ${st.level==='root'?'Fermer':'Retour'}</button>
+      <button class="bab-back" onclick="babBack('${panelId}')">← ${st.level==='root'?'Fermer':'Retour'}</button>
       <div class="bab-crumb">${crumb}</div>
-      <button class="bab-close" title="Fermer" onclick="closeBabouchka('${projId}')">✕</button>
+      <button class="bab-close" title="Fermer" onclick="closeBabouchka('${panelId}')">✕</button>
     </div>
-    <div class="bab-body">${_babRoot(projId,s)}${_babDevis(s)}${_babDec(s)}</div>
+    <div class="bab-body">${_babRoot(panelId,s)}${_babDevis(s)}${_babDec(s)}</div>
   </div>`;
   mount.querySelectorAll('.bab-level').forEach(l=>l.classList.toggle('active',l.dataset.level===st.level));
+  if(st.level==='root'&&_babEditing[st.subId])_babRenderEditChips(st.subId);
 }
-function _babRoot(projId,s){
+
+function _babRoot(panelId,s){
   const enAtt=s.devis.filter(d=>d.statut==='demande').length;
+  const draftBanner=s._draft?`<div class="bab-draft-banner"><span>🌱 Amorce non confirmée — invisible aux non-admins.</span><button class="btn btn-accent btn-sm" onclick="confirmSubcomDraft('${s.id}')">✓ Confirmer</button></div>`:'';
+  if(_babEditing[s.id]){
+    if(!_babEditWork[s.id])_babEditWork[s.id]={commissions:[...s.commissions],membres:[...s.membres]};
+    return `<div class="bab-level" data-level="root">
+      ${draftBanner}
+      <div class="form-group">
+        <label class="form-label">Nom de la sous-commission</label>
+        <input class="form-control" id="bab-name-${s.id}" value="${escapeHtml(s.nom)}">
+        <div class="sc-helper">✏️ Nom librement modifiable à tout moment.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Commissions rattachées <span style="text-transform:none;font-weight:600;color:var(--softer)">(plusieurs = transversale)</span></label>
+        <div class="member-chips-proj" id="bab-commissions-${s.id}" style="gap:6px"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Membres <span style="text-transform:none;font-weight:600;color:var(--softer)">(élus AGORA uniquement)</span></label>
+        <div class="member-chips-proj" id="bab-members-${s.id}" style="gap:5px"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn btn-ghost-red btn-sm" style="margin-right:auto" onclick="babDeleteSubcom('${s.id}')">🗑 Supprimer</button>
+        <button class="btn btn-ghost btn-sm" onclick="babCancelEdit('${s.id}')">Annuler</button>
+        <button class="btn btn-accent btn-sm" onclick="babSaveInfos('${s.id}')">Enregistrer</button>
+      </div>
+    </div>`;
+  }
   return `<div class="bab-level" data-level="root">
-    <div class="bab-sub-title">${escapeHtml(s.nom)}</div>
+    ${draftBanner}
+    <div class="bab-sub-title">${escapeHtml(s.nom)}${_canEditSub()?`<button class="bab-edit-pencil" title="Modifier" onclick="babStartEdit('${s.id}')">✏️</button>`:''}</div>
     <div class="bab-sub-rattach">${s.commissions.length>1?'<span class="bab-pill">🔗 Transversale</span>':''}Rattachée à ${s.commissions.map(c=>COMMISSIONS[c]).filter(Boolean).map(escapeHtml).join(' · ')||'—'}</div>
     <div class="bab-block-label">Membres · ${s.membres.length}</div>
     ${s.membres.length?`<div class="bab-members">${s.membres.map(m=>`<span class="bab-mem"><span class="bab-av">${_scInit(m)}</span>${escapeHtml(m)}</span>`).join('')}</div>`:`<div class="bab-empty">Aucun membre défini.</div>`}
     <div class="bab-summary">
-      <button class="bab-tile" onclick="babGo('${projId}','devis')"><span class="bab-tile-ic">🧾</span><span><span class="bab-tile-num">${s.devis.length}</span><span class="bab-tile-lab">Devis</span>${enAtt?`<span class="bab-tile-sub">${enAtt} en attente</span>`:''}</span><span class="bab-tile-go">→</span></button>
-      <button class="bab-tile" onclick="babGo('${projId}','dec')"><span class="bab-tile-ic">⚖️</span><span><span class="bab-tile-num">${s.decisions.length}</span><span class="bab-tile-lab">Décisions</span></span><span class="bab-tile-go">→</span></button>
+      <button class="bab-tile" onclick="babGo('${panelId}','devis')"><span class="bab-tile-ic">🧾</span><span><span class="bab-tile-num">${s.devis.length}</span><span class="bab-tile-lab">Devis</span>${enAtt?`<span class="bab-tile-sub">${enAtt} en attente</span>`:''}</span><span class="bab-tile-go">→</span></button>
+      <button class="bab-tile" onclick="babGo('${panelId}','dec')"><span class="bab-tile-ic">⚖️</span><span><span class="bab-tile-num">${s.decisions.length}</span><span class="bab-tile-lab">Décisions</span></span><span class="bab-tile-go">→</span></button>
     </div>
-    <div class="bab-admin-cta"><button class="btn btn-ghost btn-sm" onclick="openSubAdmin('${s.id}')">⚙ Gérer cette sous-commission</button></div>
   </div>`;
 }
+
+function _babRenderEditChips(subId){
+  const work=_babEditWork[subId];if(!work)return;
+  const cEl=document.getElementById('bab-commissions-'+subId);
+  if(cEl){
+    cEl.innerHTML='';
+    Object.entries(COMMISSIONS).forEach(([id,nom])=>{
+      const on=work.commissions.includes(id);
+      const chip=document.createElement('span');
+      chip.className='multi-chip'+(on?' on':'');chip.textContent=(on?'✓ ':'')+nom;
+      chip.onclick=()=>{work.commissions=on?work.commissions.filter(x=>x!==id):[...work.commissions,id];_babRenderEditChips(subId);};
+      cEl.appendChild(chip);
+    });
+  }
+  const mEl=document.getElementById('bab-members-'+subId);
+  if(mEl){
+    mEl.innerHTML='';
+    ALL_MEMBERS.forEach(name=>{
+      const on=work.membres.includes(name);
+      const chip=document.createElement('span');
+      chip.className='chef-chip'+(on?' selected':'');chip.textContent=name;
+      chip.onclick=()=>{work.membres=on?work.membres.filter(x=>x!==name):[...work.membres,name];_babRenderEditChips(subId);};
+      mEl.appendChild(chip);
+    });
+  }
+}
+
+function babStartEdit(subId){
+  if(!_canEditSub()){showToast('Réservé aux adjoints (mode admin)','warn');return;}
+  const s=getSubcoms()[subId];if(!s)return;
+  _babEditing[subId]=true;
+  _babEditWork[subId]={commissions:[...s.commissions],membres:[...s.membres]};
+  _refreshOpenBabs();
+}
+window.babStartEdit=babStartEdit;
+function babCancelEdit(subId){
+  delete _babEditing[subId];delete _babEditWork[subId];
+  _refreshOpenBabs();
+}
+window.babCancelEdit=babCancelEdit;
+function babSaveInfos(subId){
+  const s=getSubcoms()[subId];if(!s)return;
+  const nameEl=document.getElementById('bab-name-'+subId);
+  const nom=nameEl?nameEl.value.trim():s.nom;
+  if(!nom){showToast('Nom requis','warn');return;}
+  const work=_babEditWork[subId]||{commissions:s.commissions,membres:s.membres};
+  const updated={...s,nom,commissions:work.commissions.length?[...work.commissions]:[COMMISSION_COURANTE],membres:[...work.membres]};
+  fbSet(SUBCOM_NODE+'/'+subId,updated);
+  logAction('Sous-commission enregistrée',nom);
+  delete _babEditing[subId];delete _babEditWork[subId];
+  showToast('Enregistré ✓','ok');
+  renderProjects();_refreshOpenBabs();
+}
+window.babSaveInfos=babSaveInfos;
+function babDeleteSubcom(subId){
+  if(!_canEditSub()){showToast('Réservé aux adjoints (mode admin)','warn');return;}
+  const s=getSubcoms()[subId];if(!s)return;
+  const cross=Array.isArray(s.commissions)&&s.commissions.length>1;
+  const warn=cross?`\n\n⚠ Sous-commission TRANSVERSALE — rattachée à ${s.commissions.map(c=>COMMISSIONS[c]).filter(Boolean).join(' · ')}. Sa suppression la retire de TOUTES ces commissions.`:'';
+  if(!confirm(`Supprimer « ${s.nom} » ?${warn}\n\nElle sera déplacée dans la corbeille, récupérable pendant ${TRASH_RETENTION_DAYS} jours.`))return;
+  fbSet(TRASH_NODE+'/'+subId,{...s,_deletedAt:Date.now(),_deletedBy:getCurrentUser()||'?'});
+  fbRemove(SUBCOM_NODE+'/'+subId);
+  logAction('Sous-commission supprimée → corbeille',s.nom);
+  showToast('Déplacée dans la corbeille','warn');
+  delete _babEditing[subId];delete _babEditWork[subId];
+  Object.keys(_babState).forEach(pid=>{if(_babState[pid]&&_babState[pid].subId===subId)closeBabouchka(pid);});
+  renderProjects();
+}
+window.babDeleteSubcom=babDeleteSubcom;
+
 function _babDevis(s){
   const total=s.devis.reduce((a,d)=>a+(parseFloat(d.montant)||0),0);
-  return `<div class="bab-level" data-level="devis">${s.devis.length?s.devis.map(d=>{const st=DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande;return `<div class="devis-row"><div class="devis-main"><div class="devis-four">${escapeHtml(d.four)}</div><div class="devis-date">${_scDate(d.date)}</div></div><span class="devis-amt">${_scEur(d.montant)}</span><span class="devis-status ${st.cls}">${st.label}</span>${d.fichier?`<a class="devis-file" href="${escapeHtml(d.fichier)}" target="_blank" rel="noopener">📎 ${escapeHtml(d.fichierNom||'Pièce')}</a>`:`<span class="devis-file none">— aucune</span>`}</div>`}).join('')+`<div class="devis-total"><span>Total devis</span><b>${_scEur(total)}</b></div>`:`<div class="bab-empty">Aucun devis enregistré.</div>`}</div>`;
+  const rows=s.devis.length?s.devis.map((d,i)=>{
+    const st=DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande;
+    return `<div class="devis-row"><div class="devis-main"><div class="devis-four">${escapeHtml(d.four)}</div><div class="devis-date">${_scDate(d.date)}</div></div><span class="devis-amt">${_scEur(d.montant)}</span><span class="devis-status ${st.cls}">${st.label}</span>${d.fichier?`<a class="devis-file" href="${escapeHtml(d.fichier)}" target="_blank" rel="noopener">📎 ${escapeHtml(d.fichierNom||'Pièce')}</a>`:`<span class="devis-file none">— aucune</span>`}${_canEditSub()?`<button class="mini-del" title="Retirer" onclick="babDelDevis('${s.id}',${i})">🗑</button>`:''}</div>`;
+  }).join('')+`<div class="devis-total"><span>Total devis</span><b>${_scEur(total)}</b></div>`:`<div class="bab-empty">Aucun devis enregistré.</div>`;
+  let addZone='';
+  if(_canEditSub()){
+    if(_babAddDevis[s.id]){
+      const fd=_babDevisFile[s.id];
+      addZone=`<div class="bab-inline-form">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Fournisseur</label><input class="form-control" id="bab-dv-four-${s.id}" placeholder="Ex : SARL Toiture Garonne"></div>
+          <div class="form-group"><label class="form-label">Montant (€)</label><input class="form-control" id="bab-dv-amt-${s.id}" type="number" placeholder="0"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Statut</label>
+          <select class="form-control" id="bab-dv-status-${s.id}"><option value="demande">Demandé</option><option value="recu">Reçu</option><option value="valide">Validé</option><option value="refuse">Refusé</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pièce jointe</label>
+          <input class="form-control" id="bab-dv-file-${s.id}" type="url" placeholder="Lien du devis (Google Drive, PDF en ligne…)">
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+            <label class="btn btn-ghost btn-sm" style="font-size:11px;cursor:pointer">📎 Choisir un fichier<input type="file" id="bab-dv-fileinput-${s.id}" accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx" style="display:none" onchange="babPickDevisFile(this,'${s.id}')"></label>
+            ${DEVIS_DRIVE_URL?`<a class="btn btn-ghost btn-sm" style="font-size:11px" href="${escapeHtml(DEVIS_DRIVE_URL)}" target="_blank" rel="noopener">📂 Dossier Factures</a>`:''}
+            <span style="font-size:11px;color:var(--soft)">${fd?'📎 '+escapeHtml(fd.name)+' prêt':''}</span>
+          </div>
+          <div style="font-size:10.5px;color:var(--softer);margin-top:5px;line-height:1.4">Collez un lien, ou choisissez un petit fichier (≤ 1 Mo, intégré directement). Pour un fichier volumineux : ouvrez le dossier Factures, déposez-y le fichier, puis collez son lien ici.</div>
+        </div>
+        <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="babToggleAddDevis('${s.id}',false)">Annuler</button><button class="btn btn-accent btn-sm" onclick="babAddDevis('${s.id}')">+ Ajouter le devis</button></div>
+      </div>`;
+    }else{
+      addZone=`<button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="babToggleAddDevis('${s.id}',true)">+ Ajouter un devis</button>`;
+    }
+  }
+  return `<div class="bab-level" data-level="devis">${rows}${addZone}</div>`;
 }
-function _babDec(s){
-  return `<div class="bab-level" data-level="dec">${s.decisions.length?s.decisions.map(d=>`<div class="dec-row"><div class="dec-date">${_scDate(d.date)}</div><div class="dec-text">${escapeHtml(d.texte)}</div><div class="dec-foot"><span class="dec-by">👤 ${escapeHtml(d.par||'—')}</span>${d.cr?`<a class="dec-cr" href="${escapeHtml(d.cr)}" target="_blank" rel="noopener">📄 Compte-rendu</a>`:''}</div></div>`).join(''):`<div class="bab-empty">Aucune décision enregistrée.</div>`}</div>`;
-}
-function _refreshOpenBabs(){Object.keys(_babState).forEach(pid=>{if(document.getElementById('bab-'+pid))renderBab(pid);});}
-
-/* ── Formulaire admin sous-commission ── */
-let _scEditId=null,_scCommissions=[],_scMembers=[];
-function openSubAdmin(subId){
-  if(!isSuperAdmin()&&!isAdmin){showToast('Réservé aux adjoints (mode admin)','warn');return;}
-  const s=getSubcoms()[subId];if(!s)return;
-  _scEditId=subId;_scCommissions=[...s.commissions];_scMembers=[...s.membres];
-  document.getElementById('sub-modal-title').textContent='Sous-commission — '+s.nom;
-  document.getElementById('sf-name').value=s.nom;
-  _scRenderCommissions();_scRenderMembers();_scRenderDevisList();_scRenderDecList();
-  const dd=document.getElementById('sf-dc-date');if(dd)dd.valueAsDate=new Date();
-  document.querySelectorAll('#m-sub .sub-tab').forEach((b,i)=>b.classList.toggle('active',i===0));
-  document.querySelectorAll('#m-sub .sub-panel').forEach((p,i)=>p.classList.toggle('active',i===0));
-  openModal('m-sub');
-}
-window.openSubAdmin=openSubAdmin;
-function _scRenderCommissions(){
-  const c=document.getElementById('sf-commissions');if(!c)return;c.innerHTML='';
-  Object.entries(COMMISSIONS).forEach(([id,nom])=>{
-    const on=_scCommissions.includes(id);const chip=document.createElement('span');
-    chip.className='multi-chip'+(on?' on':'');chip.textContent=(on?'✓ ':'')+nom;
-    chip.onclick=()=>{_scCommissions=on?_scCommissions.filter(x=>x!==id):[..._scCommissions,id];_scRenderCommissions();};
-    c.appendChild(chip);
-  });
-}
-function _scRenderMembers(){
-  const c=document.getElementById('sf-members');if(!c)return;c.innerHTML='';
-  ALL_MEMBERS.forEach(name=>{
-    const on=_scMembers.includes(name);const chip=document.createElement('span');
-    chip.className='chef-chip'+(on?' selected':'');chip.textContent=name;
-    chip.onclick=()=>{_scMembers=on?_scMembers.filter(x=>x!==name):[..._scMembers,name];_scRenderMembers();};
-    c.appendChild(chip);
-  });
-}
-function _scRenderDevisList(){
-  const el=document.getElementById('sf-devis-list');if(!el)return;const s=getSubcoms()[_scEditId];
-  el.innerHTML=(s.devis||[]).map((d,i)=>`<div class="mini-list-row"><b>${escapeHtml(d.four)}</b> · ${_scEur(d.montant)}<span class="devis-status ${(DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande).cls}" style="margin-left:6px">${(DEVIS_STATUS[d.statut]||DEVIS_STATUS.demande).label}</span>${d.fichier?`<a class="devis-file" href="${escapeHtml(d.fichier)}" target="_blank" rel="noopener" style="margin-left:6px">📎 ${escapeHtml(d.fichierNom||'Pièce')}</a>`:''}<button class="mini-del" title="Retirer" onclick="scDelDevis(${i})">🗑</button></div>`).join('');
-}
-function _scRenderDecList(){
-  const el=document.getElementById('sf-dec-list');if(!el)return;const s=getSubcoms()[_scEditId];
-  el.innerHTML=(s.decisions||[]).map((d,i)=>`<div class="mini-list-row"><span style="flex:1">${escapeHtml(d.texte)}</span><span style="color:var(--softer);font-size:11px">${_scDate(d.date)}</span><button class="mini-del" title="Retirer" onclick="scDelDecision(${i})">🗑</button></div>`).join('');
-}
-function switchSubTab(panel,btn){
-  document.querySelectorAll('#m-sub .sub-tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('#m-sub .sub-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');document.getElementById('sp-'+panel).classList.add('active');
-}
-window.switchSubTab=switchSubTab;
-function scAddDevis(){
-  const four=document.getElementById('sf-dv-four').value.trim();if(!four){showToast('Fournisseur requis','warn');return;}
-  const _dvLink=(document.getElementById('sf-dv-file')?document.getElementById('sf-dv-file').value:'').trim();
-  const _dvFichier=(_scDevisFileData&&_scDevisFileData.data)||(_dvLink||null);
-  const _dvNom=(_scDevisFileData&&_scDevisFileData.name)||(_dvLink?'Lien externe':null);
-  const store=getSubcoms();store[_scEditId].devis.push({four,montant:document.getElementById('sf-dv-amt').value||0,statut:document.getElementById('sf-dv-status').value,date:new Date().toISOString().slice(0,10),fichier:_dvFichier,fichierNom:_dvNom});
-  writeSubcoms(store);logAction('Devis ajouté','«'+four+'» → '+store[_scEditId].nom);
-  document.getElementById('sf-dv-four').value='';document.getElementById('sf-dv-amt').value='';
-  const _dvf=document.getElementById('sf-dv-file');if(_dvf)_dvf.value='';const _dvfn=document.getElementById('sf-dv-filename');if(_dvfn)_dvfn.textContent='';const _dvfi=document.getElementById('sf-dv-fileinput');if(_dvfi)_dvfi.value='';_scDevisFileData=null;
-  _scRenderDevisList();_refreshOpenBabs();
-}
-window.scAddDevis=scAddDevis;
-let _scDevisFileData=null;
-function scPickDevisFile(input){
-  const f=input.files&&input.files[0];const lbl=document.getElementById('sf-dv-filename');
-  if(!f){_scDevisFileData=null;if(lbl)lbl.textContent='';return}
-  if(f.size>1024*1024){showToast('Fichier trop lourd (> 1 Mo) — déposez-le sur le Drive et collez le lien','warn');input.value='';_scDevisFileData=null;if(lbl)lbl.textContent='';return}
+function babToggleAddDevis(subId,open){_babAddDevis[subId]=open;if(!open)delete _babDevisFile[subId];_refreshOpenBabs();}
+window.babToggleAddDevis=babToggleAddDevis;
+function babPickDevisFile(input,subId){
+  const f=input.files&&input.files[0];
+  if(!f){delete _babDevisFile[subId];return}
+  if(f.size>1024*1024){showToast('Fichier trop lourd (> 1 Mo) — collez plutôt un lien','warn');input.value='';delete _babDevisFile[subId];return}
   const r=new FileReader();
-  r.onload=()=>{_scDevisFileData={name:f.name,data:r.result};if(lbl)lbl.textContent='📎 '+f.name+' prêt';};
-  r.onerror=()=>{showToast('Lecture du fichier impossible','warn');_scDevisFileData=null};
+  r.onload=()=>{_babDevisFile[subId]={name:f.name,data:r.result};_refreshOpenBabs();};
+  r.onerror=()=>{showToast('Lecture du fichier impossible','warn');delete _babDevisFile[subId]};
   r.readAsDataURL(f);
 }
-window.scPickDevisFile=scPickDevisFile;
-function scDelDevis(i){const store=getSubcoms();store[_scEditId].devis.splice(i,1);writeSubcoms(store);_scRenderDevisList();_refreshOpenBabs();}
-window.scDelDevis=scDelDevis;
-function scAddDecision(){
-  const texte=document.getElementById('sf-dc-text').value.trim();if(!texte){showToast('Texte requis','warn');return;}
-  const store=getSubcoms();store[_scEditId].decisions.unshift({texte,date:document.getElementById('sf-dc-date').value||new Date().toISOString().slice(0,10),par:document.getElementById('sf-dc-by').value.trim()||(getCurrentUser()||'—'),cr:document.getElementById('sf-dc-cr').value.trim()||null});
-  writeSubcoms(store);logAction('Décision ajoutée',store[_scEditId].nom);
-  document.getElementById('sf-dc-text').value='';document.getElementById('sf-dc-by').value='';document.getElementById('sf-dc-cr').value='';
-  _scRenderDecList();_refreshOpenBabs();
+window.babPickDevisFile=babPickDevisFile;
+function babAddDevis(subId){
+  const fourEl=document.getElementById('bab-dv-four-'+subId);
+  const four=fourEl?fourEl.value.trim():'';
+  if(!four){showToast('Fournisseur requis','warn');return;}
+  const amt=document.getElementById('bab-dv-amt-'+subId).value||0;
+  const statut=document.getElementById('bab-dv-status-'+subId).value;
+  const link=(document.getElementById('bab-dv-file-'+subId).value||'').trim();
+  const fd=_babDevisFile[subId];
+  const fichier=(fd&&fd.data)||link||null;
+  const fichierNom=(fd&&fd.name)||(link?'Lien externe':null);
+  const s=getSubcoms()[subId];if(!s)return;
+  const devis=[...s.devis,{four,montant:amt,statut,date:new Date().toISOString().slice(0,10),fichier,fichierNom}];
+  fbSet(SUBCOM_NODE+'/'+subId,{...s,devis});
+  logAction('Devis ajouté','«'+four+'» → '+s.nom);
+  delete _babDevisFile[subId];_babAddDevis[subId]=false;
+  showToast('Devis ajouté ✓','ok');
+  _refreshOpenBabs();
 }
-window.scAddDecision=scAddDecision;
-function scDelDecision(i){const store=getSubcoms();store[_scEditId].decisions.splice(i,1);writeSubcoms(store);_scRenderDecList();_refreshOpenBabs();}
-window.scDelDecision=scDelDecision;
-function scSaveInfos(){
-  const store=getSubcoms();const s=store[_scEditId];
-  const nom=document.getElementById('sf-name').value.trim();if(!nom){showToast('Nom requis','warn');return;}
-  s.nom=nom;s.commissions=_scCommissions.length?[..._scCommissions]:[COMMISSION_COURANTE];s.membres=[..._scMembers];
-  writeSubcoms(store);logAction('Sous-commission enregistrée',nom);
-  closeModal('m-sub');renderProjects();
+window.babAddDevis=babAddDevis;
+function babDelDevis(subId,i){
+  const s=getSubcoms()[subId];if(!s)return;
+  const devis=[...s.devis];devis.splice(i,1);
+  fbSet(SUBCOM_NODE+'/'+subId,{...s,devis});
+  logAction('Devis retiré',s.nom);
+  _refreshOpenBabs();
 }
-window.scSaveInfos=scSaveInfos;
+window.babDelDevis=babDelDevis;
+
+function _babDec(s){
+  const rows=s.decisions.length?s.decisions.map((d,i)=>`<div class="dec-row"><div class="dec-date">${_scDate(d.date)}</div><div class="dec-text">${escapeHtml(d.texte)}</div><div class="dec-foot"><span class="dec-by">👤 ${escapeHtml(d.par||'—')}</span>${d.cr?`<a class="dec-cr" href="${escapeHtml(d.cr)}" target="_blank" rel="noopener">📄 Compte-rendu</a>`:''}${_canEditSub()?`<button class="mini-del" title="Retirer" onclick="babDelDec('${s.id}',${i})">🗑</button>`:''}</div></div>`).join(''):`<div class="bab-empty">Aucune décision enregistrée.</div>`;
+  let addZone='';
+  if(_canEditSub()){
+    if(_babAddDec[s.id]){
+      addZone=`<div class="bab-inline-form">
+        <div class="form-group"><label class="form-label">Texte de la décision</label><textarea class="form-control" id="bab-dc-text-${s.id}" placeholder="Ce qui a été décidé…"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Date</label><input class="form-control" id="bab-dc-date-${s.id}" type="date"></div>
+          <div class="form-group"><label class="form-label">Décidé par</label><input class="form-control" id="bab-dc-by-${s.id}" placeholder="Ex : Bureau du 12/03"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Lien compte-rendu <span style="text-transform:none;font-weight:600;color:var(--softer)">(optionnel)</span></label><input class="form-control" id="bab-dc-cr-${s.id}" placeholder="https://…"></div>
+        <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="babToggleAddDec('${s.id}',false)">Annuler</button><button class="btn btn-accent btn-sm" onclick="babAddDec('${s.id}')">+ Ajouter la décision</button></div>
+      </div>`;
+    }else{
+      addZone=`<button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="babToggleAddDec('${s.id}',true)">+ Ajouter une décision</button>`;
+    }
+  }
+  return `<div class="bab-level" data-level="dec">${rows}${addZone}</div>`;
+}
+function babToggleAddDec(subId,open){
+  _babAddDec[subId]=open;
+  _refreshOpenBabs();
+  if(open){const dd=document.getElementById('bab-dc-date-'+subId);if(dd)dd.valueAsDate=new Date();}
+}
+window.babToggleAddDec=babToggleAddDec;
+function babAddDec(subId){
+  const textEl=document.getElementById('bab-dc-text-'+subId);
+  const texte=textEl?textEl.value.trim():'';
+  if(!texte){showToast('Texte requis','warn');return;}
+  const date=document.getElementById('bab-dc-date-'+subId).value||new Date().toISOString().slice(0,10);
+  const par=document.getElementById('bab-dc-by-'+subId).value.trim()||(getCurrentUser()||'—');
+  const cr=document.getElementById('bab-dc-cr-'+subId).value.trim()||null;
+  const s=getSubcoms()[subId];if(!s)return;
+  const decisions=[{texte,date,par,cr},...s.decisions];
+  fbSet(SUBCOM_NODE+'/'+subId,{...s,decisions});
+  logAction('Décision ajoutée',s.nom);
+  _babAddDec[subId]=false;
+  showToast('Décision ajoutée ✓','ok');
+  _refreshOpenBabs();
+}
+window.babAddDec=babAddDec;
+function babDelDec(subId,i){
+  const s=getSubcoms()[subId];if(!s)return;
+  const decisions=[...s.decisions];decisions.splice(i,1);
+  fbSet(SUBCOM_NODE+'/'+subId,{...s,decisions});
+  logAction('Décision retirée',s.nom);
+  _refreshOpenBabs();
+}
+window.babDelDec=babDelDec;
+function _refreshOpenBabs(){Object.keys(_babState).forEach(pid=>{if(document.getElementById('bab-'+pid))renderBab(pid);});}
+
+
+/* ── Phase 1 : confirmation d'amorce, restauration depuis la corbeille ── */
+function confirmSubcomDraft(subId){
+  if(!isSuperAdmin()&&!isAdmin){showToast('Réservé aux adjoints (mode admin)','warn');return;}
+  const s=getSubcoms()[subId];if(!s)return;
+  const updated={...s};delete updated._draft;
+  fbSet(SUBCOM_NODE+'/'+subId,updated);
+  logAction('Sous-commission confirmée',s.nom);
+  showToast('Sous-commission confirmée ✓','ok');
+  renderProjects();_refreshOpenBabs();
+}
+window.confirmSubcomDraft=confirmSubcomDraft;
+
+function restoreSubcom(subId){
+  if(!isSuperAdmin()&&!isAdmin){showToast('Réservé aux adjoints (mode admin)','warn');return;}
+  const t=_trashData&&_trashData[subId];if(!t)return;
+  const restored={...t};delete restored._deletedAt;delete restored._deletedBy;
+  fbSet(SUBCOM_NODE+'/'+subId,restored);
+  fbRemove(TRASH_NODE+'/'+subId);
+  logAction('Sous-commission restaurée',restored.nom||subId);
+  showToast('Sous-commission restaurée ✓','ok');
+}
+window.restoreSubcom=restoreSubcom;
+
+/* ── Vue d'ensemble admin (page Paramètres) — scopée à la commission courante,
+   même si les nœuds Firebase (subcommissions / corbeille) sont partagés entre les 3 fichiers.
+   "👁 Détails" rouvre la MÊME Babouchka que sur les cartes projet (panelId synthétique
+   'settings-<id>') — un seul mécanisme d'édition dans toute l'appli. ── */
+function renderSubcomAdmin(){
+  const listEl=document.getElementById('subcom-admin-list');
+  if(!listEl)return; // page admin pas montée dans ce fichier
+  const store=getSubcoms();
+  const ids=Object.keys(store).filter(id=>store[id]&&Array.isArray(store[id].commissions)&&store[id].commissions.includes(COMMISSION_COURANTE));
+  listEl.innerHTML=ids.length?ids.map(id=>{
+    const s=store[id];const draft=!!s._draft;
+    const cross=Array.isArray(s.commissions)&&s.commissions.length>1;
+    return `<div class="bab-settings-row">
+      <div class="mini-list-row">
+        <span style="flex:1">
+          <b>${escapeHtml(s.nom)}</b>
+          ${draft?'<span class="bab-pill" style="background:#fff3cd;color:#7a5800;margin-left:6px">🌱 Amorce</span>':''}
+          ${cross?'<span class="bab-pill" style="margin-left:6px">🔗 Transversale</span>':''}
+          <span style="display:block;font-size:11px;color:var(--softer);margin-top:2px">${(s.commissions||[]).map(c=>COMMISSIONS[c]).filter(Boolean).join(' · ')||'—'} · ${(s.membres||[]).length} membre(s)</span>
+        </span>
+        ${draft?`<button class="btn btn-accent btn-sm" onclick="confirmSubcomDraft('${id}')">✓ Confirmer</button>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="toggleBabouchka('settings-${id}','${id}')">👁 Détails</button>
+      </div>
+      <div id="bab-settings-${id}"></div>
+    </div>`;
+  }).join(''):'<div class="bab-empty">Aucune sous-commission pour cette commission.</div>';
+  _refreshOpenBabs(); // réaffiche immédiatement toute Babouchka 'settings-…' restée ouverte avant ce re-render
+
+  const trashEl=document.getElementById('subcom-trash-list');
+  if(!trashEl)return;
+  const trash=_trashData||{};
+  const now=Date.now();
+  const tids=Object.keys(trash).filter(id=>trash[id]&&Array.isArray(trash[id].commissions)&&trash[id].commissions.includes(COMMISSION_COURANTE));
+  trashEl.innerHTML=tids.length?tids.map(id=>{
+    const t=trash[id];
+    const joursRestants=Math.max(0,TRASH_RETENTION_DAYS-Math.floor((now-(t._deletedAt||now))/86400000));
+    return `<div class="mini-list-row">
+      <span style="flex:1">
+        <b>${escapeHtml(t.nom||id)}</b>
+        <span style="display:block;font-size:11px;color:var(--softer);margin-top:2px">Supprimée par ${escapeHtml(t._deletedBy||'?')} · ${joursRestants} jour(s) avant purge automatique</span>
+      </span>
+      <button class="btn btn-accent btn-sm" onclick="restoreSubcom('${id}')">♻ Restaurer</button>
+    </div>`;
+  }).join(''):'<div class="bab-empty">Corbeille vide.</div>';
+}
+window.renderSubcomAdmin=renderSubcomAdmin;
 window.cancelEditChefs=cancelEditChefs;
 window.getChefsArr=getChefsArr;
 
