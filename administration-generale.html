@@ -1594,7 +1594,14 @@ function initFirebase(config){
     setBanner('err','❌ Config Firebase invalide');
   }
 }
-function fbSet(path,val){if(!fbDb)return;set(ref(fbDb,path),val).catch(e=>console.error('[AG] fbSet error:',e))}
+function fbSet(path,val){
+  if(!fbDb){showToast('⚠ Hors-ligne : modification non enregistrée','warn');return Promise.reject(new Error('no-db'));}
+  return set(ref(fbDb,path),val).catch(e=>{
+    console.error('[AG] fbSet error:',e);
+    showToast('❌ Échec d\'enregistrement : '+(e&&e.message?e.message:'permission refusée ?'),'warn');
+    throw e;
+  });
+}
 function fbPush(path,val){if(!fbDb)return;push(ref(fbDb,path),val).catch(e=>console.error('[AG] fbPush error:',e))}
 function fbRemove(path){if(!fbDb)return;remove(ref(fbDb,path)).catch(e=>console.error('[AG] fbRemove error:',e))}
 function setBanner(type,msg){const b=document.getElementById('fb-banner');if(!b)return;b.className=type;b.textContent=msg;if(type==='ok')setTimeout(()=>{b.style.opacity='0';setTimeout(()=>{b.style.display='none';b.style.opacity=''},600)},3000);else{b.style.display='';b.style.opacity=''}}
