@@ -1411,8 +1411,26 @@ const TRASH_RETENTION_DAYS=30;
 const TRASH_RETENTION_MS=TRASH_RETENTION_DAYS*24*60*60*1000;
 let _subcomData=null;                // peuplé en temps réel par subscribeSubcoms() dès que Firebase est connecté
 let _trashData=null;                 // peuplé en temps réel par subscribeTrash() dès que Firebase est connecté
+/* Normalise une sous-commission lue depuis Firebase : ce backend NE STOCKE PAS les tableaux
+   vides, donc membres/devis/decisions/commissions peuvent revenir `undefined`. Sans cette
+   garde, tout accès `.length`/`...spread` plante (ex : ajout de décision sans effet). */
+function _normSub(id,raw){
+  const base=SUBCOM_DEFAULTS[id]||{id,nom:id,commissions:[COMMISSION_COURANTE]};
+  const o={...base,...(raw||{})};
+  o.id=o.id||id;
+  o.commissions=Array.isArray(o.commissions)?o.commissions:(base.commissions||[COMMISSION_COURANTE]);
+  o.membres=Array.isArray(o.membres)?o.membres:[];
+  o.devis=Array.isArray(o.devis)?o.devis:[];
+  o.decisions=Array.isArray(o.decisions)?o.decisions:[];
+  return o;
+}
 function getSubcoms(){
-  if(_subcomData) return {...SUBCOM_DEFAULTS,..._subcomData};
+  const src=_subcomData?{...SUBCOM_DEFAULTS,..._subcomData}:_localSubcoms();
+  const out={};
+  Object.keys(src).forEach(id=>{out[id]=_normSub(id,src[id])});
+  return out;
+}
+function _localSubcoms(){
   try{const o=JSON.parse(localStorage.getItem(K_SUBCOM));return o&&typeof o==='object'?{...SUBCOM_DEFAULTS,...o}:{...SUBCOM_DEFAULTS}}catch{return {...SUBCOM_DEFAULTS}}
 }
 let _subcomSub=false, _trashSub=false;
@@ -3135,7 +3153,7 @@ window.confirmSubcomDraft=confirmSubcomDraft;
 function restoreSubcom(subId){
   if(!isSuperAdmin()&&!isAdmin){showToast('Réservé aux adjoints (mode admin)','warn');return;}
   const t=_trashData&&_trashData[subId];if(!t)return;
-  const restored={...t};delete restored._deletedAt;delete restored._deletedBy;
+  const restored=_normSub(subId,t);delete restored._deletedAt;delete restored._deletedBy;
   fbSet(SUBCOM_NODE+'/'+subId,restored);
   fbRemove(TRASH_NODE+'/'+subId);
   logAction('Sous-commission restaurée',restored.nom||subId);
