@@ -2299,16 +2299,25 @@ function saveFbConfig(){const cfg={apiKey:document.getElementById('fb-apiKey').v
 window.saveFbConfig=saveFbConfig;
 function saveEmailJS(){
   const cfg={pubkey:document.getElementById('ejs-pubkey').value.trim(),service:document.getElementById('ejs-service').value.trim(),template:document.getElementById('ejs-template').value.trim(),emails:document.getElementById('ejs-emails').value.trim()};
-  // Écrire dans Firebase — partagé entre tous les membres
+  const statusEl=document.getElementById('ejs-status');
+  applyEmailJSConfig(cfg); // cache local immédiat (pré-remplissage + envoi possible tout de suite)
   if(fbDb){
-    fbSet(COMMISSION+'/config/emailjs',cfg);
+    // Écrire dans Firebase — partagé entre tous les membres ET persistant après chaque push/deploy
+    fbSet(COMMISSION+'/config/emailjs',cfg)
+      .then(()=>{
+        if(statusEl){statusEl.textContent='✅ Configuration EmailJS enregistrée dans Firebase (persistante).';setTimeout(()=>statusEl.textContent='',4000);}
+        logAction('Config EmailJS enregistrée','partagée Firebase');
+      })
+      .catch(e=>{
+        if(statusEl)statusEl.textContent='❌ Échec d\'écriture Firebase : '+(e&&e.message?e.message:'permission ?');
+        alert('❌ La configuration EmailJS n\'a PAS pu être enregistrée durablement dans Firebase.\n\nMessage : '+(e&&e.message?e.message:'permission refusée ?')+'\n\nVérifiez que les règles Firebase autorisent l\'écriture sur la branche « config ». Tant que ce n\'est pas réglé, la configuration sera perdue au prochain rechargement.');
+      });
   } else {
-    // Fallback localStorage si pas de connexion Firebase
+    // Firebase pas connecté : la config ne vivra QUE dans ce navigateur et sera perdue au push
     localStorage.setItem(K_EJS,JSON.stringify(cfg));
+    if(statusEl)statusEl.textContent='⚠ Enregistré localement uniquement (Firebase non connecté) — sera perdu au prochain déploiement.';
+    alert('⚠️ Firebase n\'est pas connecté pour le moment.\n\nLa configuration a été gardée seulement dans CE navigateur — elle sera perdue au prochain push/déploiement, et les autres membres ne la verront pas.\n\nRechargez la page (pour rétablir la connexion Firebase), puis ré-enregistrez la configuration.');
   }
-  applyEmailJSConfig(cfg);
-  document.getElementById('ejs-status').textContent='✅ Configuration EmailJS enregistrée et synchronisée.';
-  setTimeout(()=>document.getElementById('ejs-status').textContent='',3000);
 }
 window.saveEmailJS=saveEmailJS;
 
@@ -2532,14 +2541,32 @@ function _elodiePayload(p){
 }
 function _sendToElodie(subject,message,comm){
   const ejs=getEjsConfig();
-  if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template){showToast('⚠ EmailJS non configuré — mail à Élodie non envoyé','warn');return false}
+  if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template){
+    alert('⚠️ EmailJS n\'est pas configuré.\n\nLe mail à Élodie ne peut pas partir tant que les identifiants EmailJS ne sont pas renseignés.\n\n→ Allez dans ⚙️ Paramètres › section « EmailJS » et remplissez la clé publique, le service et le template.');
+    showToast('⚠ EmailJS non configuré — voir Paramètres','warn');
+    return false;
+  }
+  if(typeof emailjs==='undefined'){
+    alert('⚠️ La librairie EmailJS n\'a pas pu se charger (problème de connexion internet ou bloqueur de publicités ?). Réessayez après avoir rechargé la page.');
+    showToast('⚠ Librairie EmailJS indisponible','warn');
+    return false;
+  }
   try{
     emailjs.init(ejs.pubkey);
     emailjs.send(ejs.service,ejs.template,{to_email:ELODIE_EMAIL,subject,message,from_name:'AGORA · '+comm,date:new Date().toLocaleDateString('fr-FR')})
       .then(()=>showToast('✅ Mail envoyé à Élodie (secrétariat mairie)'))
-      .catch(()=>showToast('⚠ Envoi à Élodie échoué — vérifiez EmailJS','warn'));
+      .catch(err=>{
+        const detail=(err&&(err.text||err.message))?(err.text||err.message):'cause inconnue';
+        console.error('[Élodie] EmailJS send error:',err);
+        alert('❌ L\'envoi du mail à Élodie a échoué.\n\nMessage d\'EmailJS : '+detail+'\n\nVérifiez dans ⚙️ Paramètres que la clé publique, le service et le template sont corrects, et que le template contient bien les variables {{to_email}}, {{subject}} et {{message}}.');
+        showToast('❌ Envoi à Élodie échoué : '+detail,'warn');
+      });
     return true;
-  }catch(e){showToast('⚠ Envoi à Élodie échoué','warn');return false}
+  }catch(e){
+    console.error('[Élodie] EmailJS init error:',e);
+    showToast('⚠ Envoi à Élodie échoué : '+(e&&e.message?e.message:'erreur'),'warn');
+    return false;
+  }
 }
 function notifyElodie(projId){
   const arr=getProjects(),p=arr.find(x=>x.id===projId);if(!p){alert('Projet introuvable.');return}
