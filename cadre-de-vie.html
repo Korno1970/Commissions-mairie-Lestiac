@@ -641,6 +641,13 @@ body.is-admin .admin-inline{display:inline-flex}
 .dm-contact-group .dm-group-avatar{background:var(--purple);font-size:15px}
 .dm-sidebar-newgroup{width:100%;text-align:left;padding:10px 14px;background:none;border:none;border-bottom:1px solid var(--mid);color:var(--accent);font-weight:700;font-size:12.5px;display:flex;align-items:center;gap:6px;cursor:pointer;transition:background .12s}
 .dm-sidebar-newgroup:hover{background:var(--accent-p)}
+.dm-mention{background:var(--gold);color:#1A2530;padding:0 5px;border-radius:6px;font-weight:700;white-space:nowrap}
+.dm-msg.mine .dm-mention{background:rgba(255,255,255,.35);color:white}
+.dm-contact-me{cursor:default;background:var(--light);border-bottom:1px solid var(--mid)}
+.dm-contact-me:hover{background:var(--light)}
+.dm-notif-btn{margin-left:auto;background:none;border:1px solid var(--mid);border-radius:50%;width:28px;height:28px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--softer);flex-shrink:0;transition:all .15s}
+.dm-notif-btn:hover{border-color:var(--accent);color:var(--accent)}
+.dm-notif-btn.on{background:var(--accent-p);border-color:var(--accent);color:var(--accent)}
 
 /* ════ SOUS-COMMISSIONS — badge de rattachement + panneau Babouchka ════ */
 .proj-card.open-bab{grid-column:1/-1}
@@ -1167,15 +1174,22 @@ body.is-admin .admin-inline{display:inline-flex}
   </div></div>
 </div>
 
-<div class="overlay" id="m-cr" onclick="closeOverlay(event,'m-cr')">
-  <div class="modal"><div class="modal-head"><h3>Publier un compte rendu</h3><button class="modal-close" onclick="closeModal('m-cr')">✕</button></div>
+<div class="overlay" id="m-cr" onclick="if(event.target===this){clearCRPendingAttachment();closeOverlay(event,'m-cr')}">
+  <div class="modal"><div class="modal-head"><h3>Publier un compte rendu</h3><button class="modal-close" onclick="clearCRPendingAttachment();closeModal('m-cr')">✕</button></div>
   <div class="modal-body">
     <div class="notice n-accent"><span>📧</span><div>Ce CR sera publié sur la PWA et envoyé automatiquement par e-mail à tous les membres (hors opposition).</div></div>
     <div class="form-group"><label class="form-label">Titre / Objet</label><input type="text" id="cr-title" class="form-control" placeholder="Ex : CR Réunion Commission Admin — 15 avril 2026"></div>
     <div class="form-group"><label class="form-label">Date de la réunion</label><input type="date" id="cr-date" class="form-control"></div>
     <div class="form-group"><label class="form-label">Contenu du CR</label><textarea id="cr-body" class="form-control" rows="10" placeholder="Ordre du jour, participants, décisions, actions…"></textarea></div>
+    <div class="form-group">
+      <label class="form-label">Pièce jointe (PDF, image…) — facultatif</label>
+      <input type="file" id="cr-file-input" style="display:none" onchange="handleCRAttachmentChange(this)">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('cr-file-input').click()">📎 Joindre un fichier</button>
+      <div id="cr-pending-att" class="dm-pending-att" style="display:none;margin-top:8px;border-radius:8px;border:1px solid var(--mid)"></div>
+      <div style="font-size:11px;color:var(--softer);margin-top:4px">Limite : 8 Mo — au-delà, joignez plutôt un lien vers le dossier Drive de la commission dans le corps du CR.</div>
+    </div>
   </div>
-  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-cr')">Annuler</button><button class="btn btn-accent" onclick="publishCR()">📤 Publier &amp; Envoyer</button></div></div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="clearCRPendingAttachment();closeModal('m-cr')">Annuler</button><button class="btn btn-accent" onclick="publishCR()">📤 Publier &amp; Envoyer</button></div></div>
 </div>
 
 
@@ -2225,13 +2239,52 @@ function exportAllIcal(){const arr=getReunions().filter(r=>r.date&&r.date.trim()
 window.exportAllIcal=exportAllIcal;
 
 // ── COMPTES RENDUS ──
+// ── Pièce jointe CR ──
+const MAX_CR_ATTACHMENT_BYTES = 8 * 1024 * 1024; // 8 Mo
+let _crPendingAttachment = null;
+
+function handleCRAttachmentChange(input){
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (file.size > MAX_CR_ATTACHMENT_BYTES) {
+    alert(`Fichier trop volumineux (${Math.round(file.size/1024/1024*10)/10} Mo). Limite actuelle : ${MAX_CR_ATTACHMENT_BYTES/1024/1024} Mo.\n\nPour un fichier plus lourd, indiquez plutôt un lien vers le dossier Drive de la commission dans le corps du CR.`);
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    _crPendingAttachment = { name: file.name, mime: file.type || 'application/octet-stream', size: file.size, dataUrl: reader.result };
+    renderCRPendingAttachment();
+  };
+  reader.onerror = () => alert('Impossible de lire ce fichier.');
+  reader.readAsDataURL(file);
+}
+window.handleCRAttachmentChange = handleCRAttachmentChange;
+
+function renderCRPendingAttachment(){
+  const bar = document.getElementById('cr-pending-att');
+  if (!bar) return;
+  if (!_crPendingAttachment) { bar.style.display = 'none'; bar.innerHTML = ''; return; }
+  const sizeKb = Math.round(_crPendingAttachment.size / 1024);
+  bar.style.display = 'flex';
+  bar.innerHTML = `<span class="dm-pending-ico">📎</span><span class="dm-pending-name">${escapeHtml(_crPendingAttachment.name)}</span><span class="dm-pending-size">${sizeKb} Ko</span><button type="button" class="dm-pending-remove" onclick="clearCRPendingAttachment()" title="Retirer">✕</button>`;
+}
+
+function clearCRPendingAttachment(){
+  _crPendingAttachment = null;
+  renderCRPendingAttachment();
+}
+window.clearCRPendingAttachment = clearCRPendingAttachment;
+
 function publishCR(){
   const title=document.getElementById('cr-title').value.trim(),body=document.getElementById('cr-body').value.trim(),date=document.getElementById('cr-date').value;
   if(!title||!body){alert('Titre et contenu requis.');return}
   const who=getCurrentUser()||'Admin';const time=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
   const cr={id:'cr'+Date.now(),title,body,date,who,time,ts:Date.now()};
+  if(_crPendingAttachment) cr.file = {..._crPendingAttachment};
   writeCR(cr);logAction('CR publié','«'+title+'»');sendCRByEmail(cr);closeModal('m-cr');
   ['cr-title','cr-body','cr-date'].forEach(id=>document.getElementById(id).value='');
+  clearCRPendingAttachment();
   if(!fbConnected)renderCRs();
 }
 window.publishCR=publishCR;
@@ -2239,7 +2292,10 @@ function sendCRByEmail(cr){
   const ejs=getEjsConfig();if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template){alert('⚠️ EmailJS non configuré. CR publié mais non envoyé.');return}
   emailjs.init(ejs.pubkey);
   const emails=(ejs.emails||'').split(',').map(e=>e.trim()).filter(Boolean);if(!emails.length){alert('⚠️ Aucune adresse configurée.');return}
-  Promise.all(emails.map(to=>emailjs.send(ejs.service,ejs.template,{to_email:to,subject:cr.title,message:cr.body,from_name:'Commission Cadre de Vie — Lestiac',date:cr.date||''}))).then(()=>{alert('✅ CR envoyé à '+emails.length+' membre(s).');logAction('CR envoyé','«'+cr.title+'»')}).catch(e=>{alert('❌ Erreur envoi : '+e.text)})
+  // Note : la pièce jointe n'est pas transmise dans l'e-mail (EmailJS n'accepte pas de fichier
+  // en pièce jointe via send()) — elle reste disponible dans AGORA, on le signale dans le message.
+  const messageWithAtt = cr.body + (cr.file ? `\n\n📎 Pièce jointe disponible dans AGORA : ${cr.file.name}` : '');
+  Promise.all(emails.map(to=>emailjs.send(ejs.service,ejs.template,{to_email:to,subject:cr.title,message:messageWithAtt,from_name:'Commission Cadre de Vie — Lestiac',date:cr.date||''}))).then(()=>{alert('✅ CR envoyé à '+emails.length+' membre(s).');logAction('CR envoyé','«'+cr.title+'»')}).catch(e=>{alert('❌ Erreur envoi : '+e.text)})
 }
 function renderCRs(){
   const list=document.getElementById('cr-list'),empty=document.getElementById('cr-empty');
@@ -2249,7 +2305,8 @@ function renderCRs(){
   const me=getCurrentUser();
   const canDel=isAdmin||isSuperAdmin()||(cr.who&&cr.who===me);
   const card=document.createElement('div');card.className='cr-card';
-  card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${escapeHtml(cr.title||"")}</div><div class="cr-meta">Publié par ${escapeHtml(cr.who||"?")} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><div style="display:flex;align-items:center;gap:8px"><span class="cr-sent">✓ Publié</span>${canDel?`<button class="btn btn-ghost-red btn-sm" onclick="deleteCR('${cr.id||idx}')">🗑</button>`:''}</div></div><div class="cr-body">${escapeHtml(cr.body||"")}</div>`;
+  const attHtml = cr.file ? `<div style="margin-top:10px">${renderAttachmentHtml(cr.file)}</div>` : '';
+  card.innerHTML=`<div class="cr-card-head"><div><div class="cr-title">${escapeHtml(cr.title||"")}</div><div class="cr-meta">Publié par ${escapeHtml(cr.who||"?")} · ${cr.time}${cr.date?' · Réunion du '+new Date(cr.date).toLocaleDateString('fr-FR'):''}</div></div><div style="display:flex;align-items:center;gap:8px"><span class="cr-sent">✓ Publié</span>${canDel?`<button class="btn btn-ghost-red btn-sm" onclick="deleteCR('${cr.id||idx}')">🗑</button>`:''}</div></div><div class="cr-body">${escapeHtml(cr.body||"")}</div>${attHtml}`;
   list.appendChild(card);
 });updateStats();
 }
@@ -3381,6 +3438,24 @@ function renderDMContacts() {
   if (!cont || !me) return;
   cont.innerHTML = '';
 
+  // -- Moi (confirmation visuelle que ma présence est bien diffusée) --
+  const meOnline = _onlineMembers.has(me);
+  const meInitials = me.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  const meDiv = document.createElement('div');
+  meDiv.className = 'dm-contact dm-contact-me';
+  meDiv.innerHTML = `
+    <div class="dm-contact-avatar">
+      ${meInitials}
+      <div class="dm-online${meOnline ? ' on' : ' off'}"></div>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div class="dm-contact-name">${escapeHtml(me)} <span style="font-weight:400;color:var(--softer)">(vous)</span></div>
+      <div style="font-size:10px;color:${meOnline ? '#22c55e' : '#9ca3af'};font-weight:600">${meOnline ? 'En ligne' : 'Connexion en cours…'}</div>
+    </div>
+    <button type="button" class="dm-notif-btn" id="notif-toggle-btn" onclick="requestNotifPermission()" title="Activer les notifications navigateur">🔔</button>
+  `;
+  cont.appendChild(meDiv);
+
   // -- Groupes --
   const groupIds = Object.keys(_myGroups).sort((a, b) =>
     (_myGroups[a].name || '').localeCompare(_myGroups[b].name || '', 'fr'));
@@ -3440,6 +3515,8 @@ function renderDMContacts() {
     `;
     cont.appendChild(div);
   });
+
+  updateNotifBtn();
 }
 
 // ── Compteurs non-lus DM ──
@@ -3454,9 +3531,13 @@ function trackUnread() {
     onValue(ref(fbDb, `dm/${key}`), snap => {
       const msgs = Object.values(snap.val() || {});
       const unread = msgs.filter(m => m.to === me && !m.read && !m.deleted).length;
-      // Ding si nouveaux messages non lus (et pas premier chargement, et pas la conv déjà ouverte)
+      // Ding + notification si nouveaux messages non lus (et pas premier chargement, et pas la conv déjà ouverte)
       const prev = _prevUnread[other] ?? null;
-      if (prev !== null && unread > prev && _dmWith !== other) playDing();
+      if (prev !== null && unread > prev && _dmWith !== other) {
+        playDing();
+        const lastMsg = msgs.filter(m => m.to === me && !m.deleted).sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
+        pushBrowserNotif('💬 ' + other, lastMsg ? (lastMsg.file ? '📎 ' + (lastMsg.file.name || 'Pièce jointe') : lastMsg.text || '') : 'Nouveau message', () => { nav('chat', document.querySelector('[data-page="chat"]')); openDMWith(other); });
+      }
       _prevUnread[other] = unread;
       _dmUnread[other] = unread || 0;
       updateDMBadge();
@@ -3501,6 +3582,8 @@ function openDMWith(name) {
   document.getElementById('dm-conv-status').textContent = _onlineMembers.has(name) ? '🟢 En ligne' : '⚫ Hors ligne';
   const leaveBtn = document.getElementById('dm-leave-group-btn');
   if (leaveBtn) leaveBtn.style.display = 'none';
+  const dmInput = document.getElementById('dm-input');
+  if (dmInput) dmInput.placeholder = 'Votre message…';
 
   document.querySelectorAll('.dm-contact').forEach(el => {
     el.classList.toggle('active', el.dataset.name === name);
@@ -3560,7 +3643,7 @@ function renderDMMessages(data, me, other, commission, key) {
     } else {
       const read = m.read && mine;
       const attHtml = m.file ? renderAttachmentHtml(m.file) : '';
-      const textHtml = m.text ? `<div>${escapeHtml(m.text)}</div>` : '';
+      const textHtml = m.text ? `<div>${highlightMentions(escapeHtml(m.text))}</div>` : '';
       div.innerHTML = `
         <div class="dm-msg-time">${escapeHtml(timeStr)}</div>
         <div class="dm-msg-bubble" style="position:relative">
@@ -3634,7 +3717,15 @@ function trackGroupUnread(gid) {
     const unread = msgs.filter(m => m.who !== me && !m.deleted && !(m.readBy && m.readBy[encodeURIComponent(me)])).length;
     const prevKey = 'g_' + gid;
     const prev = _prevUnread[prevKey] ?? null;
-    if (prev !== null && unread > prev && _activeGroupId !== gid) playDing();
+    if (prev !== null && unread > prev && _activeGroupId !== gid) {
+      playDing();
+      const lastMsg = msgs.filter(m => m.who !== me && !m.deleted).sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
+      const gName = (_myGroups[gid] && _myGroups[gid].name) || 'Groupe';
+      const mentioned = lastMsg && isMentioned(lastMsg.text, me);
+      const title = mentioned ? `🔔 ${lastMsg.who} vous a mentionné · ${gName}` : `👥 ${gName}`;
+      const body = lastMsg ? (lastMsg.file ? '📎 ' + (lastMsg.file.name || 'Pièce jointe') : (mentioned ? '' : (lastMsg.who + ' : ')) + (lastMsg.text || '')) : 'Nouveau message';
+      pushBrowserNotif(title, body, () => { nav('chat', document.querySelector('[data-page="chat"]')); openGroup(gid); });
+    }
     _prevUnread[prevKey] = unread;
     _groupUnread[gid] = unread || 0;
     updateDMBadge();
@@ -3660,6 +3751,8 @@ function openGroup(gid) {
   updateGroupHeader(gid);
   const leaveBtn = document.getElementById('dm-leave-group-btn');
   if (leaveBtn) { leaveBtn.style.display = ''; leaveBtn.onclick = () => leaveGroup(gid); }
+  const dmInput = document.getElementById('dm-input');
+  if (dmInput) dmInput.placeholder = 'Votre message… (@Nom pour mentionner quelqu\\'un)';
 
   document.querySelectorAll('.dm-contact').forEach(el => {
     el.classList.toggle('active', el.dataset.group === gid);
@@ -3723,7 +3816,7 @@ function renderGroupMessages(data, me, gid) {
       div.innerHTML = `<div class="dm-msg-bubble" style="opacity:.45;font-style:italic;font-size:12px">🚫 Message supprimé</div>`;
     } else {
       const attHtml = m.file ? renderAttachmentHtml(m.file) : '';
-      const textHtml = m.text ? `<div>${escapeHtml(m.text)}</div>` : '';
+      const textHtml = m.text ? `<div>${highlightMentions(escapeHtml(m.text))}</div>` : '';
       const canDel = mine || isAdmin || isSuperAdmin();
       div.innerHTML = `
         <div class="dm-msg-time">${!mine ? `<strong>${escapeHtml(m.who || '?')}</strong> · ` : ''}${escapeHtml(timeStr)}</div>
@@ -3889,6 +3982,66 @@ function sendDM() {
 }
 window.sendDM = sendDM;
 
+
+// ══════════════════════════════════════════════════════════════
+// MENTIONS @Nom (mise en évidence dans les messages)
+// ══════════════════════════════════════════════════════════════
+function isMentioned(text, me) {
+  if (!text || !me) return false;
+  const re = new RegExp('@' + me.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+  return re.test(text);
+}
+
+function highlightMentions(escapedText) {
+  if (!escapedText) return escapedText;
+  let out = escapedText;
+  ALL_MEMBERS.forEach(name => {
+    const re = new RegExp('@' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
+    out = out.replace(re, `<span class="dm-mention">@${name}</span>`);
+  });
+  return out;
+}
+
+// ══════════════════════════════════════════════════════════════
+// NOTIFICATIONS NAVIGATEUR (API Notification)
+// ══════════════════════════════════════════════════════════════
+// Fonctionnent tant que le navigateur est ouvert (onglet actif ou en arrière-plan,
+// fenêtre minimisée) — pas de vraie "push" navigateur fermé, qui nécessiterait un
+// service worker + Firebase Cloud Messaging + Cloud Functions côté serveur (donc un
+// passage au plan payant Firebase Blaze). À envisager plus tard si besoin, avec
+// validation préalable du coût.
+function notifPermissionState() {
+  if (!('Notification' in window)) return 'unsupported';
+  return Notification.permission; // 'default' | 'granted' | 'denied'
+}
+
+function requestNotifPermission() {
+  if (!('Notification' in window)) { alert("Ce navigateur ne prend pas en charge les notifications."); return; }
+  if (Notification.permission === 'denied') {
+    alert("Les notifications sont bloquées pour ce site. Pour les activer : cliquez sur le cadenas 🔒 à côté de l'adresse du site, puis autorisez les notifications.");
+    return;
+  }
+  Notification.requestPermission().then(() => { updateNotifBtn(); });
+}
+window.requestNotifPermission = requestNotifPermission;
+
+function updateNotifBtn() {
+  const btn = document.getElementById('notif-toggle-btn');
+  if (!btn) return;
+  const state = notifPermissionState();
+  if (state === 'granted') { btn.textContent = '🔔'; btn.classList.add('on'); btn.title = 'Notifications activées'; }
+  else if (state === 'denied') { btn.textContent = '🔕'; btn.classList.remove('on'); btn.title = 'Notifications bloquées (réglages du navigateur)'; }
+  else { btn.textContent = '🔔'; btn.classList.remove('on'); btn.title = 'Activer les notifications navigateur'; }
+}
+
+function pushBrowserNotif(title, body, onClick) {
+  if (notifPermissionState() !== 'granted') return;
+  if (document.hasFocus()) return; // déjà en train de regarder l'app au premier plan — le ding + le badge suffisent
+  try {
+    const n = new Notification(title, { body: (body || '').substring(0, 140) });
+    n.onclick = () => { window.focus(); if (onClick) onClick(); n.close(); };
+  } catch (e) { /* API indisponible sur ce contexte (ex. http non sécurisé) */ }
+}
 
 // ── NOTIFICATION SONORE ──
 let _audioCtx = null;
