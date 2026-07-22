@@ -3752,7 +3752,7 @@ function openGroup(gid) {
   const leaveBtn = document.getElementById('dm-leave-group-btn');
   if (leaveBtn) { leaveBtn.style.display = ''; leaveBtn.onclick = () => leaveGroup(gid); }
   const dmInput = document.getElementById('dm-input');
-  if (dmInput) dmInput.placeholder = 'Votre message… (@Nom pour mentionner quelqu\\'un)';
+  if (dmInput) dmInput.placeholder = "Votre message… (@Nom pour mentionner quelqu'un)";
 
   document.querySelectorAll('.dm-contact').forEach(el => {
     el.classList.toggle('active', el.dataset.group === gid);
