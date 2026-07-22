@@ -833,7 +833,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- SIDEBAR -->
 <nav id="sidebar">
   <span class="nav-label">Navigation</span>
-  <button class="nav-btn active" data-page="bord"        onclick="nav('bord',this)"><span class="ni">🏠</span>Tableau de bord</button>
+  <button class="nav-btn" data-page="bord"        onclick="nav('bord',this)"><span class="ni">🏠</span>Tableau de bord</button>
   <button class="nav-btn"        data-page="projets"     onclick="nav('projets',this)"><span class="ni">📋</span>Projets</button>
   <button class="nav-btn"        data-page="reunions"    onclick="nav('reunions',this)"><span class="ni">📅</span>Réunions</button>
   <button class="nav-btn"        data-page="cr"          onclick="nav('cr',this)"><span class="ni">📄</span>Comptes rendus</button>
@@ -842,7 +842,7 @@ body.is-admin .admin-inline{display:inline-flex}
   <button class="nav-btn"        data-page="membres"     onclick="nav('membres',this)"><span class="ni">👥</span>Membres</button>
   <hr class="nav-divider">
   <span class="nav-label">Admin</span>
-  <button class="nav-btn" data-page="chat" onclick="nav('chat',this)"><span class="ni">💬</span>Chat</button>
+  <button class="nav-btn active" data-page="chat" onclick="nav('chat',this)"><span class="ni">💬</span>Chat</button>
   <button class="nav-btn admin-only" data-page="journal"    onclick="nav('journal',this)"><span class="ni">📝</span>Journal</button>
   <button class="nav-btn admin-only" data-page="admin"      onclick="nav('admin',this)"><span class="ni">⚙️</span>Paramètres</button>
   <div id="nav-locked" style="padding:8px 16px;font-size:12px;color:rgba(255,255,255,.35);font-style:italic">🔒 Accès réservé</div>
@@ -853,7 +853,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <main id="main">
 
 <!-- ▓ BORD ▓ -->
-<div class="page active" id="page-bord">
+<div class="page" id="page-bord">
   <div class="ph"><h1>Tableau de bord</h1><p>Commission Affaires Scolaires · Lestiac 2026–2032</p></div>
   <!-- HERO BANNER -->
   <div class="agora-hero">
@@ -1024,7 +1024,7 @@ body.is-admin .admin-inline{display:inline-flex}
 
 <!-- ▓ JOURNAL ▓ -->
 
-<div class="page" id="page-chat">
+<div class="page active" id="page-chat">
   <div class="ph">
     <h1>💬 Messages</h1>
     <p>Messagerie directe et discussions de groupe entre membres de la commission</p>
@@ -1113,6 +1113,7 @@ body.is-admin .admin-inline{display:inline-flex}
     </div></div>
     <div class="card"><div class="card-head"><h2>💾 Exports</h2></div><div class="card-body" style="display:flex;flex-direction:column;gap:8px">
       <button class="btn btn-navy btn-sm" onclick="exportJSON()">⬇️ Backup JSON</button>
+      <div style="font-size:11px;color:var(--softer);margin-top:-4px">Inclut désormais l'historique complet des messages (DM + groupes) et les CR.</div>
       <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Imprimer</button>
     </div></div>
   </div>
@@ -1125,7 +1126,8 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- BOTTOM NAV -->
 <div id="bottom-nav">
   <div class="bn-items">
-    <button class="bn-item active" data-page="bord"     onclick="nav('bord',this)"><span class="bn-icon">🏠</span>Accueil</button>
+    <button class="bn-item active" data-page="chat"     onclick="nav('chat',this)"><span class="bn-icon">💬</span>Chat</button>
+    <button class="bn-item" data-page="bord"            onclick="nav('bord',this)"><span class="bn-icon">🏠</span>Accueil</button>
     <button class="bn-item" data-page="projets"         onclick="nav('projets',this)"><span class="bn-icon">📋</span>Projets</button>
     <button class="bn-item" data-page="cr"              onclick="nav('cr',this)"><span class="bn-icon">📄</span>CR</button>
     <button class="bn-item" data-page="taches"          onclick="nav('taches',this)"><span class="bn-icon">✅</span>Tâches</button>
@@ -1403,7 +1405,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- ════ JAVASCRIPT ════ -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set, onValue, push, remove, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
 const COMMISSION = 'scolaire';
 const FB_PRESET = {
@@ -1723,7 +1725,7 @@ function doLogin(){
 window.doLogin=doLogin;
 function closeGate(){document.getElementById('gate').classList.remove('show');document.getElementById('gate-pwd').value='';document.getElementById('gate-err').style.display='none'}
 window.closeGate=closeGate;
-function logout(){isAdmin=false;document.body.classList.remove('is-admin');document.getElementById('btn-mode').classList.remove('admin');document.getElementById('mode-label').textContent='Participants';document.getElementById('nav-locked').style.display='';nav('bord',document.querySelector('[data-page="bord"]'));renderAll()}
+function logout(){isAdmin=false;document.body.classList.remove('is-admin');document.getElementById('btn-mode').classList.remove('admin');document.getElementById('mode-label').textContent='Participants';document.getElementById('nav-locked').style.display='';nav('chat',document.querySelector('[data-page="chat"]'));renderAll()}
 window.logout=logout;
 
 // ── IDENTITY ──
@@ -1731,7 +1733,7 @@ function openIdModal(){const me=getCurrentUser();document.querySelectorAll('.id-
 window.openIdModal=openIdModal;
 function closeIdModal(){document.getElementById('id-modal-bg').classList.remove('open');_pendingJoin=null}
 window.closeIdModal=closeIdModal;
-function pickIdentity(name){localStorage.setItem(K_USER,name);closeIdModal();updateIdentityBtn();if(_pendingJoin){_doToggleMember(_pendingJoin,name);_pendingJoin=null}renderProjects()}
+function pickIdentity(name){localStorage.setItem(K_USER,name);closeIdModal();updateIdentityBtn();if(_pendingJoin){_doToggleMember(_pendingJoin,name);_pendingJoin=null}renderProjects();initDMPage()}
 window.pickIdentity=pickIdentity;
 function pickCustomIdentity(){const name=document.getElementById('id-custom-name').value.trim();if(!name)return;pickIdentity(name);document.getElementById('id-custom-name').value=''}
 window.pickCustomIdentity=pickCustomIdentity;
@@ -2410,7 +2412,31 @@ function applyEmailJSConfig(cfg){
 window.applyEmailJSConfig=applyEmailJSConfig;
 function changePwd(){const p1=document.getElementById('new-pwd').value,p2=document.getElementById('new-pwd2').value;if(!p1||p1!==p2){alert('Mots de passe incorrects.');return}localStorage.setItem(K_PWD,p1);alert('Mot de passe mis à jour.');document.getElementById('new-pwd').value='';document.getElementById('new-pwd2').value=''}
 window.changePwd=changePwd;
-function exportJSON(){const blob=new Blob([JSON.stringify({projects:getProjects(),tasks:getTasks(),reunions:getReunions()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='AffairesScolaires_backup.json';a.click()}
+async function exportJSON(){
+  // Inclut désormais l'intégralité de l'historique de messagerie (DM + groupes, partagés
+  // entre les 3 commissions) — mémorisation garantie et exportable, indépendamment de Firebase.
+  let dmData = null, groupsData = null;
+  if (fbDb) {
+    try {
+      const [dmSnap, groupsSnap] = await Promise.all([get(ref(fbDb, 'dm')), get(ref(fbDb, 'groups'))]);
+      dmData = dmSnap.val();
+      groupsData = groupsSnap.val();
+    } catch (e) {
+      console.error('[AS] Backup — lecture de la messagerie échouée :', e);
+    }
+  }
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    exportedBy: getCurrentUser() || 'inconnu',
+    projects: getProjects(),
+    tasks: getTasks(),
+    reunions: getReunions(),
+    comptesRendus: getCRs(),
+    messagerie: { dm: dmData, groupes: groupsData }
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='AffairesScolaires_backup.json';a.click();
+}
 window.exportJSON=exportJSON;
 function makeEditable(el){if(!isAdmin)return;el.contentEditable='true';el.style.background='#fffde7';el.focus();el.onblur=()=>{el.contentEditable='false';el.style.background=''}}
 window.makeEditable=makeEditable;
@@ -3438,7 +3464,13 @@ function refreshActivePresenceUI() {
 function renderDMContacts() {
   const me = getCurrentUser();
   const cont = document.getElementById('dm-contacts');
-  if (!cont || !me) return;
+  if (!cont) return;
+  if (!me) {
+    cont.innerHTML = `<div style="padding:24px 18px;text-align:center;color:var(--softer);font-size:12.5px;line-height:1.6">
+      👋 Bienvenue !<br>Cliquez sur <strong>« M'identifier »</strong> en haut de l'écran pour accéder à vos messages.
+    </div>`;
+    return;
+  }
   cont.innerHTML = '';
 
   // -- Moi (confirmation visuelle que ma présence est bien diffusée) --
@@ -3755,7 +3787,7 @@ function openGroup(gid) {
   const leaveBtn = document.getElementById('dm-leave-group-btn');
   if (leaveBtn) { leaveBtn.style.display = ''; leaveBtn.onclick = () => leaveGroup(gid); }
   const dmInput = document.getElementById('dm-input');
-  if (dmInput) dmInput.placeholder = 'Votre message… (@Nom pour mentionner quelqu\'un)';
+  if (dmInput) dmInput.placeholder = "Votre message… (@Nom pour mentionner quelqu'un)";
 
   document.querySelectorAll('.dm-contact').forEach(el => {
     el.classList.toggle('active', el.dataset.group === gid);
@@ -4039,7 +4071,12 @@ function updateNotifBtn() {
 
 function pushBrowserNotif(title, body, onClick) {
   if (notifPermissionState() !== 'granted') return;
-  if (document.hasFocus()) return; // déjà en train de regarder l'app au premier plan — le ding + le badge suffisent
+  // Correctif 22/07/2026 : l'ancienne condition `if (document.hasFocus()) return;` bloquait la
+  // notification dès que l'onglet avait le focus — donc quasiment toujours en usage normal
+  // (l'utilisateur a le navigateur ouvert devant lui, juste pas forcément sur la bonne conversation).
+  // Le fait de ne pas notifier quand la conversation exacte est déjà ouverte est déjà géré par
+  // l'appelant (trackUnread/trackGroupUnread, condition _dmWith/_activeGroupId) — pas besoin
+  // d'une condition supplémentaire ici.
   try {
     const n = new Notification(title, { body: (body || '').substring(0, 140) });
     n.onclick = () => { window.focus(); if (onClick) onClick(); n.close(); };
@@ -4406,6 +4443,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderAll();
   renderQuickTasks();
   updateDashShortcuts();
+  initDMPage(); // Chat est la page d'accueil par défaut : on initialise présence/messagerie dès le chargement, pas seulement au clic sur l'onglet
   if(document.getElementById('ptask-add-form'))
     document.getElementById('ptask-add-form').style.display='none';
 });
