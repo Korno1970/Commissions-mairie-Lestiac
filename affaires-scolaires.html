@@ -621,6 +621,26 @@ body.is-admin .admin-inline{display:inline-flex}
 .dm-input-bar textarea{flex:1;border:1px solid var(--mid);border-radius:22px;padding:9px 16px;font-size:13px;font-family:inherit;resize:none;line-height:1.4;min-height:40px;max-height:120px;outline:none;transition:border-color .15s;background:white}
 .dm-input-bar textarea:focus{border-color:var(--accent)}
 .dm-send-btn{align-self:flex-end;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;padding:0;flex-shrink:0}
+.dm-attach-btn{align-self:flex-end;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;padding:0;flex-shrink:0;background:var(--light);border:1px solid var(--mid);color:var(--soft)}
+.dm-attach-btn:hover{background:var(--accent-p);border-color:var(--accent);color:var(--accent)}
+.dm-pending-att{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--accent-p);border-top:1px solid var(--mid);font-size:12px;color:var(--text)}
+.dm-pending-name{font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dm-pending-size{color:var(--softer)}
+.dm-pending-remove{background:none;border:none;cursor:pointer;font-size:13px;color:var(--softer);padding:2px 4px}
+.dm-pending-remove:hover{color:var(--terra)}
+.dm-att-file{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.14);text-decoration:none;color:inherit;margin-bottom:4px}
+.dm-msg.theirs .dm-att-file{background:rgba(0,0,0,.04)}
+.dm-att-ico{font-size:20px;position:relative;flex-shrink:0}
+.dm-att-ext{position:absolute;bottom:-3px;right:-6px;font-size:7px;font-weight:800;background:var(--terra);color:white;padding:1px 3px;border-radius:4px;letter-spacing:.3px}
+.dm-att-meta{display:flex;flex-direction:column;min-width:0}
+.dm-att-name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.dm-att-size{font-size:10px;opacity:.75}
+.dm-att-img-wrap{display:block;margin-bottom:4px}
+.dm-att-img{max-width:220px;max-height:220px;border-radius:10px;display:block}
+.dm-section-label{font-family:'Sora',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--softer);padding:12px 14px 4px}
+.dm-contact-group .dm-group-avatar{background:var(--purple);font-size:15px}
+.dm-sidebar-newgroup{width:100%;text-align:left;padding:10px 14px;background:none;border:none;border-bottom:1px solid var(--mid);color:var(--accent);font-weight:700;font-size:12.5px;display:flex;align-items:center;gap:6px;cursor:pointer;transition:background .12s}
+.dm-sidebar-newgroup:hover{background:var(--accent-p)}
 
 /* ════ SOUS-COMMISSIONS — badge de rattachement + panneau Babouchka ════ */
 .proj-card.open-bab{grid-column:1/-1}
@@ -1000,31 +1020,36 @@ body.is-admin .admin-inline{display:inline-flex}
 <div class="page" id="page-chat">
   <div class="ph">
     <h1>💬 Messages</h1>
-    <p>Messagerie directe entre membres de la commission</p>
+    <p>Messagerie directe et discussions de groupe entre membres de la commission</p>
   </div>
   <div class="card" style="padding:0;overflow:hidden">
     <div class="dm-layout">
-      <!-- Sidebar contacts -->
+      <!-- Sidebar contacts + groupes -->
       <div class="dm-sidebar">
-        <div class="dm-sidebar-head">👥 Membres</div>
+        <div class="dm-sidebar-head">👥 Discussions</div>
+        <button type="button" class="dm-sidebar-newgroup" onclick="openNewGroupModal()">➕ Nouvelle discussion de groupe</button>
         <div class="dm-contacts" id="dm-contacts"></div>
       </div>
       <!-- Panneau conversation -->
       <div class="dm-pane" id="dm-pane">
         <div class="dm-pane-empty" id="dm-pane-empty">
           <div class="ei">💬</div>
-          <div>Sélectionnez un membre<br>pour démarrer une conversation</div>
+          <div>Sélectionnez un membre ou un groupe<br>pour démarrer une conversation</div>
         </div>
         <div id="dm-conv" style="display:none;flex-direction:column;flex:1;min-height:0">
           <div class="dm-pane-head">
             <div class="dm-contact-avatar" id="dm-conv-avatar" style="width:30px;height:30px;font-size:11px"></div>
-            <div>
+            <div style="flex:1;min-width:0">
               <div class="dm-pane-head-name" id="dm-conv-name"></div>
               <div class="dm-pane-head-status" id="dm-conv-status"></div>
             </div>
+            <button class="btn btn-ghost btn-sm" id="dm-leave-group-btn" style="display:none">Quitter</button>
           </div>
           <div class="dm-messages" id="dm-messages"></div>
+          <div id="dm-pending-att" class="dm-pending-att" style="display:none"></div>
           <div class="dm-input-bar">
+            <input type="file" id="dm-file-input" style="display:none" onchange="handleAttachmentChange(this)">
+            <button type="button" class="btn dm-attach-btn" onclick="document.getElementById('dm-file-input').click()" title="Joindre un document ou une image">📎</button>
             <textarea id="dm-input" placeholder="Votre message…" rows="1"
               onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendDM()}"></textarea>
             <button class="btn btn-accent dm-send-btn" onclick="sendDM()" title="Envoyer">↗</button>
@@ -1641,6 +1666,7 @@ function deleteCR(idOrIdx){
     }
   }
 }
+window.deleteCR = deleteCR; // correctif 22/07/2026 : fonction jamais exposée à window → bouton 🗑 des CR inopérant
 function writeCR(cr){if(fbDb)fbPush(COMMISSION+'/cr',cr);else{const d=getLocal();if(!d.crs)d.crs=[];d.crs.unshift(cr);saveLocal(d);localData.cr=d.crs;renderCRs()}}
 function writeBudget(b){if(fbDb)fbSet(COMMISSION+'/budget',b);else{const d=getLocal();d.budget=b;saveLocal(d);localData.budget=b}}
 function logAction(action,detail){const who=getCurrentUser()||'Anonyme';writeLog({who,action,detail,ts:Date.now(),time:new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})})}
@@ -3241,163 +3267,76 @@ window.getChefsArr=getChefsArr;
 
 
 // ══════════════════════════════════════════════════════
-// CHAT — Firebase Realtime
+// UTILITAIRES CHAT
 // ══════════════════════════════════════════════════════
-let _chatUnsub = null;       // unsubscribe listener chat global
-let _chatProjUnsub = null;   // unsubscribe listener chat projet
-let _presenceInterval = null;
-const CHAT_LIMIT = 120;      // messages max chargés
-
-// ── Présence ──
-function registerPresence() {
-  const me = getCurrentUser();
-  if (!me || !fbDb) return;
-  const presRef = ref(fbDb, `scolaire/presence/${encodeURIComponent(me)}`);
-  const data = { name: me, ts: Date.now() };
-  set(presRef, data);
-  // Mise à jour toutes les 30s + suppression à la fermeture
-  _presenceInterval = setInterval(() => set(presRef, { name: me, ts: Date.now() }), 30000);
-  window.addEventListener('beforeunload', () => remove(presRef));
-  // Écouter les présences
-  onValue(ref(fbDb, `scolaire/presence`), snap => {
-    const now = Date.now();
-    const all = Object.values(snap.val() || {});
-    const online = all.filter(p => now - (p.ts || 0) < 90000); // actif < 90s
-    const bar = document.getElementById('chat-presence-bar');
-    if (!bar) return;
-    bar.innerHTML = '<span style="font-size:11px;color:var(--softer);font-weight:600;letter-spacing:.5px">EN LIGNE ·</span>';
-    if (!online.length) {
-      bar.innerHTML += `<span style="font-size:12px;color:var(--softer);font-style:italic;margin-left:6px">Personne pour l'instant</span>`;
-    } else {
-      online.forEach(p => {
-        const dot = document.createElement('span');
-        dot.className = 'presence-dot';
-        dot.textContent = p.name;
-        bar.appendChild(dot);
-      });
-    }
-  });
-}
-
-// ── Rendu d'un message ──
-function renderChatMsg(key, msg, containerId, context) {
-  const me = getCurrentUser();
-  const mine = msg.who === me;
-  const deleted = !!msg.deleted;
-  const canDel = !deleted && (mine || isAdmin || isSuperAdmin());
-  const div = document.createElement('div');
-  div.className = 'chat-msg ' + (mine ? 'mine' : 'theirs') + (deleted ? ' deleted' : '');
-  div.dataset.key = key;
-  const time = msg.ts ? new Date(msg.ts).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}) : '';
-  const date = msg.ts ? new Date(msg.ts).toLocaleDateString('fr-FR', {day:'numeric',month:'short'}) : '';
-  div.innerHTML = `
-    <div class="chat-msg-meta">
-      ${!mine ? `<strong>${msg.who||'?'}</strong>` : ''}
-      <span>${date} ${time}</span>
-      ${canDel ? `<button class="chat-msg-del" onclick="deleteChatMsg('${key}','${context}')" title="Supprimer">🗑</button>` : ''}
-    </div>
-    <div class="chat-msg-bubble">${deleted ? '🚫 Message supprimé' : escapeHtml(msg.text||'')}</div>
-  `;
-  return div;
-}
-
+// (L'ancien "chat par projet" et l'ancienne barre de présence ont été retirés le 22/07/2026 :
+//  c'était du code mort, jamais relié à l'interface (aucun élément #chat-input-proj,
+//  #chat-messages-proj ni #chat-presence-bar n'existe dans le HTML). La messagerie réelle,
+//  ci-dessous, est la Messagerie/Discussions — DM + groupes.)
 function escapeHtml(t) {
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');
 }
 
-// ── Envoyer un message ──
-function sendChatMsg(context) {
-  const me = getCurrentUser();
-  if (!me) { alert('Connectez-vous pour écrire dans le chat.'); return; }
-  const inputId = 'chat-input-proj'; // global supprimé, remplacé par DM
-  const inp = document.getElementById(inputId);
-  const text = inp.value.trim();
-  if (!text) return;
-  const path = `scolaire/chat/proj_${_currentProjId}`;
-  fbPush(path, { who: me, text, ts: Date.now() });
-  inp.value = '';
-  inp.style.height = 'auto';
-}
-window.sendChatMsg = sendChatMsg;
-
-// ── Supprimer un message ──
-function deleteChatMsg(key, context) {
-  if (!confirm('Supprimer ce message ?')) return;
-  const path = context === 'global'
-    ? `scolaire/chat/global/${key}`
-    : `scolaire/chat/proj_${_currentProjId}/${key}`;
-  fbSet(path, { deleted: true, ts: Date.now() });
-}
-window.deleteChatMsg = deleteChatMsg;
-
-// ── Écouter et afficher le chat ──
-function subscribeChatGlobal() {} // remplacé par DM
-
-// ── Chat projet — listener Firebase ──
-function subscribeChatProj(projId) {
-  if (!fbDb || !projId) return;
-  if (_chatProjUnsub) { _chatProjUnsub(); _chatProjUnsub = null; }
-  const cont = document.getElementById('chat-messages-proj');
-  if (!cont) return;
-  cont.innerHTML = '';
-  const chatRef = ref(fbDb, `scolaire/chat/proj_${projId}`);
-  _chatProjUnsub = onValue(chatRef, snap => {
-    const data = snap.val() || {};
-    const entries = Object.entries(data).sort((a, b) => (a[1].ts || 0) - (b[1].ts || 0));
-    cont.innerHTML = '';
-    if (!entries.length) {
-      cont.innerHTML = `<div class="chat-empty">Aucun message sur ce projet.</div>`;
-      return;
-    }
-    entries.slice(-80).forEach(([k, m]) => {
-      const me = getCurrentUser();
-      const mine = m.who === me;
-      const deleted = !!m.deleted;
-      const canDel = !deleted && (mine || isAdmin || isSuperAdmin());
-      const time = m.ts ? new Date(m.ts).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}) : '';
-      const div = document.createElement('div');
-      div.className = 'chat-msg ' + (mine ? 'mine' : 'theirs') + (deleted ? ' deleted' : '');
-      div.innerHTML = `
-        <div class="chat-msg-meta">
-          ${!mine ? `<strong>${escapeHtml(m.who||'?')}</strong>` : ''}
-          <span>${time}</span>
-          ${canDel ? `<button class="chat-msg-del" onclick="deleteChatMsg('${k}','proj')" title="Supprimer">🗑</button>` : ''}
-        </div>
-        <div class="chat-msg-bubble">${deleted ? '🚫 Message supprimé' : escapeHtml(m.text||'')}</div>
-      `;
-      cont.appendChild(div);
-    });
-    cont.scrollTop = cont.scrollHeight;
-  });
-}
-window.subscribeChatProj = subscribeChatProj;
-
-
-// Désabonnement chat projet intégré dans closeModal original
-
-
 // ══════════════════════════════════════════════════════════════
-// MESSAGERIE DIRECTE (DM) — style Messenger
+// MESSAGERIE — DM + Discussions de groupe + pièces jointes
 // ══════════════════════════════════════════════════════════════
-let _dmWith = null;          // interlocuteur actif
-let _dmUnsub = null;         // listener Firebase conversation active
-let _onlineMembers = new Set(); // membres en ligne
+// Corrections apportées le 22/07/2026 (audit des 3 commissions) :
+//  1) BUG : initPresenceDM() était rappelée en entier à CHAQUE clic sur l'onglet
+//     "💬 Chat" (via initDMPage → nav()), et empilait à chaque fois un nouveau
+//     setInterval(25s) + deux nouveaux listeners Firebase onValue(), sans jamais
+//     libérer les précédents. Après quelques allers-retours sur l'onglet Chat, la
+//     présence était écrite en double/triple/etc., les notifications ("ding")
+//     se déclenchaient plusieurs fois pour un seul message, et l'app se
+//     ralentissait progressivement — symptôme d'un chat qui "ne répond plus".
+//     → Corrigé avec un garde-fou (_dmPresenceStarted) : l'initialisation ne
+//        s'exécute plus qu'une seule fois par session.
+//  2) BUG (même famille) : trackUnread() était relancée à chaque écriture sur la
+//     branche Firebase de la commission (donc toutes les ~25s à cause du battement
+//     de présence), et re-empilait elle aussi un onValue() par membre sans jamais
+//     se désabonner. → Corrigé avec le garde-fou _unreadTrackingStarted.
+//  3) BUG (fragilité) : plusieurs fonctions (openDMWith, sendDM…) appelaient
+//     ref(fbDb, …) sans vérifier que Firebase avait fini de se connecter. Un clic
+//     un peu rapide au chargement de la page provoquait une exception silencieuse
+//     (visible seulement dans la console) et l'impression que "rien ne se passe".
+//     → Corrigé avec un contrôle explicite de fbDb avant toute opération.
+//  4) Les chemins Firebase codés en dur ('cdv/…', 'scolaire/…', 'admin/…') sont
+//     remplacés par la constante COMMISSION déjà définie en haut du fichier, pour
+//     éviter tout risque de désynchronisation future entre les 3 sites.
+//  5) NOUVEAU : discussions de groupe (créer un groupe, y ajouter des membres,
+//     fil de discussion partagé) — nœuds Firebase groups/{id} et groupIndex/.
+//  6) NOUVEAU : envoi de documents/images en pièce jointe dans le DM et les
+//     groupes (limite : 4 Mo par fichier, stocké en base64 dans Firebase RTDB —
+//     au-delà, mieux vaut partager un lien vers le dossier Drive de la commission).
 
-// ── Clé de conversation (triée pour être symétrique) ──
+let _dmWith = null;              // interlocuteur DM actif (mode 1-à-1)
+let _activeGroupId = null;       // groupe actif (mode groupe) — exclusif avec _dmWith
+let _dmUnsub = null;             // listener Firebase de la conversation actuellement ouverte
+let _onlineMembers = new Set();  // membres en ligne (présence partagée inter-commissions)
+let _dmPresenceStarted = false;      // garde-fou correctif n°1
+let _unreadTrackingStarted = false;  // garde-fou correctif n°2
+let _myGroups = {};              // {groupId: {name, members:[...], createdBy, createdAt}}
+let _groupMsgUnsubs = {};        // groupId -> fonction de désabonnement (suivi des non-lus)
+let _groupUnread = {};           // groupId -> nombre de messages non lus
+let _pendingAttachment = null;   // {name, mime, size, dataUrl} en attente d'envoi
+const MAX_ATTACHMENT_BYTES = 4 * 1024 * 1024; // 4 Mo — limite raisonnable pour du base64 en RTDB
+
+// ── Clé de conversation DM (triée pour être symétrique) ──
 function dmKey(a, b) {
   return [encodeURIComponent(a), encodeURIComponent(b)].sort().join('__');
 }
 
-// ── Présence ──
+// ── Présence (partagée entre les 3 commissions) — ne s'initialise qu'une fois ──
 function initPresenceDM() {
+  if (_dmPresenceStarted) return; // correctif n°1 : voir note d'audit ci-dessus
   const me = getCurrentUser();
   if (!me || !fbDb) return;
-  const presRef = ref(fbDb, `scolaire/presence/${encodeURIComponent(me)}`);
-  // Écriture aussi dans le chemin partagé inter-commissions
+  _dmPresenceStarted = true;
+
+  const presRef = ref(fbDb, `${COMMISSION}/presence/${encodeURIComponent(me)}`);
   const sharedRef = ref(fbDb, `presence/${encodeURIComponent(me)}`);
   const update = () => {
-    set(presRef, { name: me, ts: Date.now(), commission: 'scolaire' });
-    set(sharedRef, { name: me, ts: Date.now(), commission: 'scolaire' });
+    set(presRef, { name: me, ts: Date.now(), commission: COMMISSION });
+    set(sharedRef, { name: me, ts: Date.now(), commission: COMMISSION });
   };
   update();
   setInterval(update, 25000);
@@ -3414,35 +3353,70 @@ function initPresenceDM() {
         .filter(p => now - (p.ts || 0) < 75000)
         .map(p => p.name)
     );
-    const chatPage = document.getElementById('page-chat');
-    if (chatPage && chatPage.classList.contains('active')) renderDMContacts();
-    if (_dmWith) {
-      const statusEl = document.getElementById('dm-conv-status');
-      if (statusEl) statusEl.textContent = _onlineMembers.has(_dmWith) ? '🟢 En ligne' : '⚫ Hors ligne';
-    }
+    refreshActivePresenceUI();
   });
   // Présence locale commission (complément)
-  onValue(ref(fbDb, 'scolaire/presence'), snap => {
+  onValue(ref(fbDb, `${COMMISSION}/presence`), snap => {
     const now = Date.now();
     Object.values(snap.val() || {})
       .filter(p => now - (p.ts || 0) < 75000)
       .forEach(p => _onlineMembers.add(p.name));
-    const chatPage = document.getElementById('page-chat');
-    if (chatPage && chatPage.classList.contains('active')) renderDMContacts();
-    if (_dmWith) {
-      const statusEl = document.getElementById('dm-conv-status');
-      if (statusEl) statusEl.textContent = _onlineMembers.has(_dmWith) ? '🟢 En ligne' : '⚫ Hors ligne';
-    }
+    refreshActivePresenceUI();
   });
+
+  initGroupsIndex();
+  trackUnread();
 }
 
-// ── Initialiser la liste des contacts ──
+function refreshActivePresenceUI() {
+  const chatPage = document.getElementById('page-chat');
+  if (chatPage && chatPage.classList.contains('active')) renderDMContacts();
+  if (_dmWith) {
+    const statusEl = document.getElementById('dm-conv-status');
+    if (statusEl) statusEl.textContent = _onlineMembers.has(_dmWith) ? '🟢 En ligne' : '⚫ Hors ligne';
+  }
+}
+
+// ── Sidebar : groupes + contacts (1-à-1) ──
 function renderDMContacts() {
   const me = getCurrentUser();
   const cont = document.getElementById('dm-contacts');
   if (!cont || !me) return;
   cont.innerHTML = '';
-  // Trier : en ligne d'abord, puis hors ligne alphabétique
+
+  // -- Groupes --
+  const groupIds = Object.keys(_myGroups).sort((a, b) =>
+    (_myGroups[a].name || '').localeCompare(_myGroups[b].name || '', 'fr'));
+  if (groupIds.length) {
+    const label = document.createElement('div');
+    label.className = 'dm-section-label';
+    label.textContent = 'GROUPES';
+    cont.appendChild(label);
+    groupIds.forEach(gid => {
+      const g = _myGroups[gid];
+      const memberCount = (g.members || []).length;
+      const div = document.createElement('div');
+      div.className = 'dm-contact dm-contact-group' + (gid === _activeGroupId ? ' active' : '');
+      div.dataset.group = gid;
+      div.onclick = () => openGroup(gid);
+      div.innerHTML = `
+        <div class="dm-contact-avatar dm-group-avatar">👥</div>
+        <div style="flex:1;min-width:0">
+          <div class="dm-contact-name">${escapeHtml(g.name || 'Groupe')}</div>
+          <div style="font-size:10px;color:var(--softer);font-weight:600">${memberCount} membre${memberCount > 1 ? 's' : ''}</div>
+        </div>
+        ${_groupUnread[gid] ? `<div class="dm-unread">${_groupUnread[gid]}</div>` : ''}
+      `;
+      cont.appendChild(div);
+    });
+  }
+
+  // -- Membres (1-à-1) --
+  const labelM = document.createElement('div');
+  labelM.className = 'dm-section-label';
+  labelM.textContent = 'MEMBRES';
+  cont.appendChild(labelM);
+
   const members = ALL_MEMBERS.filter(name => name !== me);
   members.sort((a, b) => {
     const aOn = _onlineMembers.has(a), bOn = _onlineMembers.has(b);
@@ -3471,22 +3445,23 @@ function renderDMContacts() {
   });
 }
 
-// ── Compteurs non-lus ──
+// ── Compteurs non-lus DM ──
 let _dmUnread = {};
-function trackUnread(commission) {
+function trackUnread() {
+  if (_unreadTrackingStarted) return; // correctif n°2 : voir note d'audit ci-dessus
   const me = getCurrentUser();
   if (!me || !fbDb) return;
+  _unreadTrackingStarted = true;
   ALL_MEMBERS.filter(n => n !== me).forEach(other => {
     const key = dmKey(me, other);
     onValue(ref(fbDb, `dm/${key}`), snap => {
       const msgs = Object.values(snap.val() || {});
       const unread = msgs.filter(m => m.to === me && !m.read && !m.deleted).length;
-      // Ding si nouveaux messages non lus (et pas premier chargement)
+      // Ding si nouveaux messages non lus (et pas premier chargement, et pas la conv déjà ouverte)
       const prev = _prevUnread[other] ?? null;
-      if (prev !== null && unread > prev) playDing();
+      if (prev !== null && unread > prev && _dmWith !== other) playDing();
       _prevUnread[other] = unread;
       _dmUnread[other] = unread || 0;
-      // Badge sur nav
       updateDMBadge();
       renderDMContacts();
     });
@@ -3494,7 +3469,9 @@ function trackUnread(commission) {
 }
 
 function updateDMBadge() {
-  const total = Object.values(_dmUnread).reduce((a, b) => a + b, 0);
+  const dmTotal = Object.values(_dmUnread).reduce((a, b) => a + b, 0);
+  const groupTotal = Object.values(_groupUnread).reduce((a, b) => a + b, 0);
+  const total = dmTotal + groupTotal;
   const navBtns = document.querySelectorAll('[data-page="chat"]');
   navBtns.forEach(btn => {
     let badge = btn.querySelector('.nav-dm-badge');
@@ -3509,13 +3486,15 @@ function updateDMBadge() {
   });
 }
 
-// ── Ouvrir une conversation ──
+// ── Ouvrir une conversation 1-à-1 ──
 function openDMWith(name) {
   const me = getCurrentUser();
   if (!me) { alert('Connectez-vous pour accéder aux messages.'); return; }
+  if (!fbDb) { showToast('⚠ Connexion Firebase indisponible pour le moment. Réessayez dans quelques secondes.', 'warn'); return; }
+  _activeGroupId = null;
   _dmWith = name;
+  clearPendingAttachment();
 
-  // UI
   document.getElementById('dm-pane-empty').style.display = 'none';
   const conv = document.getElementById('dm-conv');
   conv.style.display = 'flex';
@@ -3523,40 +3502,37 @@ function openDMWith(name) {
   document.getElementById('dm-conv-avatar').textContent = initials;
   document.getElementById('dm-conv-name').textContent = name;
   document.getElementById('dm-conv-status').textContent = _onlineMembers.has(name) ? '🟢 En ligne' : '⚫ Hors ligne';
+  const leaveBtn = document.getElementById('dm-leave-group-btn');
+  if (leaveBtn) leaveBtn.style.display = 'none';
 
-  // Marquer actif dans sidebar
   document.querySelectorAll('.dm-contact').forEach(el => {
     el.classList.toggle('active', el.dataset.name === name);
   });
 
-  // Reset unread
   _dmUnread[name] = 0;
   updateDMBadge();
   renderDMContacts();
 
-  // Écouter Firebase
   if (_dmUnsub) _dmUnsub();
-  const commission = typeof COMMISSION !== 'undefined' ? COMMISSION : 'cdv';
+  const commission = COMMISSION;
   const key = dmKey(me, name);
   const msgRef = ref(fbDb, `dm/${key}`);
   _dmUnsub = onValue(msgRef, snap => {
     renderDMMessages(snap.val() || {}, me, name, commission, key);
   });
 
-  // Focus input
   setTimeout(() => document.getElementById('dm-input')?.focus(), 100);
 }
 window.openDMWith = openDMWith;
 
-// ── Rendu messages ──
+// ── Rendu messages DM ──
 function renderDMMessages(data, me, other, commission, key) {
   const cont = document.getElementById('dm-messages');
   if (!cont) return;
   const entries = Object.entries(data).sort((a, b) => (a[1].ts || 0) - (b[1].ts || 0));
   cont.innerHTML = '';
 
-  // Marquer comme lus
-  entries.filter(([,m]) => m.to === me && !m.read).forEach(([k]) => {
+  entries.filter(([, m]) => m.to === me && !m.read).forEach(([k]) => {
     fbSet(`dm/${key}/${k}/read`, true);
   });
 
@@ -3572,7 +3548,6 @@ function renderDMMessages(data, me, other, commission, key) {
     const dateStr = d ? d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
     const timeStr = d ? d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
 
-    // Séparateur de date
     if (dateStr && dateStr !== lastDate) {
       const sep = document.createElement('div');
       sep.style.cssText = 'text-align:center;font-size:11px;color:var(--softer);margin:10px 0;display:flex;align-items:center;gap:8px';
@@ -3587,10 +3562,12 @@ function renderDMMessages(data, me, other, commission, key) {
       div.innerHTML = `<div class="dm-msg-bubble" style="opacity:.45;font-style:italic;font-size:12px">🚫 Message supprimé</div>`;
     } else {
       const read = m.read && mine;
+      const attHtml = m.file ? renderAttachmentHtml(m.file) : '';
+      const textHtml = m.text ? `<div>${escapeHtml(m.text)}</div>` : '';
       div.innerHTML = `
         <div class="dm-msg-time">${escapeHtml(timeStr)}</div>
         <div class="dm-msg-bubble" style="position:relative">
-          ${escapeHtml(m.text || '')}
+          ${attHtml}${textHtml}
           ${mine ? `<button class="dm-msg-del" onclick="deleteDMMsg('${k}','${commission}','${key}')" title="Supprimer">🗑</button>` : ''}
         </div>
         ${mine ? `<div class="dm-msg-receipt">${read ? '✓✓ Lu' : '✓ Envoyé'}</div>` : ''}
@@ -3601,27 +3578,6 @@ function renderDMMessages(data, me, other, commission, key) {
   cont.scrollTop = cont.scrollHeight;
 }
 
-// ── Envoyer un DM ──
-function sendDM() {
-  const me = getCurrentUser();
-  if (!me || !_dmWith) return;
-  const inp = document.getElementById('dm-input');
-  const text = (inp?.value || '').trim();
-  if (!text) return;
-  const commission = typeof COMMISSION !== 'undefined' ? COMMISSION : 'cdv';
-  const key = dmKey(me, _dmWith);
-  fbPush(`dm/${key}`, {
-    from: me,
-    to: _dmWith,
-    text,
-    ts: Date.now(),
-    read: false
-  });
-  inp.value = '';
-  inp.style.height = 'auto';
-}
-window.sendDM = sendDM;
-
 // ── Supprimer un DM ──
 function deleteDMMsg(msgKey, commission, convKey) {
   if (!confirm('Supprimer ce message ?')) return;
@@ -3629,19 +3585,317 @@ function deleteDMMsg(msgKey, commission, convKey) {
 }
 window.deleteDMMsg = deleteDMMsg;
 
-// ── Init DM quand on arrive sur la page ──
+// ── Init page Chat (appelée à chaque clic sur l'onglet 💬) ──
 function initDMPage() {
-  const commission = typeof COMMISSION !== 'undefined' ? COMMISSION : 'cdv';
-  initPresenceDM();
-  // trackUnread déjà démarré au chargement Firebase
+  initPresenceDM(); // idempotent désormais (garde-fou interne, cf. note d'audit)
   renderDMContacts();
 }
 window.initDMPage = initDMPage;
 
 
-// ── NOTIFICATION SONORE DM ──
+// ══════════════════════════════════════════════════════════════
+// DISCUSSIONS DE GROUPE
+// ══════════════════════════════════════════════════════════════
+let _newGroupMembers = [];
+
+// ── Index des groupes dont je suis membre (fan-out Firebase) ──
+function initGroupsIndex() {
+  const me = getCurrentUser();
+  if (!me || !fbDb) return;
+  onValue(ref(fbDb, `groupIndex/${encodeURIComponent(me)}`), snap => {
+    const ids = Object.keys(snap.val() || {});
+    // Nettoyer les groupes quittés / supprimés
+    Object.keys(_myGroups).forEach(gid => {
+      if (!ids.includes(gid)) {
+        delete _myGroups[gid];
+        if (_groupMsgUnsubs[gid]) { _groupMsgUnsubs[gid](); delete _groupMsgUnsubs[gid]; }
+        delete _groupUnread[gid];
+      }
+    });
+    ids.forEach(gid => {
+      if (!_myGroups[gid]) {
+        onValue(ref(fbDb, `groups/${gid}/meta`), metaSnap => {
+          const meta = metaSnap.val();
+          if (!meta) return;
+          _myGroups[gid] = meta;
+          renderDMContacts();
+          if (_activeGroupId === gid) updateGroupHeader(gid);
+        });
+      }
+      trackGroupUnread(gid);
+    });
+    renderDMContacts();
+  });
+}
+
+// ── Suivi des non-lus d'un groupe (garde-fou anti-doublon intégré) ──
+function trackGroupUnread(gid) {
+  if (_groupMsgUnsubs[gid]) return;
+  const me = getCurrentUser();
+  _groupMsgUnsubs[gid] = onValue(ref(fbDb, `groups/${gid}/messages`), snap => {
+    const msgs = Object.values(snap.val() || {});
+    const unread = msgs.filter(m => m.who !== me && !m.deleted && !(m.readBy && m.readBy[encodeURIComponent(me)])).length;
+    const prevKey = 'g_' + gid;
+    const prev = _prevUnread[prevKey] ?? null;
+    if (prev !== null && unread > prev && _activeGroupId !== gid) playDing();
+    _prevUnread[prevKey] = unread;
+    _groupUnread[gid] = unread || 0;
+    updateDMBadge();
+    renderDMContacts();
+  });
+}
+
+// ── Ouvrir une discussion de groupe ──
+function openGroup(gid) {
+  const me = getCurrentUser();
+  if (!me) { alert('Connectez-vous pour accéder aux messages.'); return; }
+  if (!fbDb) { showToast('⚠ Connexion Firebase indisponible pour le moment. Réessayez dans quelques secondes.', 'warn'); return; }
+  const g = _myGroups[gid];
+  if (!g) return;
+  _dmWith = null;
+  _activeGroupId = gid;
+  clearPendingAttachment();
+
+  document.getElementById('dm-pane-empty').style.display = 'none';
+  const conv = document.getElementById('dm-conv');
+  conv.style.display = 'flex';
+  document.getElementById('dm-conv-avatar').textContent = '👥';
+  updateGroupHeader(gid);
+  const leaveBtn = document.getElementById('dm-leave-group-btn');
+  if (leaveBtn) { leaveBtn.style.display = ''; leaveBtn.onclick = () => leaveGroup(gid); }
+
+  document.querySelectorAll('.dm-contact').forEach(el => {
+    el.classList.toggle('active', el.dataset.group === gid);
+  });
+
+  _groupUnread[gid] = 0;
+  updateDMBadge();
+  renderDMContacts();
+
+  if (_dmUnsub) _dmUnsub();
+  const msgRef = ref(fbDb, `groups/${gid}/messages`);
+  _dmUnsub = onValue(msgRef, snap => {
+    renderGroupMessages(snap.val() || {}, me, gid);
+  });
+
+  setTimeout(() => document.getElementById('dm-input')?.focus(), 100);
+}
+window.openGroup = openGroup;
+
+function updateGroupHeader(gid) {
+  const g = _myGroups[gid];
+  if (!g || _activeGroupId !== gid) return;
+  document.getElementById('dm-conv-name').textContent = g.name || 'Groupe';
+  document.getElementById('dm-conv-status').textContent = `${(g.members || []).length} membre(s) · ${(g.members || []).join(', ')}`;
+}
+
+// ── Rendu messages de groupe ──
+function renderGroupMessages(data, me, gid) {
+  const cont = document.getElementById('dm-messages');
+  if (!cont) return;
+  const entries = Object.entries(data).sort((a, b) => (a[1].ts || 0) - (b[1].ts || 0));
+  cont.innerHTML = '';
+
+  entries.filter(([, m]) => m.who !== me && !m.deleted && !(m.readBy && m.readBy[encodeURIComponent(me)])).forEach(([k]) => {
+    fbSet(`groups/${gid}/messages/${k}/readBy/${encodeURIComponent(me)}`, true);
+  });
+
+  if (!entries.length) {
+    cont.innerHTML = '<div style="text-align:center;color:var(--softer);font-size:13px;margin-top:30px">Démarrez la discussion 👋</div>';
+    return;
+  }
+
+  let lastDate = '';
+  entries.forEach(([k, m]) => {
+    const mine = m.who === me;
+    const d = m.ts ? new Date(m.ts) : null;
+    const dateStr = d ? d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+    const timeStr = d ? d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
+
+    if (dateStr && dateStr !== lastDate) {
+      const sep = document.createElement('div');
+      sep.style.cssText = 'text-align:center;font-size:11px;color:var(--softer);margin:10px 0;display:flex;align-items:center;gap:8px';
+      sep.innerHTML = `<hr style="flex:1;border:none;border-top:1px solid var(--mid)"><span>${escapeHtml(dateStr)}</span><hr style="flex:1;border:none;border-top:1px solid var(--mid)">`;
+      cont.appendChild(sep);
+      lastDate = dateStr;
+    }
+
+    const div = document.createElement('div');
+    div.className = 'dm-msg ' + (mine ? 'mine' : 'theirs');
+    if (m.deleted) {
+      div.innerHTML = `<div class="dm-msg-bubble" style="opacity:.45;font-style:italic;font-size:12px">🚫 Message supprimé</div>`;
+    } else {
+      const attHtml = m.file ? renderAttachmentHtml(m.file) : '';
+      const textHtml = m.text ? `<div>${escapeHtml(m.text)}</div>` : '';
+      const canDel = mine || isAdmin || isSuperAdmin();
+      div.innerHTML = `
+        <div class="dm-msg-time">${!mine ? `<strong>${escapeHtml(m.who || '?')}</strong> · ` : ''}${escapeHtml(timeStr)}</div>
+        <div class="dm-msg-bubble" style="position:relative">
+          ${attHtml}${textHtml}
+          ${canDel ? `<button class="dm-msg-del" onclick="deleteGroupMsg('${k}','${gid}')" title="Supprimer">🗑</button>` : ''}
+        </div>
+      `;
+    }
+    cont.appendChild(div);
+  });
+  cont.scrollTop = cont.scrollHeight;
+}
+
+function deleteGroupMsg(msgKey, gid) {
+  if (!confirm('Supprimer ce message ?')) return;
+  fbSet(`groups/${gid}/messages/${msgKey}/deleted`, true);
+}
+window.deleteGroupMsg = deleteGroupMsg;
+
+// ── Modale "Nouvelle discussion de groupe" ──
+function openNewGroupModal() {
+  const me = getCurrentUser();
+  if (!me) { alert('Connectez-vous pour créer un groupe.'); return; }
+  _newGroupMembers = [];
+  document.getElementById('ng-name').value = '';
+  renderNewGroupChips();
+  openModal('m-new-group');
+}
+window.openNewGroupModal = openNewGroupModal;
+
+function renderNewGroupChips() {
+  const me = getCurrentUser();
+  const cont = document.getElementById('ng-members');
+  if (!cont) return;
+  cont.innerHTML = ALL_MEMBERS.filter(n => n !== me).map(name => {
+    const active = _newGroupMembers.includes(name);
+    return `<span class="mchip${active ? ' active' : ''}" onclick="toggleNewGroupMember('${name}')"><span class="chip-check">✓</span>${escapeHtml(name)}</span>`;
+  }).join('');
+}
+window.renderNewGroupChips = renderNewGroupChips;
+
+function toggleNewGroupMember(name) {
+  const i = _newGroupMembers.indexOf(name);
+  if (i >= 0) _newGroupMembers.splice(i, 1); else _newGroupMembers.push(name);
+  renderNewGroupChips();
+}
+window.toggleNewGroupMember = toggleNewGroupMember;
+
+function createGroup() {
+  const me = getCurrentUser();
+  if (!me) { alert('Connectez-vous pour créer un groupe.'); return; }
+  if (!fbDb) { showToast('⚠ Connexion Firebase indisponible pour le moment.', 'warn'); return; }
+  const name = document.getElementById('ng-name').value.trim();
+  if (!name) { alert('Le nom du groupe est obligatoire.'); return; }
+  if (!_newGroupMembers.length) { alert('Sélectionnez au moins un membre.'); return; }
+  const members = Array.from(new Set([..._newGroupMembers, me]));
+  const gid = 'g_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  fbSet(`groups/${gid}/meta`, { name, members, createdBy: me, createdAt: Date.now() }).then(() => {
+    members.forEach(m => fbSet(`groupIndex/${encodeURIComponent(m)}/${gid}`, true));
+    closeModal('m-new-group');
+    showToast('✅ Groupe créé');
+    logAction('Groupe créé', '«' + name + '»');
+  }).catch(() => { /* fbSet gère déjà l'affichage de l'erreur */ });
+}
+window.createGroup = createGroup;
+
+function leaveGroup(gid) {
+  const me = getCurrentUser();
+  const g = _myGroups[gid];
+  if (!me || !g) return;
+  if (!confirm(`Quitter le groupe « ${g.name} » ?`)) return;
+  fbSet(`groupIndex/${encodeURIComponent(me)}/${gid}`, null);
+  const newMembers = (g.members || []).filter(m => m !== me);
+  fbSet(`groups/${gid}/meta/members`, newMembers);
+  if (_activeGroupId === gid) {
+    _activeGroupId = null;
+    document.getElementById('dm-conv').style.display = 'none';
+    document.getElementById('dm-pane-empty').style.display = '';
+  }
+}
+window.leaveGroup = leaveGroup;
+
+
+// ══════════════════════════════════════════════════════════════
+// PIÈCES JOINTES (documents/images) — DM et groupes
+// ══════════════════════════════════════════════════════════════
+function handleAttachmentChange(input) {
+  const file = input.files && input.files[0];
+  input.value = ''; // permet de resélectionner le même fichier ensuite
+  if (!file) return;
+  if (file.size > MAX_ATTACHMENT_BYTES) {
+    alert(`Fichier trop volumineux (${Math.round(file.size / 1024 / 1024 * 10) / 10} Mo). Limite actuelle : ${MAX_ATTACHMENT_BYTES / 1024 / 1024} Mo.\n\nPour un fichier plus lourd, partagez plutôt un lien vers le dossier Drive de la commission.`);
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    _pendingAttachment = { name: file.name, mime: file.type || 'application/octet-stream', size: file.size, dataUrl: reader.result };
+    renderPendingAttachment();
+  };
+  reader.onerror = () => alert('Impossible de lire ce fichier.');
+  reader.readAsDataURL(file);
+}
+window.handleAttachmentChange = handleAttachmentChange;
+
+function renderPendingAttachment() {
+  const bar = document.getElementById('dm-pending-att');
+  if (!bar) return;
+  if (!_pendingAttachment) { bar.style.display = 'none'; bar.innerHTML = ''; return; }
+  const sizeKb = Math.round(_pendingAttachment.size / 1024);
+  bar.style.display = 'flex';
+  bar.innerHTML = `<span class="dm-pending-ico">📎</span><span class="dm-pending-name">${escapeHtml(_pendingAttachment.name)}</span><span class="dm-pending-size">${sizeKb} Ko</span><button type="button" class="dm-pending-remove" onclick="clearPendingAttachment()" title="Retirer">✕</button>`;
+}
+
+function clearPendingAttachment() {
+  _pendingAttachment = null;
+  renderPendingAttachment();
+}
+window.clearPendingAttachment = clearPendingAttachment;
+
+function renderAttachmentHtml(file) {
+  if (!file) return '';
+  const isImage = (file.mime || '').startsWith('image/');
+  const sizeKb = file.size ? Math.round(file.size / 1024) : null;
+  if (isImage) {
+    return `<a href="${file.dataUrl}" target="_blank" rel="noopener" class="dm-att-img-wrap"><img src="${file.dataUrl}" class="dm-att-img" alt="${escapeHtml(file.name || 'image')}"></a>`;
+  }
+  const ext = (file.name || '').split('.').pop().toUpperCase().substring(0, 4);
+  return `<a href="${file.dataUrl}" download="${escapeHtml(file.name || 'document')}" class="dm-att-file">
+      <span class="dm-att-ico">📄<span class="dm-att-ext">${escapeHtml(ext)}</span></span>
+      <span class="dm-att-meta"><span class="dm-att-name">${escapeHtml(file.name || 'Document')}</span><span class="dm-att-size">${sizeKb ? sizeKb + ' Ko' : ''} · télécharger</span></span>
+    </a>`;
+}
+
+// ── Envoyer (DM ou groupe, texte et/ou pièce jointe) ──
+function sendDM() {
+  const me = getCurrentUser();
+  if (!me) return;
+  if (!fbDb) { showToast('⚠ Connexion Firebase indisponible pour le moment. Réessayez dans quelques secondes.', 'warn'); return; }
+  if (!_dmWith && !_activeGroupId) return;
+  const inp = document.getElementById('dm-input');
+  const text = (inp?.value || '').trim();
+  if (!text && !_pendingAttachment) return;
+
+  const payload = { text, ts: Date.now() };
+  if (_pendingAttachment) payload.file = { ..._pendingAttachment };
+
+  if (_activeGroupId) {
+    payload.who = me;
+    payload.readBy = { [encodeURIComponent(me)]: true };
+    fbPush(`groups/${_activeGroupId}/messages`, payload);
+  } else {
+    const key = dmKey(me, _dmWith);
+    payload.from = me;
+    payload.to = _dmWith;
+    payload.read = false;
+    fbPush(`dm/${key}`, payload);
+  }
+
+  inp.value = '';
+  inp.style.height = 'auto';
+  clearPendingAttachment();
+}
+window.sendDM = sendDM;
+
+
+// ── NOTIFICATION SONORE ──
 let _audioCtx = null;
-let _prevUnread = {};  // mémoriser l'état précédent pour détecter les nouveaux msgs
+let _prevUnread = {};  // mémoriser l'état précédent pour détecter les nouveaux msgs (DM ET groupes, clés préfixées 'g_' pour les groupes)
 
 function getDingCtx() {
   if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -4073,6 +4327,30 @@ const link=document.createElement('link');link.rel='manifest';link.href=URL.crea
       <button class="btn btn-accent admin-only" id="qtd-btn-save" style="display:none" onclick="saveQTEdit()">✓ Enregistrer</button>
       <button class="btn btn-accent" id="qtd-btn-done" onclick="doneQTFromDetail()">✓ Valider</button>
       <button class="btn btn-ghost" id="qtd-btn-reopen" style="display:none" onclick="reopenQTFromDetail()">↩ Rouvrir</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODALE NOUVELLE DISCUSSION DE GROUPE ════ -->
+<div class="overlay" id="m-new-group" onclick="closeOverlay(event,'m-new-group')">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h3>👥 Nouvelle discussion de groupe</h3>
+      <button class="modal-close" onclick="closeModal('m-new-group')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Nom du groupe *</label>
+        <input type="text" id="ng-name" class="form-control" placeholder="Ex. Vie du village, Journée verte…">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Membres</label>
+        <div id="ng-members" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-new-group')">Annuler</button>
+      <button class="btn btn-accent" onclick="createGroup()">Créer le groupe</button>
     </div>
   </div>
 </div>
