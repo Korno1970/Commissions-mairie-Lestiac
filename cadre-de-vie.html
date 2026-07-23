@@ -581,6 +581,50 @@ body.is-admin .admin-inline{display:inline-flex}
   #main{padding:0}
 }
 
+/* ═══════ JEFFERSON — bulle & tiroir de chat ═══════ */
+#jef-bubble{
+  position:fixed;right:22px;bottom:22px;z-index:950;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--navy);color:#fff;border:none;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;font-weight:800;font-size:18px;
+  box-shadow:var(--sh-lg);cursor:pointer;transition:transform .18s;
+}
+#jef-bubble:hover{transform:translateY(-2px) scale(1.04)}
+#jef-drawer{
+  position:fixed;right:22px;bottom:86px;z-index:950;
+  width:340px;max-width:calc(100vw - 32px);
+  height:460px;max-height:calc(100vh - 140px);
+  background:var(--white);border-radius:var(--r-lg);
+  box-shadow:var(--sh-lg);display:none;flex-direction:column;overflow:hidden;
+  border:1px solid var(--mid);
+}
+#jef-drawer.open{display:flex}
+.jef-head{background:var(--navy);color:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.jef-head-id{display:flex;align-items:center;gap:9px}
+.jef-head-avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:12px;flex-shrink:0}
+.jef-head-name{font-family:'Sora',sans-serif;font-weight:700;font-size:13.5px}
+.jef-head-sub{font-size:10px;color:rgba(255,255,255,.5)}
+.jef-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:16px;cursor:pointer;padding:4px}
+.jef-close:hover{color:#fff}
+.jef-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px;background:var(--light)}
+.jef-msg{display:flex}
+.jef-msg.user{justify-content:flex-end}
+.jef-msg span{max-width:82%;padding:8px 12px;border-radius:14px;font-size:13px;line-height:1.45}
+.jef-msg.assistant span{background:#fff;border:1px solid var(--mid);color:var(--text);border-bottom-left-radius:4px}
+.jef-msg.user span{background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.jef-msg.typing span{color:var(--softer);font-style:italic}
+.jef-input-bar{display:flex;gap:8px;padding:10px;border-top:1px solid var(--mid);flex-shrink:0;background:#fff}
+.jef-input-bar textarea{flex:1;resize:none;border:1px solid var(--mid);border-radius:16px;padding:8px 13px;font-family:'Figtree',sans-serif;font-size:13px;outline:none;max-height:70px}
+.jef-input-bar textarea:focus{border-color:var(--accent)}
+.jef-send{width:34px;height:34px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:15px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .15s}
+.jef-send:disabled{opacity:.4;cursor:default}
+@media(max-width:768px){
+  #jef-bubble{bottom:calc(78px + var(--safe-b))}
+  #jef-drawer{bottom:calc(142px + var(--safe-b));right:16px;width:calc(100vw - 32px);height:min(460px,calc(100vh - 200px))}
+}
+@media print{#jef-bubble,#jef-drawer{display:none!important}}
+
 
 
 
@@ -833,7 +877,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- SIDEBAR -->
 <nav id="sidebar">
   <span class="nav-label">Navigation</span>
-  <button class="nav-btn" data-page="bord"        onclick="nav('bord',this)"><span class="ni">🏠</span>Tableau de bord</button>
+  <button class="nav-btn active" data-page="bord"        onclick="nav('bord',this)"><span class="ni">🏠</span>Tableau de bord</button>
   <button class="nav-btn"        data-page="projets"     onclick="nav('projets',this)"><span class="ni">📋</span>Projets</button>
   <button class="nav-btn"        data-page="reunions"    onclick="nav('reunions',this)"><span class="ni">📅</span>Réunions</button>
   <button class="nav-btn"        data-page="cr"          onclick="nav('cr',this)"><span class="ni">📄</span>Comptes rendus</button>
@@ -842,7 +886,7 @@ body.is-admin .admin-inline{display:inline-flex}
   <button class="nav-btn"        data-page="membres"     onclick="nav('membres',this)"><span class="ni">👥</span>Membres</button>
   <hr class="nav-divider">
   <span class="nav-label">Admin</span>
-  <button class="nav-btn active" data-page="chat" onclick="nav('chat',this)"><span class="ni">💬</span>Chat</button>
+  <button class="nav-btn" data-page="chat" onclick="nav('chat',this)"><span class="ni">💬</span>Chat</button>
   <button class="nav-btn admin-only" data-page="journal"    onclick="nav('journal',this)"><span class="ni">📝</span>Journal</button>
   <button class="nav-btn admin-only" data-page="admin"      onclick="nav('admin',this)"><span class="ni">⚙️</span>Paramètres</button>
   <div id="nav-locked" style="padding:8px 16px;font-size:12px;color:rgba(255,255,255,.35);font-style:italic">🔒 Accès réservé</div>
@@ -853,7 +897,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <main id="main">
 
 <!-- ▓ BORD ▓ -->
-<div class="page" id="page-bord">
+<div class="page active" id="page-bord">
   <div class="ph"><h1>Tableau de bord</h1><p>Commission Cadre de Vie · Lestiac 2026–2032</p></div>
   <!-- HERO BANNER -->
   <div class="agora-hero">
@@ -1024,7 +1068,7 @@ body.is-admin .admin-inline{display:inline-flex}
 
 <!-- ▓ JOURNAL ▓ -->
 
-<div class="page active" id="page-chat">
+<div class="page" id="page-chat">
   <div class="ph">
     <h1>💬 Messages</h1>
     <p>Messagerie directe et discussions de groupe entre membres de la commission</p>
@@ -1113,7 +1157,6 @@ body.is-admin .admin-inline{display:inline-flex}
     </div></div>
     <div class="card"><div class="card-head"><h2>💾 Exports</h2></div><div class="card-body" style="display:flex;flex-direction:column;gap:8px">
       <button class="btn btn-navy btn-sm" onclick="exportJSON()">⬇️ Backup JSON</button>
-      <div style="font-size:11px;color:var(--softer);margin-top:-4px">Inclut désormais l'historique complet des messages (DM + groupes) et les CR.</div>
       <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Imprimer</button>
     </div></div>
   </div>
@@ -1126,8 +1169,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- BOTTOM NAV -->
 <div id="bottom-nav">
   <div class="bn-items">
-    <button class="bn-item active" data-page="chat"     onclick="nav('chat',this)"><span class="bn-icon">💬</span>Chat</button>
-    <button class="bn-item" data-page="bord"            onclick="nav('bord',this)"><span class="bn-icon">🏠</span>Accueil</button>
+    <button class="bn-item active" data-page="bord"     onclick="nav('bord',this)"><span class="bn-icon">🏠</span>Accueil</button>
     <button class="bn-item" data-page="projets"         onclick="nav('projets',this)"><span class="bn-icon">📋</span>Projets</button>
     <button class="bn-item" data-page="cr"              onclick="nav('cr',this)"><span class="bn-icon">📄</span>CR</button>
     <button class="bn-item" data-page="taches"          onclick="nav('taches',this)"><span class="bn-icon">✅</span>Tâches</button>
@@ -1404,7 +1446,7 @@ body.is-admin .admin-inline{display:inline-flex}
 <!-- ════ JAVASCRIPT ════ -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, onValue, push, remove, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
 const COMMISSION = 'cdv';
 const FB_PRESET = {
@@ -1730,7 +1772,7 @@ function doLogin(){
 window.doLogin=doLogin;
 function closeGate(){document.getElementById('gate').classList.remove('show');document.getElementById('gate-pwd').value='';document.getElementById('gate-err').style.display='none'}
 window.closeGate=closeGate;
-function logout(){isAdmin=false;document.body.classList.remove('is-admin');document.getElementById('btn-mode').classList.remove('admin');document.getElementById('mode-label').textContent='Participants';document.getElementById('nav-locked').style.display='';nav('chat',document.querySelector('[data-page="chat"]'));renderAll()}
+function logout(){isAdmin=false;document.body.classList.remove('is-admin');document.getElementById('btn-mode').classList.remove('admin');document.getElementById('mode-label').textContent='Participants';document.getElementById('nav-locked').style.display='';nav('bord',document.querySelector('[data-page="bord"]'));renderAll()}
 window.logout=logout;
 
 // ── IDENTITY ──
@@ -1738,7 +1780,7 @@ function openIdModal(){const me=getCurrentUser();document.querySelectorAll('.id-
 window.openIdModal=openIdModal;
 function closeIdModal(){document.getElementById('id-modal-bg').classList.remove('open');_pendingJoin=null}
 window.closeIdModal=closeIdModal;
-function pickIdentity(name){localStorage.setItem(K_USER,name);closeIdModal();updateIdentityBtn();if(_pendingJoin){_doToggleMember(_pendingJoin,name);_pendingJoin=null}renderProjects();initDMPage()}
+function pickIdentity(name){localStorage.setItem(K_USER,name);closeIdModal();updateIdentityBtn();if(_pendingJoin){_doToggleMember(_pendingJoin,name);_pendingJoin=null}renderProjects()}
 window.pickIdentity=pickIdentity;
 function pickCustomIdentity(){const name=document.getElementById('id-custom-name').value.trim();if(!name)return;pickIdentity(name);document.getElementById('id-custom-name').value=''}
 window.pickCustomIdentity=pickCustomIdentity;
@@ -2418,31 +2460,7 @@ function applyEmailJSConfig(cfg){
 window.applyEmailJSConfig=applyEmailJSConfig;
 function changePwd(){const p1=document.getElementById('new-pwd').value,p2=document.getElementById('new-pwd2').value;if(!p1||p1!==p2){alert('Mots de passe incorrects.');return}localStorage.setItem(K_PWD,p1);alert('Mot de passe mis à jour.');document.getElementById('new-pwd').value='';document.getElementById('new-pwd2').value=''}
 window.changePwd=changePwd;
-async function exportJSON(){
-  // Inclut désormais l'intégralité de l'historique de messagerie (DM + groupes, partagés
-  // entre les 3 commissions) — mémorisation garantie et exportable, indépendamment de Firebase.
-  let dmData = null, groupsData = null;
-  if (fbDb) {
-    try {
-      const [dmSnap, groupsSnap] = await Promise.all([get(ref(fbDb, 'dm')), get(ref(fbDb, 'groups'))]);
-      dmData = dmSnap.val();
-      groupsData = groupsSnap.val();
-    } catch (e) {
-      console.error('[CDV] Backup — lecture de la messagerie échouée :', e);
-    }
-  }
-  const payload = {
-    exportedAt: new Date().toISOString(),
-    exportedBy: getCurrentUser() || 'inconnu',
-    projects: getProjects(),
-    tasks: getTasks(),
-    reunions: getReunions(),
-    comptesRendus: getCRs(),
-    messagerie: { dm: dmData, groupes: groupsData }
-  };
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CadreDeVie_backup.json';a.click();
-}
+function exportJSON(){const blob=new Blob([JSON.stringify({projects:getProjects(),tasks:getTasks(),reunions:getReunions()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CadreDeVie_backup.json';a.click()}
 window.exportJSON=exportJSON;
 function makeEditable(el){if(!isAdmin)return;el.contentEditable='true';el.style.background='#fffde7';el.focus();el.onblur=()=>{el.contentEditable='false';el.style.background=''}}
 window.makeEditable=makeEditable;
@@ -3461,13 +3479,7 @@ function refreshActivePresenceUI() {
 function renderDMContacts() {
   const me = getCurrentUser();
   const cont = document.getElementById('dm-contacts');
-  if (!cont) return;
-  if (!me) {
-    cont.innerHTML = `<div style="padding:24px 18px;text-align:center;color:var(--softer);font-size:12.5px;line-height:1.6">
-      👋 Bienvenue !<br>Cliquez sur <strong>« M'identifier »</strong> en haut de l'écran pour accéder à vos messages.
-    </div>`;
-    return;
-  }
+  if (!cont || !me) return;
   cont.innerHTML = '';
 
   // -- Moi (confirmation visuelle que ma présence est bien diffusée) --
@@ -4068,12 +4080,7 @@ function updateNotifBtn() {
 
 function pushBrowserNotif(title, body, onClick) {
   if (notifPermissionState() !== 'granted') return;
-  // Correctif 22/07/2026 : l'ancienne condition `if (document.hasFocus()) return;` bloquait la
-  // notification dès que l'onglet avait le focus — donc quasiment toujours en usage normal
-  // (l'utilisateur a le navigateur ouvert devant lui, juste pas forcément sur la bonne conversation).
-  // Le fait de ne pas notifier quand la conversation exacte est déjà ouverte est déjà géré par
-  // l'appelant (trackUnread/trackGroupUnread, condition _dmWith/_activeGroupId) — pas besoin
-  // d'une condition supplémentaire ici.
+  if (document.hasFocus()) return; // déjà en train de regarder l'app au premier plan — le ding + le badge suffisent
   try {
     const n = new Notification(title, { body: (body || '').substring(0, 140) });
     n.onclick = () => { window.focus(); if (onClick) onClick(); n.close(); };
@@ -4440,10 +4447,119 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderAll();
   renderQuickTasks();
   updateDashShortcuts();
-  initDMPage(); // Chat est la page d'accueil par défaut : on initialise présence/messagerie dès le chargement, pas seulement au clic sur l'onglet
   if(document.getElementById('ptask-add-form'))
     document.getElementById('ptask-add-form').style.display='none';
 });
+
+/* ══════════════════════════════════════════════════════════════
+   JEFFERSON · AGORA — assistant contextuel + Q&R
+   Appelle le relais Cloudflare Worker (clé API cachée côté serveur).
+   ══════════════════════════════════════════════════════════════ */
+const JEFFERSON_ENDPOINT = 'https://autumn-cherry-ff1fjefferson-agora.sylkor.workers.dev'; // ⚠ vérifier cette URL exacte dans le dashboard Cloudflare
+
+const JEF_GUIDE = "Structure : Commission > Sous-commission (optionnelle) > Projet. Une sous-commission regroupe membres, devis et décisions. Les sous-commissions s'ouvrent en cliquant sur leur badge sous un projet (panneau qui se déplie sur place). Un devis passe par les statuts Demandé → Reçu → Validé/Refusé. Une sous-commission nouvellement créée reste en amorce (brouillon) tant qu'un admin ne l'a pas confirmée — invisible aux autres jusque-là. Le bouton Participants en haut à droite ouvre l'accès admin (mot de passe).";
+
+let _jefMsgs = [];
+let _jefSending = false;
+
+function jeffersonSnapshot(){
+  const me = getCurrentUser();
+  const commissionNom = COMMISSIONS[COMMISSION_COURANTE] || 'la commission';
+  const activeBtn = document.querySelector('#sidebar .nav-btn.active');
+  const page = activeBtn ? activeBtn.dataset.page : 'bord';
+  const subcoms = getSubcoms();
+  const mine = Object.values(subcoms).filter(s=>Array.isArray(s.commissions)&&s.commissions.includes(COMMISSION_COURANTE));
+  const admin = isAdmin || isSuperAdmin();
+
+  const openIds = [...new Set(Object.values(_babState).map(v=>v.subId))];
+  const openSubs = openIds.map(id=>subcoms[id]).filter(Boolean);
+
+  let devisTxt;
+  if(openSubs.length){
+    const n = openSubs.reduce((a,s)=>a+s.devis.filter(d=>d.statut==='demande').length,0);
+    devisTxt = n ? (n+' devis en attente dans "'+openSubs.map(s=>s.nom).join(', ')+'"') : ('aucun devis en attente dans "'+openSubs.map(s=>s.nom).join(', ')+'"');
+  } else {
+    const n = mine.filter(s=>!s._draft||admin).reduce((a,s)=>a+s.devis.filter(d=>d.statut==='demande').length,0);
+    devisTxt = n ? (n+' devis en attente au total dans les sous-commissions de la commission') : 'aucun devis en attente';
+  }
+
+  const drafts = admin ? mine.filter(s=>s._draft).map(s=>s.nom) : [];
+
+  return { me, commissionNom, page, subOuverte: openSubs.length ? openSubs.map(s=>s.nom).join(', ') : null, devisTxt, drafts, admin };
+}
+
+function buildJeffersonPrompt(){
+  const s = jeffersonSnapshot();
+  let t = "Tu es Jefferson, l'assistant d'AGORA, l'outil de pilotage des commissions de la mairie de Lestiac-sur-Garonne. Tu es direct et un peu taquin, jamais lourd. Tu tutoies tout le monde. Tu dis QUOI FAIRE, jamais QUOI PENSER.\n\n";
+  t += "CE QUE TU SAIS D'AGORA (pour répondre aux questions générales) :\n" + JEF_GUIDE + "\n\n";
+  t += "ÉTAT RÉEL DE LA SESSION — appuie-toi uniquement là-dessus, ne suppose rien d'autre :\n";
+  t += "- Élu·e : " + (s.me || "non identifié·e") + "\n";
+  t += "- Commission : " + s.commissionNom + " · page actuelle : " + s.page + "\n";
+  t += "- Sous-commission ouverte : " + (s.subOuverte || "aucune") + "\n";
+  t += "- Devis : " + s.devisTxt + "\n";
+  if(s.admin && s.drafts.length) t += "- Amorces de sous-commissions non confirmées : " + s.drafts.join(', ') + "\n";
+  t += "\nRÈGLES :\n";
+  t += "- Ne conseille jamais une action déjà faite ou déjà mentionnée dans cette conversation.\n";
+  t += "- Ne répète jamais un conseil déjà donné : reformule ou passe à l'étape suivante.\n";
+  t += "- Si l'élu·e n'est pas identifié·e, propose avec humour de cliquer sur \"M'identifier\" en haut à droite, sans insister lourdement.\n";
+  t += "- Réponds en 2 phrases maximum. Texte simple uniquement : aucun markdown, pas de #, pas de ** gras **, pas de listes à puces.";
+  return t;
+}
+
+function _jefEsc(s){return escapeHtml(String(s||''))}
+
+function _renderJefMsgs(){
+  const list=document.getElementById('jef-msg-list');if(!list)return;
+  list.innerHTML=_jefMsgs.map(m=>`<div class="jef-msg ${m.role}${m.typing?' typing':''}"><span>${_jefEsc(m.text)}</span></div>`).join('');
+  list.scrollTop=list.scrollHeight;
+}
+
+function jeffersonGreeting(){
+  const me=getCurrentUser();
+  return me ? `Salut ${me} ! Une question, un blocage ? Je suis là.` : `Salut ! Je suis Jefferson, ton guide dans AGORA. Pose ta question si tu bloques.`;
+}
+
+function toggleJefferson(){
+  const d=document.getElementById('jef-drawer');if(!d)return;
+  const opening=!d.classList.contains('open');
+  d.classList.toggle('open');
+  if(opening&&!_jefMsgs.length){_jefMsgs=[{role:'assistant',text:jeffersonGreeting()}];_renderJefMsgs();}
+  if(opening)setTimeout(()=>{const i=document.getElementById('jef-input');if(i)i.focus()},150);
+}
+window.toggleJefferson=toggleJefferson;
+
+async function sendJefferson(){
+  const input=document.getElementById('jef-input');
+  const q=(input.value||'').trim();
+  if(!q||_jefSending)return;
+  input.value='';
+  _jefMsgs.push({role:'user',text:q});
+  _jefMsgs.push({role:'assistant',text:'…',typing:true});
+  _renderJefMsgs();
+  _jefSending=true;
+  document.getElementById('jef-send-btn').disabled=true;
+  try{
+    // slice(1) : on ne renvoie jamais le message d'accueil à l'API (elle exige que
+    // l'historique commence par un message 'user', pas 'assistant').
+    const history=_jefMsgs.slice(1).filter(m=>!m.typing).slice(-20).map(m=>({role:m.role,content:m.text}));
+    const res=await fetch(JEFFERSON_ENDPOINT,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({system:buildJeffersonPrompt(),messages:history})
+    });
+    const data=await res.json();
+    const txt=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('')||'…';
+    _jefMsgs=_jefMsgs.filter(m=>!m.typing);
+    _jefMsgs.push({role:'assistant',text:txt});
+  }catch(e){
+    console.error('[Jefferson] erreur:',e);
+    _jefMsgs=_jefMsgs.filter(m=>!m.typing);
+    _jefMsgs.push({role:'assistant',text:"Je suis momentanément indisponible."});
+  }
+  _jefSending=false;
+  document.getElementById('jef-send-btn').disabled=false;
+  _renderJefMsgs();
+}
+window.sendJefferson=sendJefferson;
 </script>
 
 <script>
@@ -4540,6 +4656,23 @@ const link=document.createElement('link');link.rel='manifest';link.href=URL.crea
       <button class="btn btn-ghost" onclick="closeModal('m-new-group')">Annuler</button>
       <button class="btn btn-accent" onclick="createGroup()">Créer le groupe</button>
     </div>
+  </div>
+</div>
+
+<!-- ════ JEFFERSON · ASSISTANT AGORA ════ -->
+<button id="jef-bubble" onclick="toggleJefferson()" title="Jefferson — assistant AGORA">J</button>
+<div id="jef-drawer">
+  <div class="jef-head">
+    <div class="jef-head-id">
+      <div class="jef-head-avatar">J</div>
+      <div><div class="jef-head-name">Jefferson</div><div class="jef-head-sub">Assistant AGORA</div></div>
+    </div>
+    <button class="jef-close" onclick="toggleJefferson()">✕</button>
+  </div>
+  <div class="jef-body" id="jef-msg-list"></div>
+  <div class="jef-input-bar">
+    <textarea id="jef-input" rows="1" placeholder="Demander à Jefferson…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendJefferson()}"></textarea>
+    <button class="jef-send" id="jef-send-btn" onclick="sendJefferson()">↑</button>
   </div>
 </div>
 
