@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1B2F5E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cadre de Vie">
+<title>Commission Cadre de Vie — Lestiac 2026·2032</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" async></script>
+<link rel="stylesheet" href="agora.css?v=20260913">
+<style>
+  /* Thème de la commission — seule variation visuelle entre les trois pages */
+  :root{
+    --accent:#1A5C6B;      /* couleur principale */
+    --accent-d:#0f3d2e;    /* version sombre, dégradé du bandeau */
+    --accent-p:#E6F3F5;    /* version pâle, fonds */
+    --accent-l:#9ECDD5;    /* version claire, filets et accents */
+  }
+</style>
+</head>
+<body>
+
+<!-- ADMIN GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">🔐 Accès Administration</div>
+    <div class="gate-sub">Commission Cadre de Vie · S. Kornowski</div>
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <input type="password" id="gate-pwd" class="form-control" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-navy" style="width:100%" onclick="doLogin()">Accéder →</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="closeGate()">Annuler</button>
+    <div class="gate-err" id="gate-err">Mot de passe incorrect.</div>
+  </div>
+</div>
+
+<!-- IDENTITY MODAL -->
+<div id="id-modal-bg">
+  <div id="id-modal">
+    <h3>Qui êtes-vous ?</h3>
+    <p>Choisissez votre prénom — mémorisé sur cet appareil.</p>
+    <div id="id-chips-pick">
+      <button class="id-pick-btn" onclick="pickIdentity('Daniel')">Daniel</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Catherine')">Catherine</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Corinne')">Corinne</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Sylvain')">Sylvain</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Vivien')">Vivien</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Anthony')">Anthony</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Rose')">Rose</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Michel')">Michel</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Roger')">Roger</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Lalie')">Lalie</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Claire')">Claire</button>
+      <button class="id-pick-btn" onclick="pickIdentity('Sophie')">Sophie</button>
+    </div>
+    <div style="margin-bottom:14px">
+      <p style="font-size:12px;color:var(--soft);margin-bottom:8px">Autre prénom :</p>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="id-custom-name" class="form-control" placeholder="Votre prénom…" style="flex:1" onkeydown="if(event.key==='Enter')pickCustomIdentity()">
+        <button class="btn btn-accent btn-sm" onclick="pickCustomIdentity()">OK</button>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="closeIdModal()">Annuler</button>
+  </div>
+</div>
+
+<!-- FB BANNER -->
+<div id="fb-banner">⏳ Connexion Firebase…</div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-ticker"><div class="tb-ticker-inner"><span>Mairie de Lestiac-sur-Garonne</span><span class="tb-ticker-sep"> · </span><span>Gironde · ~590 habitants</span><span class="tb-ticker-sep"> · </span><span>Mandat 2026–2032</span><span class="tb-ticker-sep"> · </span><span>commissions-lestiac.fr</span><span class="tb-ticker-sep"> · </span><span>S. Kornowski — Responsable</span><span class="tb-ticker-sep"> · </span><span>Sous-commissions : Travaux · Voirie · Bâti · Urba</span><span class="tb-ticker-sep"> · </span><span>Mairie de Lestiac-sur-Garonne</span><span class="tb-ticker-sep"> · </span><span>Gironde · ~590 habitants</span><span class="tb-ticker-sep"> · </span><span>Mandat 2026–2032</span><span class="tb-ticker-sep"> · </span><span>commissions-lestiac.fr</span><span class="tb-ticker-sep"> · </span><span>S. Kornowski — Responsable</span><span class="tb-ticker-sep"> · </span><span>Sous-commissions : Travaux · Voirie · Bâti · Urba</span></div></div>
+  <div class="tb-main">
+    <div class="tb-left">
+      <a href="https://commissions-lestiac.fr" class="tb-back" title="← Toutes les commissions">←</a>
+      <div class="tb-wordmark">
+        <span class="tb-agora">AGORA</span>
+        <span class="tb-commission-name">Cadre de Vie<span class="tb-accent-dot"></span></span>
+      </div>
+    </div>
+    <div class="tb-center-nav">
+      <button class="tb-navbtn" onclick="nav('bord',document.querySelector('[data-page=bord]'))">Tableau</button>
+      <button class="tb-navbtn" onclick="nav('projets',document.querySelector('[data-page=projets]'))">Projets</button>
+      <button class="tb-navbtn" onclick="nav('reunions',document.querySelector('[data-page=reunions]'))">Réunions</button>
+      <button class="tb-navbtn" onclick="nav('cr',document.querySelector('[data-page=cr]'))">CR</button>
+      <button class="tb-navbtn" onclick="nav('taches',document.querySelector('[data-page=taches]'))">Tâches</button>
+      <button class="tb-navbtn" onclick="nav('chat',document.querySelector('[data-page=chat]'))">Chat</button>
+    </div>
+    <div class="tb-actions">
+      <button id="btn-identity" class="tb-btn" onclick="openIdModal()">
+        <span class="dot"></span><span id="identity-label">M'identifier</span>
+      </button>
+      <button id="btn-mode" class="tb-btn" onclick="requestAdmin()">
+        <span class="dot" style="background:#6be0a0"></span><span id="mode-label">Participants</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <span class="nav-label">Navigation</span>
+  <button class="nav-btn active" data-page="bord"        onclick="nav('bord',this)"><span class="ni">🏠</span>Tableau de bord</button>
+  <button class="nav-btn"        data-page="projets"     onclick="nav('projets',this)"><span class="ni">📋</span>Projets</button>
+  <button class="nav-btn"        data-page="reunions"    onclick="nav('reunions',this)"><span class="ni">📅</span>Réunions</button>
+  <button class="nav-btn"        data-page="cr"          onclick="nav('cr',this)"><span class="ni">📄</span>Comptes rendus</button>
+  <button class="nav-btn"        data-page="taches"      onclick="nav('taches',this)"><span class="ni">✅</span>Tâches</button>
+  <button class="nav-btn"        data-page="finances"    onclick="nav('finances',this)"><span class="ni">💶</span>Finances</button>
+  <button class="nav-btn"        data-page="membres"     onclick="nav('membres',this)"><span class="ni">👥</span>Membres</button>
+  <hr class="nav-divider">
+  <span class="nav-label">Admin</span>
+  <button class="nav-btn" data-page="chat" onclick="nav('chat',this)"><span class="ni">💬</span>Chat</button>
+  <button class="nav-btn admin-only" data-page="journal"    onclick="nav('journal',this)"><span class="ni">📝</span>Journal</button>
+  <button class="nav-btn admin-only" data-page="admin"      onclick="nav('admin',this)"><span class="ni">⚙️</span>Paramètres</button>
+  <div id="nav-locked" style="padding:8px 16px;font-size:12px;color:rgba(255,255,255,.35);font-style:italic">🔒 Accès réservé</div>
+  <hr class="nav-divider">
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- ▓ BORD ▓ -->
+<div class="page active" id="page-bord">
+  <div class="ph"><h1>Tableau de bord</h1><p>Commission Cadre de Vie · Lestiac 2026–2032</p></div>
+  <!-- HERO BANNER -->
+  <div class="agora-hero">
+    <div class="hero-bg-fill" style="background:linear-gradient(165deg,#1B2F5E 0%,#0f3d4a 55%,#1a4a2e 100%)"></div>
+    <svg class="hero-landscape-svg" viewBox="0 0 1200 200" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg"><path fill="rgba(255,255,255,.08)" d="M0,180 C100,150 200,120 300,140 C400,160 450,100 550,110 C650,120 700,80 800,90 C900,100 1000,130 1100,120 L1200,110 L1200,200 L0,200 Z"/><path fill="rgba(255,255,255,.05)" d="M0,195 C150,160 250,140 400,155 C550,170 600,130 750,140 C900,150 1000,120 1200,130 L1200,200 L0,200 Z"/><g transform="translate(80,142)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(180,150)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(260,158)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(340,142)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(480,150)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(560,158)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(680,142)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(780,150)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(860,158)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(980,142)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(1060,150)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g><g transform="translate(1140,158)"><polygon points="0,-35 -14,0 14,0" fill="rgba(255,255,255,.10)"/><polygon points="0,-55 -10,-20 10,-20" fill="rgba(255,255,255,.07)"/><rect x="-3" y="0" width="6" height="12" fill="rgba(255,255,255,.07)"/></g></svg>
+    <div class="hero-ovl"></div>
+    <div class="hero-cnt">
+      <div class="hero-ey">Commission municipale · Lestiac-sur-Garonne · Mandat 2026–2032</div>
+      <div class="hero-ttl">CADRE DE VIE</div>
+      <div class="hero-tags"><span class="hero-tag">Environnement</span><span class="hero-tag">Vie du village</span><span class="hero-tag">Gouvernance</span></div>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat terra"><div class="stat-n" id="s-ct">—</div><div class="stat-l">Court terme</div></div>
+    <div class="stat"><div class="stat-n" id="s-mt">—</div><div class="stat-l">Moyen terme</div></div>
+    <div class="stat navy"><div class="stat-n" id="s-lt">—</div><div class="stat-l">Long terme</div></div>
+    <div class="stat teal"><div class="stat-n" id="s-rdv">—</div><div class="stat-l">Réunions</div></div>
+    <div class="stat"><div class="stat-n" id="s-tasks">—</div><div class="stat-l">Tâches ✓</div></div>
+    <div class="stat"><div class="stat-n" id="s-cr">—</div><div class="stat-l">CR publiés</div></div>
+  </div>
+  <!-- Tâches du quotidien -->
+  <div class="card">
+    <div class="card-head" style="display:flex;align-items:center;justify-content:space-between">
+      <h2>📌 Tâches du quotidien</h2>
+      <a id="bord-drive-link" href="https://drive.google.com/drive/u/0/folders/1lDN-UMwFqsMlyirWKXE-5NjDjCKzvi2m" target="_blank"
+          style="background:rgba(255,255,255,.15);color:white;font-weight:700;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 14px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:5px">
+          📂 Drive
+        </a>
+        <a href="https://docs.google.com/spreadsheets/d/1neybqqBthe-sFcKhnfbJNoTf9VSaEl1w/edit?gid=1641869499#gid=1641869499" target="_blank"
+          style="background:rgba(255,255,255,.15);color:white;font-weight:700;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 14px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:5px">
+          📊 Dossiers courants
+        </a>
+        <button class="btn btn-sm admin-only" onclick="openModal('m-quick-task')" style="background:white;color:var(--navy);font-weight:700;border:none;border-radius:8px;padding:6px 14px">+ Assigner</button>
+    </div>
+    <div class="card-body">
+      <div id="quick-tasks-list"><div class="empty-state" style="padding:16px"><div class="ei" style="font-size:24px">📋</div><p>Aucune tâche du quotidien.</p></div></div>
+    </div>
+  </div>
+  <!-- Raccourcis navigation dashboard -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px">
+    <button class="dash-shortcut" onclick="nav('projets',document.querySelector('[data-page=projets]'))">
+      <span class="ds-icon">📋</span><span class="ds-label">Projets</span><span class="ds-count" id="ds-projets">—</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('taches',document.querySelector('[data-page=taches]'))">
+      <span class="ds-icon">✅</span><span class="ds-label">Tâches</span><span class="ds-count" id="ds-taches">—</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('reunions',document.querySelector('[data-page=reunions]'))">
+      <span class="ds-icon">📅</span><span class="ds-label">Réunions</span><span class="ds-count" id="ds-reunions">—</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('cr',document.querySelector('[data-page=cr]'))">
+      <span class="ds-icon">📄</span><span class="ds-label">CR</span><span class="ds-count" id="ds-cr">—</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('membres',document.querySelector('[data-page=membres]'))">
+      <span class="ds-icon">👥</span><span class="ds-label">Membres</span><span class="ds-count" id="ds-membres">12</span>
+    </button>
+    <button class="dash-shortcut" onclick="nav('finances',document.querySelector('[data-page=finances]'))">
+      <span class="ds-icon">💶</span><span class="ds-label">Finances</span><span class="ds-count" id="ds-finances">—</span>
+    </button>
+  </div>
+</div>
+
+<!-- ▓ PROJETS ▓ -->
+<div class="page" id="page-projets">
+  <div class="ph"><h1>Projets</h1><p>Court, moyen et long terme</p></div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;padding:0 4px" id="axe-filter-bar">
+      <button class="tab active" onclick="filterProjAxe('tous',this)">Tous</button>
+      <button class="tab" onclick="filterProjAxe('env',this)">🌿 Environnement</button>
+      <button class="tab" onclick="filterProjAxe('vie',this)">🎭 Vie du village</button>
+      <button class="tab" onclick="filterProjAxe('gouv',this)">🗳 Gouvernance</button>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div class="tab-bar" style="border:none;margin:0">
+      <button class="tab active" onclick="filterProj('tous',this)">Tous</button>
+      <button class="tab" onclick="filterProj('court',this)">Court terme</button>
+      <button class="tab" onclick="filterProj('moyen',this)">Moyen terme</button>
+      <button class="tab" onclick="filterProj('long',this)">Long terme</button>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" id="archive-toggle" onclick="toggleArchiveView(this)" style="font-size:11px">📦 Voir les archives</button>
+      <button class="btn btn-terra btn-sm" onclick="openModal('m-proj')">+ Ajouter</button>
+    </div>
+  </div>
+  <div class="proj-grid" id="proj-grid"></div>
+</div>
+
+<!-- ▓ RÉUNIONS ▓ -->
+<div class="page" id="page-reunions">
+  <div class="ph"><h1>Réunions</h1><p>Planification au fil de l'eau</p></div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-ghost btn-sm" onclick="exportAllIcal()">📅 Export iCal</button>
+    <button class="btn btn-terra btn-sm" onclick="openModal('m-reunion')">+ Planifier une réunion</button>
+  </div>
+  <div class="notice n-gold"><span>📅</span><div>Date vide = à fixer. Chaque réunion s'exporte vers Google ou Apple Calendrier.</div></div>
+  <div class="meeting-list" id="reunion-list"></div>
+  <div class="empty-state" id="reunion-empty"><div class="ei">📅</div><p>Aucune réunion planifiée.</p></div>
+</div>
+
+<!-- ▓ COMPTES RENDUS ▓ -->
+<div class="page" id="page-cr">
+  <div class="ph"><h1>Comptes rendus</h1><p>Publication et envoi automatique aux membres</p></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+    <button class="btn btn-accent btn-sm" onclick="openModal('m-cr')">+ Publier un CR</button>
+  </div>
+  <div class="notice n-accent"><span>📧</span><div>Après publication, le CR est automatiquement envoyé par e-mail à tous les membres de la commission (hors opposition). Assurez-vous que EmailJS est configuré dans les Paramètres.</div></div>
+  <div class="cr-list" id="cr-list"></div>
+  <div class="empty-state" id="cr-empty"><div class="ei">📄</div><p>Aucun compte rendu publié.</p></div>
+</div>
+
+<!-- ▓ TÂCHES (page globale) ▓ -->
+<div class="page" id="page-taches">
+  <div class="ph"><h1>Tâches</h1><p>Cochez au fur et à mesure</p></div>
+  <div class="card"><div class="card-head terra"><h2>🟠 Court terme — 2026</h2></div><div class="card-body"><div id="tasks-court"></div><div class="add-task-row admin-only"><input type="text" id="new-task-court" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('court')"><select id="new-task-court-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-terra btn-sm" onclick="addTask('court')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head"><h2>🔵 Moyen terme — 2027</h2></div><div class="card-body"><div id="tasks-moyen"></div><div class="add-task-row admin-only"><input type="text" id="new-task-moyen" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('moyen')"><select id="new-task-moyen-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-accent btn-sm" onclick="addTask('moyen')">Ajouter</button></div></div></div>
+  <div class="card"><div class="card-head navy"><h2>🔷 Long terme — 2028+</h2></div><div class="card-body"><div id="tasks-long"></div><div class="add-task-row admin-only"><input type="text" id="new-task-long" placeholder="Ajouter une tâche…" onkeydown="if(event.key==='Enter')addTask('long')"><select id="new-task-long-tag"><option value="tt-env">🌿 Env</option><option value="tt-vie">🎭 Vie</option><option value="tt-gouv">🗳 Gouv</option></select><button class="btn btn-navy btn-sm" onclick="addTask('long')">Ajouter</button></div></div></div>
+</div>
+
+<!-- ▓ FINANCES ▓ -->
+<div class="page" id="page-finances">
+  <div class="ph"><h1>💶 Finances</h1><p>Budget de la commission · Daniel Bouchet, responsable Finances</p></div>
+  <div class="notice n-gold"><span>💶</span><div>Les données financières sont saisies par le responsable Finances (Daniel Bouchet) et visibles par toutes les commissions.</div></div>
+  <div class="fin-card">
+    <div class="fin-title">Budget alloué — Commission Cadre de Vie</div>
+    <div class="fin-meta" id="fin-annee">Exercice 2026</div>
+    <div class="budget-bar-wrap"><div class="budget-bar" id="fin-bar" style="width:0%"></div></div>
+    <div class="budget-labels"><span id="fin-consomme">0 € consommé</span><span id="fin-total">Budget : à renseigner</span></div>
+  </div>
+  <div id="fin-lignes"></div>
+  <div class="card admin-only">
+    <div class="card-head"><h2>✏️ Mettre à jour le budget</h2></div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Budget total alloué (€)</label><input type="number" id="fin-total-input" class="form-control" placeholder="5000"></div>
+        <div class="form-group"><label class="form-label">Montant consommé (€)</label><input type="number" id="fin-consomme-input" class="form-control" placeholder="1200"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Commentaire / ligne budgétaire</label><textarea id="fin-comment" class="form-control" rows="2" placeholder="Ex: Devis fête des vendanges, impression affiches…"></textarea></div>
+      <button class="btn btn-accent btn-sm" onclick="saveBudget()">Enregistrer</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-head navy"><h2>🔗 Budget global de la commune</h2></div>
+    <div class="card-body">
+      <div id="budget-global-display" style="font-size:13px;color:var(--soft);font-style:italic">Aucune donnée globale synchronisée.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ▓ MEMBRES ▓ -->
+<div class="page" id="page-membres">
+  <div class="ph"><h1>Membres</h1><p>Commission Cadre de Vie — responsable : Sylvain Kornowski · Conseil Municipal 2026–2032</p></div>
+  <div class="card">
+    <div class="card-head"><h2>👥 Conseil Municipal — Majorité</h2></div>
+    <div class="card-body"><div class="table-wrap"><table class="dtable"><thead><tr><th>Prénom &amp; Nom</th><th>Rôle</th><th>Contact</th></tr></thead><tbody id="membres-tbody">
+      <tr><td><strong>Daniel Bouchet</strong></td><td>Maire · Super-admin</td><td><a href="mailto:daniel.bouchet@lestiac.fr" style="color:var(--accent)">daniel.bouchet@lestiac.fr</a></td></tr>
+      <tr><td><strong>Catherine Penard</strong></td><td>1ère adjointe · Admin Générale</td><td><a href="mailto:catherine.penard@lestiac.fr" style="color:var(--accent)">catherine.penard@lestiac.fr</a></td></tr>
+      <tr><td><strong>Corinne Eeckeman</strong></td><td>3ème adjointe · Affaires Scolaires</td><td><a href="mailto:corinne.eeckeman@lestiac.fr" style="color:var(--accent)">corinne.eeckeman@lestiac.fr</a></td></tr>
+      <tr><td><strong>Sylvain Kornowski</strong></td><td>2ème adjoint · Cadre de Vie</td><td><a href="mailto:sylvain.kornowski@lestiac.fr" style="color:var(--accent)">sylvain.kornowski@lestiac.fr</a></td></tr>
+      <tr><td><strong>Vivien Bomont</strong></td><td>Conseiller</td><td><a href="mailto:vivien.bomont@lestiac.fr" style="color:var(--accent)">vivien.bomont@lestiac.fr</a></td></tr>
+      <tr><td><strong>Anthony Benoit</strong></td><td>Conseiller</td><td><a href="mailto:anthony.benoit@lestiac.fr" style="color:var(--accent)">anthony.benoit@lestiac.fr</a></td></tr>
+      <tr><td><strong>Rose Adjei</strong></td><td>Conseillère</td><td><a href="mailto:rose.adjei@lestiac.fr" style="color:var(--accent)">rose.adjei@lestiac.fr</a></td></tr>
+      <tr><td><strong>Michel Jorge</strong></td><td>Conseiller</td><td><a href="mailto:michel.jorge@lestiac.fr" style="color:var(--accent)">michel.jorge@lestiac.fr</a></td></tr>
+      <tr><td><strong>Roger Carteau</strong></td><td>Conseiller</td><td><a href="mailto:roger.carteau@lestiac.fr" style="color:var(--accent)">roger.carteau@lestiac.fr</a></td></tr>
+      <tr><td><strong>Lalie Deredin</strong></td><td>Conseillère</td><td><a href="mailto:lalie.deredin@lestiac.fr" style="color:var(--accent)">lalie.deredin@lestiac.fr</a></td></tr>
+      <tr><td><strong>Claire Gaston</strong></td><td>Conseillère</td><td><a href="mailto:claire.gaston@lestiac.fr" style="color:var(--accent)">claire.gaston@lestiac.fr</a></td></tr>
+      <tr><td><strong>Sophie Larrieu-Manan</strong></td><td>Conseillère · Communication</td><td><a href="mailto:sophie.larrieumanan@free.fr" style="color:var(--accent)">sophie.larrieumanan@free.fr</a></td></tr>
+    </tbody></table></div></div>
+  </div>
+</div>
+
+<!-- ▓ JOURNAL ▓ -->
+
+<div class="page" id="page-chat">
+  <div class="ph">
+    <h1>💬 Messages</h1>
+    <p>Messagerie directe et discussions de groupe entre membres de la commission</p>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="dm-layout">
+      <!-- Sidebar contacts + groupes -->
+      <div class="dm-sidebar">
+        <div class="dm-sidebar-head">👥 Discussions</div>
+        <button type="button" class="dm-sidebar-newgroup" onclick="openNewGroupModal()">➕ Nouvelle discussion de groupe</button>
+        <div class="dm-contacts" id="dm-contacts"></div>
+      </div>
+      <!-- Panneau conversation -->
+      <div class="dm-pane" id="dm-pane">
+        <div class="dm-pane-empty" id="dm-pane-empty">
+          <div class="ei">💬</div>
+          <div>Sélectionnez un membre ou un groupe<br>pour démarrer une conversation</div>
+        </div>
+        <div id="dm-conv" style="display:none;flex-direction:column;flex:1;min-height:0">
+          <div class="dm-pane-head">
+            <div class="dm-contact-avatar" id="dm-conv-avatar" style="width:30px;height:30px;font-size:11px"></div>
+            <div style="flex:1;min-width:0">
+              <div class="dm-pane-head-name" id="dm-conv-name"></div>
+              <div class="dm-pane-head-status" id="dm-conv-status"></div>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="dm-leave-group-btn" style="display:none">Quitter</button>
+          </div>
+          <div class="dm-messages" id="dm-messages"></div>
+          <div id="dm-pending-att" class="dm-pending-att" style="display:none"></div>
+          <div class="dm-input-bar">
+            <input type="file" id="dm-file-input" style="display:none" onchange="handleAttachmentChange(this)">
+            <button type="button" class="btn dm-attach-btn" onclick="document.getElementById('dm-file-input').click()" title="Joindre un document ou une image">📎</button>
+            <textarea id="dm-input" placeholder="Votre message…" rows="1"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendDM()}"></textarea>
+            <button class="btn btn-accent dm-send-btn" onclick="sendDM()" title="Envoyer">↗</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page admin-only" id="page-journal">
+  <div class="ph"><h1>📝 Journal des modifications</h1><p>Actions réalisées par les participants</p></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn btn-ghost-red btn-sm" onclick="clearLog()">Vider</button></div>
+  <div class="log-list" id="log-list"><div class="empty-state"><div class="ei">📋</div><p>Aucune modification.</p></div></div>
+</div>
+
+<!-- ▓ ADMIN ▓ -->
+<div class="page admin-only" id="page-admin">
+  <div class="ph"><h1>⚙️ Paramètres</h1><p>Firebase, EmailJS, mot de passe</p></div>
+  <div class="config-card">
+    <h3>🔥 Firebase</h3>
+    <div class="config-fields">
+      <div class="form-group"><label class="form-label">databaseURL</label><input type="text" id="fb-databaseURL" class="form-control" placeholder="https://…firebasedatabase.app"></div>
+      <div class="form-group"><label class="form-label">apiKey</label><input type="text" id="fb-apiKey" class="form-control"></div>
+      <div class="form-group"><label class="form-label">projectId</label><input type="text" id="fb-projectId" class="form-control"></div>
+    </div>
+    <button class="btn btn-teal btn-sm" onclick="saveFbConfig()">Connecter Firebase</button>
+    <div id="fb-config-status" style="margin-top:8px;font-size:12px;color:var(--soft)"></div>
+  </div>
+  <div class="config-card">
+    <h3>📧 EmailJS — Envoi automatique des CR</h3>
+    <p style="font-size:13px;color:var(--soft);margin-bottom:12px">Créez un compte sur <strong>emailjs.com</strong>, connectez votre Gmail, créez un template nommé <code>template_cr</code> avec les variables <code>&#123;&#123;subject&#125;&#125;</code>, <code>&#123;&#123;message&#125;&#125;</code>, <code>&#123;&#123;to_email&#125;&#125;</code>.</p>
+    <div class="config-fields">
+      <div class="form-group"><label class="form-label">Public Key</label><input type="text" id="ejs-pubkey" class="form-control" placeholder="user_xxxxx"></div>
+      <div class="form-group"><label class="form-label">Service ID</label><input type="text" id="ejs-service" class="form-control" placeholder="service_xxxxx"></div>
+      <div class="form-group"><label class="form-label">Template ID</label><input type="text" id="ejs-template" class="form-control" placeholder="template_cr"></div>
+    </div>
+    <div class="form-group"><label class="form-label">E-mails membres (séparés par des virgules)</label><textarea id="ejs-emails" class="form-control" rows="3" placeholder="catherine@exemple.fr, sophie@exemple.fr…"></textarea></div>
+    <button class="btn btn-accent btn-sm" onclick="saveEmailJS()">Enregistrer</button>
+    <div id="ejs-status" style="margin-top:8px;font-size:12px;color:var(--soft)"></div>
+  </div>
+  <div class="config-card">
+    <h3>🗂 Sous-commissions</h3>
+    <p style="font-size:13px;color:var(--soft);margin-bottom:12px">Vue d'ensemble — y compris les amorces non confirmées, invisibles ailleurs pour les non-admins.</p>
+    <div id="subcom-admin-list"><div class="bab-empty">Chargement…</div></div>
+    <h3 style="margin-top:18px;font-size:14px">🗑 Corbeille <span style="font-weight:600;color:var(--softer);font-size:12px">— restauration possible pendant 30 jours, purge automatique ensuite</span></h3>
+    <div id="subcom-trash-list"><div class="bab-empty">Chargement…</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div class="card"><div class="card-head"><h2>🔑 Mot de passe</h2></div><div class="card-body">
+      <div class="form-group"><input type="password" id="new-pwd" class="form-control" placeholder="Nouveau"></div>
+      <div class="form-group"><input type="password" id="new-pwd2" class="form-control" placeholder="Confirmer"></div>
+      <button class="btn btn-terra btn-sm" onclick="changePwd()">Changer</button>
+    </div></div>
+    <div class="card"><div class="card-head"><h2>💾 Exports</h2></div><div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn btn-navy btn-sm" onclick="exportJSON()">⬇️ Backup JSON</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Imprimer</button>
+    </div></div>
+  </div>
+  <div class="card"><div class="card-head"><h2>🚪 Session</h2></div><div class="card-body"><button class="btn btn-ghost-red btn-sm" onclick="logout()">Se déconnecter</button></div></div>
+</div>
+
+</main>
+</div>
+
+<!-- BOTTOM NAV -->
+<div id="bottom-nav">
+  <div class="bn-items">
+    <button class="bn-item active" data-page="bord"     onclick="nav('bord',this)"><span class="bn-icon">🏠</span>Accueil</button>
+    <button class="bn-item" data-page="projets"         onclick="nav('projets',this)"><span class="bn-icon">📋</span>Projets</button>
+    <button class="bn-item" data-page="cr"              onclick="nav('cr',this)"><span class="bn-icon">📄</span>CR</button>
+    <button class="bn-item" data-page="taches"          onclick="nav('taches',this)"><span class="bn-icon">✅</span>Tâches</button>
+    <button class="bn-item" data-page="finances"        onclick="nav('finances',this)"><span class="bn-icon">💶</span>Finances</button>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="m-reunion" onclick="closeOverlay(event,'m-reunion')">
+  <div class="modal"><div class="modal-head"><h3>Planifier une réunion</h3><button class="modal-close" onclick="closeModal('m-reunion')">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Titre</label><input type="text" id="r-title" class="form-control" placeholder="Ex : Point communication"></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Date (vide = à fixer)</label><input type="date" id="r-date" class="form-control"></div><div class="form-group"><label class="form-label">Heure</label><input type="time" id="r-heure" class="form-control" value="18:30"></div></div>
+    <div class="form-group"><label class="form-label">Lieu</label><input type="text" id="r-lieu" class="form-control" value="Mairie de Lestiac"></div>
+    <div class="form-group"><label class="form-label">Projet concerné <span style="font-weight:400;color:var(--softer)">(optionnel — pour notifier les membres du projet)</span></label>
+      <select id="r-projet" class="form-control"><option value="">— Aucun projet spécifique —</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Participants</label><input type="text" id="r-parts" class="form-control" value="Sylvain, Roger, Corinne, Vivien, Lalie"></div>
+    <div class="form-group"><label class="form-label">Thèmes</label><input type="text" id="r-tags" class="form-control" placeholder="Communication, Événements…"></div>
+    <div class="form-group"><label class="form-label">Ordre du jour</label><textarea id="r-notes" class="form-control" placeholder="Points à aborder…"></textarea></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-reunion')">Annuler</button><button class="btn btn-accent" onclick="saveReunion()">Enregistrer</button></div></div>
+</div>
+
+<div class="overlay" id="m-proj" onclick="closeOverlay(event,'m-proj')">
+  <div class="modal"><div class="modal-head"><h3>Ajouter un projet</h3><button class="modal-close" onclick="closeModal('m-proj')">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Titre</label><input type="text" id="p-title" class="form-control" placeholder="Intitulé"></div>
+    <div class="form-group">
+      <label class="form-label">En charge du projet <span style="font-weight:400;color:var(--softer)">(1 ou 2 max)</span></label>
+      <div id="p-chefs-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px"></div>
+      <input type="hidden" id="p-pilote" value="">
+    </div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Horizon</label><select id="p-horizon" class="form-control"><option value="court">Court terme</option><option value="moyen">Moyen terme</option><option value="long">Long terme</option></select></div><div class="form-group"><label class="form-label">Statut</label><select id="p-status" class="form-control"><option value="s-lancer">À lancer</option><option value="s-cours">En cours</option><option value="s-attente">En attente</option><option value="s-fait">Réalisé</option></select></div></div>
+    <div class="form-group"><label class="form-label">Sous-commission</label><select id="p-axe" class="form-control"><option value="env">🌿 Environnement</option><option value="vie">🎭 Vie du village</option><option value="gouv">🗳 Gouvernance</option></select></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea id="p-desc" class="form-control" placeholder="Décrire…"></textarea></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Budget</label><input type="text" id="p-budget" class="form-control" placeholder="500 €"></div><div class="form-group"><label class="form-label">Subventions</label><input type="text" id="p-subs" class="form-control" placeholder="FDVA, CAF…"></div></div>
+  </div>
+  <div class="modal-foot" style="flex-wrap:wrap;gap:8px">
+    <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--soft);cursor:pointer;flex:1">
+      <input type="checkbox" id="p-sophie" style="width:16px;height:16px;accent-color:var(--accent)">
+      📣 Solliciter Sophie (communication)
+    </label>
+    <button class="btn btn-ghost" onclick="closeModal('m-proj')">Annuler</button>
+    <button class="btn btn-accent" onclick="saveProj()">Ajouter</button>
+  </div></div>
+</div>
+
+<div class="overlay" id="m-cr" onclick="if(event.target===this){clearCRPendingAttachment();closeOverlay(event,'m-cr')}">
+  <div class="modal"><div class="modal-head"><h3>Publier un compte rendu</h3><button class="modal-close" onclick="clearCRPendingAttachment();closeModal('m-cr')">✕</button></div>
+  <div class="modal-body">
+    <div class="notice n-accent"><span>📧</span><div>Ce CR sera publié sur la PWA et envoyé automatiquement par e-mail à tous les membres (hors opposition).</div></div>
+    <div class="form-group"><label class="form-label">Titre / Objet</label><input type="text" id="cr-title" class="form-control" placeholder="Ex : CR Réunion Commission Admin — 15 avril 2026"></div>
+    <div class="form-group"><label class="form-label">Date de la réunion</label><input type="date" id="cr-date" class="form-control"></div>
+    <div class="form-group"><label class="form-label">Contenu du CR</label><textarea id="cr-body" class="form-control" rows="10" placeholder="Ordre du jour, participants, décisions, actions…"></textarea></div>
+    <div class="form-group">
+      <label class="form-label">Pièce jointe (PDF, image…) — facultatif</label>
+      <input type="file" id="cr-file-input" style="display:none" onchange="handleCRAttachmentChange(this)">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('cr-file-input').click()">📎 Joindre un fichier</button>
+      <div id="cr-pending-att" class="dm-pending-att" style="display:none;margin-top:8px;border-radius:8px;border:1px solid var(--mid)"></div>
+      <div style="font-size:11px;color:var(--softer);margin-top:4px">Limite : 8 Mo — au-delà, joignez plutôt un lien vers le dossier Drive de la commission dans le corps du CR.</div>
+    </div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="clearCRPendingAttachment();closeModal('m-cr')">Annuler</button><button class="btn btn-accent" onclick="publishCR()">📤 Publier &amp; Envoyer</button></div></div>
+</div>
+
+
+
+<!-- ═══════ MODAL DÉTAIL PROJET (avec onglets) ═══════ -->
+<div class="overlay" id="m-proj-detail" onclick="closeOverlay(event,'m-proj-detail')">
+  <div class="modal" style="max-width:960px;max-height:96vh">
+    <div class="modal-head" id="proj-detail-head" style="background:var(--accent)">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+        <h3 id="proj-detail-title" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Projet</h3>
+        <button id="btn-rename-proj" class="btn-icon" title="Renommer le projet" onclick="startRenameProj()" style="display:none;font-size:14px">✏️</button>
+      </div>
+      <button class="modal-close" onclick="closeModal('m-proj-detail')">✕</button>
+    </div>
+    <div id="rename-proj-bar" style="display:none;background:#fffde7;border-bottom:1px solid var(--mid);padding:10px 20px;display:none;gap:8px;align-items:center">
+      <input type="text" id="rename-proj-input" class="form-control" style="flex:1;font-weight:600" placeholder="Nouveau titre…">
+      <button class="btn btn-accent btn-sm" onclick="confirmRenameProj()">✓ Valider</button>
+      <button class="btn btn-ghost btn-sm" onclick="cancelRenameProj()">Annuler</button>
+    </div>
+    <div class="modal-body">
+      <!-- Méta projet -->
+      <div id="proj-detail-meta" style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"></div>
+      <div id="proj-detail-pilote" style="margin-bottom:10px">
+        <!-- En charge du projet — affichage + édition super-admin -->
+        <div id="proj-chef-display" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"></div>
+        <div id="proj-chef-edit" style="display:none;margin-top:8px;padding:10px;background:var(--light);border-radius:var(--r);border:1px dashed var(--mid)">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:6px">Choisir 1 ou 2 en charge du projet</div>
+          <div id="proj-chef-edit-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px"></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-accent btn-sm" onclick="saveChefs()">✓ Valider</button>
+            <button class="btn btn-ghost btn-sm" onclick="cancelEditChefs()">Annuler</button>
+          </div>
+        </div>
+      </div>
+      <!-- ── Édition inline du projet (admin) ── -->
+      <div id="proj-inline-edit" style="display:none;background:var(--light);border-radius:var(--r);padding:14px;margin-bottom:14px;border:1px dashed var(--accent)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:10px">✏️ Modifier le projet</div>
+        <div class="form-group"><label class="form-label">Description</label>
+          <textarea id="pie-desc" class="form-control" rows="3" style="resize:vertical"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-group"><label class="form-label">Statut</label>
+            <select id="pie-status" class="form-control">
+              <option value="s-lancer">À lancer</option>
+              <option value="s-cours">En cours</option>
+              <option value="s-attente">En attente</option>
+              <option value="s-fait">Réalisé</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Horizon</label>
+            <select id="pie-horizon" class="form-control">
+              <option value="court">Court terme</option>
+              <option value="moyen">Moyen terme</option>
+              <option value="long">Long terme</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Sous-commission</label>
+          <select id="pie-axe" class="form-control" onchange="window._pieRenderSubcoms&&_pieRenderSubcoms(this.value)"></select>
+        </div>
+        <div class="form-group"><label class="form-label">Aussi rattaché à <span style="text-transform:none;font-weight:600;color:var(--softer)">(autres sous-commissions — transversal)</span></label>
+          <div class="member-chips-proj" id="pie-subcoms" style="gap:6px"></div>
+          <div class="sc-helper">Le projet garde sa sous-commission principale ci-dessus ; coche ici pour le partager avec d'autres — y compris d'autres commissions (🔗) quand Firebase est connecté.</div>
+        </div>
+        <div class="form-group"><label class="form-label">Budget</label>
+          <input type="text" id="pie-budget" class="form-control" placeholder="Ex : 5 000 €">
+        </div>
+        <div class="form-group"><label class="form-label">Notes budgétaires</label>
+          <input type="text" id="pie-subs" class="form-control" placeholder="Ex : Subvention CDC">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn btn-accent" onclick="saveProjInlineEdit()">✓ Enregistrer</button>
+          <button class="btn btn-ghost" onclick="closeProjInlineEdit()">Annuler</button>
+        </div>
+      </div>
+      <div id="proj-detail-desc" style="font-size:13.5px;color:var(--soft);line-height:1.6;margin-bottom:10px;cursor:pointer" title="Cliquer pour modifier (admin)"></div>
+      <div style="font-size:12px;color:var(--soft);margin-bottom:12px" id="proj-detail-budget"></div>
+      <!-- Participants -->
+      <div style="margin-bottom:14px">
+        <div class="members-zone-label" style="margin-bottom:6px">👥 Participants</div>
+        <div class="member-chips-proj" id="proj-detail-chips"></div>
+        <button class="btn-join" id="proj-detail-join" onclick="joinFromDetail()">+ Rejoindre</button>
+      </div>
+      <!-- ─── SECRÉTARIAT DE MAIRIE — ÉLODIE ─── -->
+      <div style="background:var(--navy-p);border:1px solid var(--mid);border-radius:var(--r);padding:12px 14px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px">🏛 Secrétariat de mairie — Élodie</div>
+        <div style="font-size:11.5px;color:var(--soft);line-height:1.5;margin-bottom:10px">Informez Élodie quand le projet est activé, puis transmettez-lui le résultat finalisé (devis validé, décisions…) pour mise en œuvre.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" style="font-size:12px" onclick="notifyElodie(_currentProjId)">📧 Informer Élodie</button>
+          <button class="btn btn-accent btn-sm" style="font-size:12px" onclick="sendResultToElodie(_currentProjId)">📤 Transmettre le résultat</button>
+        </div>
+        <div id="elodie-status" style="font-size:11px;color:var(--softer);margin-top:8px"></div>
+      </div>
+      <!-- ─── ONGLETS Notes / Tâches / Commentaires ─── -->
+      <div class="detail-tab-bar">
+        <button class="detail-tab active" onclick="switchDetailTab('notes',this)">📝 Notes</button>
+        <button class="detail-tab" onclick="switchDetailTab('ptasks',this)">✅ Tâches <span id="ptask-count-badge" style="font-size:10px;background:var(--terra);color:white;border-radius:20px;padding:1px 6px;margin-left:3px;display:none"></span></button>
+        <button class="detail-tab" onclick="switchDetailTab('comments',this)">💬 Chat projet</button>
+        <button class="detail-tab" onclick="switchDetailTab('docs',this)">📎 Documents</button>
+      </div>
+
+      <!-- Panneau Notes -->
+      <div class="detail-panel active" id="panel-notes">
+        <div id="proj-notes-author" class="note-author-line" style="display:none"></div>
+        <textarea id="proj-detail-notes" class="form-control" rows="12" placeholder="Notes, liens, informations partagées…" style="min-height:180px;resize:vertical" oninput="autoSaveNotes()"></textarea>
+        <div style="font-size:11px;color:var(--soft);margin-top:4px" id="proj-notes-status"></div>
+      </div>
+
+      <!-- Panneau Tâches projet -->
+      <div class="detail-panel" id="panel-ptasks">
+        <div class="ptask-list" id="ptask-list"></div>
+
+        <!-- Formulaire ajout tâche -->
+        <div class="ptask-add-form" id="ptask-add-form">
+          <div class="ptask-add-form-title">+ Nouvelle tâche</div>
+          <div class="ptask-form-grid">
+            <div class="ptask-form-full">
+              <label class="ptask-form-label">Titre de la tâche *</label>
+              <input type="text" id="pt-title" class="ptask-form-input" placeholder="Ex : Contacter le Département 33 pour la D10">
+            </div>
+            <div>
+              <label class="ptask-form-label">Assigné à</label>
+              <div class="ptask-assign-chips" id="pt-assign-chips"></div>
+            </div>
+            <div>
+              <label class="ptask-form-label">Date limite</label>
+              <input type="date" id="pt-deadline" class="ptask-form-input">
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+            <button class="btn btn-ghost btn-sm" onclick="cancelAddPtask()">Annuler</button>
+            <button class="btn btn-accent btn-sm" onclick="savePtask()">Ajouter la tâche</button>
+          </div>
+        </div>
+        <div style="margin-top:8px;text-align:right" id="ptask-add-btn-wrap">
+          <button class="btn btn-ghost btn-sm" onclick="showPtaskForm()" id="btn-show-ptask-form">+ Ajouter une tâche</button>
+        </div>
+      </div>
+
+      <!-- Panneau Chat projet (remplace Commentaires) -->
+      <div class="detail-panel" id="panel-comments">
+        <div style="display:flex;flex-direction:column;height:320px">
+          <div id="proj-detail-comments" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 0 10px;scroll-behavior:smooth"></div>
+          <div style="display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--mid)">
+            <textarea id="proj-comment-input" class="form-control" rows="1"
+              placeholder="Message sur ce projet…"
+              style="flex:1;border-radius:22px;padding:9px 16px;resize:none;min-height:40px;max-height:100px;font-size:13px"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addComment()}"></textarea>
+            <button class="btn btn-accent" onclick="addComment()"
+              style="align-self:flex-end;width:40px;height:40px;border-radius:50%;padding:0;font-size:18px;flex-shrink:0">↗</button>
+          </div>
+        </div>
+      </div>
+      <!-- Panneau Documents -->
+      <div class="detail-panel" id="panel-docs">
+        <div style="font-size:12px;color:var(--soft);margin-bottom:12px;line-height:1.6">
+          📁 Documents partagés de la commission stockés sur Google Drive.<br>
+          <strong>Cliquez sur « Ouvrir le dossier Drive »</strong> pour déposer ou consulter des fichiers PDF, comptes rendus, délibérations, etc.
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+          <a id="drive-folder-link" href="#" target="_blank" class="btn btn-navy btn-sm" onclick="openDriveFolder(event)">
+            📂 Ouvrir le dossier Drive
+          </a>
+          <button class="btn btn-ghost btn-sm" onclick="copyDriveLink()">🔗 Copier le lien</button>
+        </div>
+        <div id="drive-folder-config" style="display:none">
+          <div class="form-group" style="margin-top:8px">
+            <label class="form-label">URL du dossier Google Drive</label>
+            <input type="text" id="drive-url-input" class="form-control" placeholder="https://drive.google.com/drive/folders/...">
+            <div style="font-size:11px;color:var(--soft);margin-top:4px">Admin uniquement · URL sauvegardée pour tous les membres via Firebase</div>
+          </div>
+          <button class="btn btn-accent btn-sm" onclick="saveDriveUrl()">Enregistrer</button>
+        </div>
+        <div style="font-size:11px;color:var(--softer);margin-top:8px;padding-top:8px;border-top:1px solid var(--mid)">
+          💡 <em>Pour ajouter un document : ouvrez le dossier Drive, faites « + Nouveau » et déposez votre fichier. Il sera immédiatement visible par tous les membres.</em>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <div style="font-size:11px;color:var(--soft);flex:1" id="proj-detail-source"></div>
+      <button class="btn btn-ghost" onclick="closeModal('m-proj-detail')">Fermer</button>
+      <button class="btn btn-ghost admin-only" id="proj-edit-btn" onclick="openProjInlineEdit()">✏️ Modifier</button>
+      <button class="btn btn-sophie" onclick="solliciterSophieProjet()" title="Notifier Sophie pour ce projet" style="background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px">📣 Sophie</button>
+      <button class="btn btn-ghost-red btn-sm admin-only" onclick="deleteProjFromDetail()">🗑 Supprimer</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL TÂCHE QUOTIDIEN -->
+<div class="overlay" id="m-quick-task" onclick="closeOverlay(event,'m-quick-task')">
+  <div class="modal"><div class="modal-head"><h3>📌 Nouvelle tâche du quotidien</h3><button class="modal-close" onclick="closeModal('m-quick-task')">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Titre *</label><input type="text" id="qt-title" class="form-control" placeholder="Ex : Contacter le notaire pour parcelle 123-456"></div>
+    <div class="form-group"><label class="form-label">Assigner à</label>
+      <select id="qt-assignee" class="form-control">
+        <option value="">— Choisir un membre —</option>
+        <option>Daniel</option><option>Catherine</option><option>Corinne</option><option>Sylvain</option>
+        <option>Vivien</option><option>Anthony</option><option>Rose</option><option>Michel</option>
+        <option>Roger</option><option>Lalie</option><option>Claire</option><option>Sophie</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Date limite</label><input type="date" id="qt-deadline" class="form-control"></div>
+    <div class="form-group"><label class="form-label">Note</label><textarea id="qt-note" class="form-control" rows="2" placeholder="Détails…"></textarea></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-quick-task')">Annuler</button><button class="btn btn-accent" onclick="saveQuickTask()">Assigner</button></div></div>
+</div>
+
+<!-- ════ JAVASCRIPT ════ -->
+
+<!-- Configuration de la commission, puis tronc commun. L'ordre est impératif. -->
+<script src="config-cadre-de-vie.js?v=20260913"></script>
+<script type="module" src="agora-core.js?v=20260913"></script>
+
+
+<!-- ════ MODALE DÉTAIL TÂCHE QUOTIDIENNE ════ -->
+<div class="overlay" id="m-qt-detail" onclick="closeOverlay(event,'m-qt-detail')">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-head">
+      <h3 id="qtd-title">Tâche</h3>
+      <button class="modal-close" onclick="closeModal('m-qt-detail')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Vue lecture -->
+      <div id="qtd-view">
+        <div id="qtd-assignee" style="margin-bottom:8px"></div>
+        <div id="qtd-deadline" style="margin-bottom:8px"></div>
+        <div id="qtd-note" style="margin-bottom:8px;font-size:13px;color:var(--soft)"></div>
+        <div id="qtd-status" style="margin-bottom:8px"></div>
+        <div id="qtd-created" style="font-size:11px;color:var(--softer)"></div>
+      </div>
+      <!-- Vue édition (admin/super-admin) -->
+      <div id="qtd-edit" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--mid)">
+        <div class="form-group"><label class="form-label">Titre *</label>
+          <input type="text" id="qtd-edit-title" class="form-control">
+        </div>
+        <div class="form-group"><label class="form-label">Responsable</label>
+          <select id="qtd-edit-assignee" class="form-control"></select>
+        </div>
+        <div class="form-group"><label class="form-label">Date limite</label>
+          <input type="date" id="qtd-edit-deadline" class="form-control">
+        </div>
+        <div class="form-group"><label class="form-label">Note</label>
+          <textarea id="qtd-edit-note" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <!-- Documents Drive -->
+      <div id="qtd-drive" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--mid)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--softer);margin-bottom:8px">📁 Documents liés</div>
+        <div style="font-size:12px;color:var(--soft);margin-bottom:10px;line-height:1.5">
+          Accédez au dossier Drive de la commission pour déposer ou consulter les documents liés à cette tâche.
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+          <a id="qtd-drive-link" href="#" target="_blank" class="btn btn-navy btn-sm" onclick="openQTDrive(event)">
+            📂 Ouvrir le dossier Drive
+          </a>
+          <button class="btn btn-ghost btn-sm" onclick="copyQTDriveLink()">🔗 Copier le lien</button>
+        </div>
+        <div id="qtd-drive-config" style="display:none;margin-top:10px">
+          <div class="form-group">
+            <label class="form-label">URL du dossier Google Drive</label>
+            <input type="text" id="qtd-drive-url-input" class="form-control" placeholder="https://drive.google.com/drive/folders/...">
+            <div style="font-size:11px;color:var(--softer);margin-top:4px">Admin uniquement · URL sauvegardée pour tous via Firebase</div>
+          </div>
+          <button class="btn btn-accent btn-sm" onclick="saveQTDriveUrl()">Enregistrer</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('qtd-drive-config').style.display='none'">Annuler</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot" style="flex-wrap:wrap;gap:8px">
+      <button class="btn btn-ghost-red btn-sm admin-only" id="qtd-btn-del" onclick="deleteQTFromDetail()">🗑 Supprimer</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost btn-sm" onclick="notifyElodieTask(_qtDetailIdx)">🏛 Informer Élodie</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-qt-detail')">Fermer</button>
+      <button class="btn btn-ghost admin-only" id="qtd-btn-edit" onclick="toggleQTEdit()">✏️ Modifier</button>
+      <button class="btn btn-accent admin-only" id="qtd-btn-save" style="display:none" onclick="saveQTEdit()">✓ Enregistrer</button>
+      <button class="btn btn-accent" id="qtd-btn-done" onclick="doneQTFromDetail()">✓ Valider</button>
+      <button class="btn btn-ghost" id="qtd-btn-reopen" style="display:none" onclick="reopenQTFromDetail()">↩ Rouvrir</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODALE NOUVELLE DISCUSSION DE GROUPE ════ -->
+<div class="overlay" id="m-new-group" onclick="closeOverlay(event,'m-new-group')">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h3>👥 Nouvelle discussion de groupe</h3>
+      <button class="modal-close" onclick="closeModal('m-new-group')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Nom du groupe *</label>
+        <input type="text" id="ng-name" class="form-control" placeholder="Ex. Vie du village, Journée verte…">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Membres</label>
+        <div id="ng-members" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-new-group')">Annuler</button>
+      <button class="btn btn-accent" onclick="createGroup()">Créer le groupe</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ NOTIFICATIONS CHAT ════ -->
+<div id="chat-alert-banner" class="chat-alert-banner" onclick="openChatFromBanner()">
+  <span id="chat-alert-banner-text"></span>
+  <button class="chat-alert-banner-close" onclick="event.stopPropagation();dismissChatBanner()" title="Fermer">✕</button>
+</div>
+<div id="chat-toast-stack"></div>
+
+<!-- ════ JEFFERSON · ASSISTANT AGORA ════ -->
+<button id="jef-bubble" onclick="toggleJefferson()" title="Jefferson — assistant AGORA"></button>
+<div id="jef-drawer">
+  <div class="jef-head">
+    <div class="jef-head-id">
+      <div class="jef-head-avatar"></div>
+      <div><div class="jef-head-name">Jefferson</div><div class="jef-head-sub">Assistant AGORA</div></div>
+    </div>
+    <button class="jef-close" onclick="toggleJefferson()">✕</button>
+  </div>
+  <div class="jef-body" id="jef-msg-list"></div>
+  <div class="jef-input-bar">
+    <textarea id="jef-input" rows="1" placeholder="Demander à Jefferson…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendJefferson()}"></textarea>
+    <button class="jef-send" id="jef-send-btn" onclick="sendJefferson()">↑</button>
+  </div>
+</div>
+
+</body>
+</html>
