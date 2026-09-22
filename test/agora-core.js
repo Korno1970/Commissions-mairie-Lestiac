@@ -1,11 +1,13 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set, onValue, push, remove, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
 /* ══════════════════════════════════════════════════════════════
    AGORA — tronc commun aux trois commissions.
    Aucune valeur propre à une commission ici : tout ce qui varie est
    lu dans window.AGORA_CONFIG, défini par config-<commission>.js,
    chargé AVANT ce fichier.
+   Base : Affaires Scolaires (version la plus avancée au 22/09/2026),
+   plus le bouton « Supprimer les cochées » corrigé de Cadre de Vie.
    ══════════════════════════════════════════════════════════════ */
 const CFG = window.AGORA_CONFIG;
 if (!CFG) throw new Error("AGORA : configuration absente. Charger config-<commission>.js avant agora-core.js.");
@@ -39,9 +41,9 @@ const AXE_CLASSES = CFG.axeClasses;
    Persistance locale pour l'instant (clé K_SUBCOM) ; à brancher sur Firebase
    (/subcommissions) ultérieurement — partagé entre les 3 fichiers pour le transversal. */
 const COMMISSIONS = {cdv:'Cadre de Vie', adm:'Administration Générale', sco:'Affaires Scolaires'};
-const COMMISSION_COURANTE = CFG.code; // ⚠ adapter dans chaque fichier : 'adm' / 'sco'
+const COMMISSION_COURANTE = CFG.code;
 const DEVIS_STATUS = {demande:{label:'Demandé',cls:'ds-demande'},recu:{label:'Reçu',cls:'ds-recu'},valide:{label:'Validé',cls:'ds-valide'},refuse:{label:'Refusé',cls:'ds-refuse'}};
-// Amorces reprises des labels d'axe — noms 100% renommables, ids stables
+// Amorces reprises des libellés d'axe — noms 100% renommables, ids stables
 const SUBCOM_DEFAULTS = CFG.subcomDefaults;
 const K_SUBCOM = CFG.keys.subcom;
 const SUBCOM_NODE='subcommissions'; // ⚠ nœud PARTAGÉ entre les 3 commissions (hors COMMISSION) — c'est lui qui rend le transversal réel
@@ -112,7 +114,6 @@ function subscribeTrash(){
     if(typeof renderSubcomAdmin==='function')renderSubcomAdmin();
   },()=>{});
 }
-// rattachement d'un projet : champ subcoms[] si présent, sinon dérivé de l'axe
 function getProjSubcomIds(p){const ids=[];if(p.axe)ids.push(p.axe);(Array.isArray(p.subcoms)?p.subcoms:[]).forEach(id=>{if(id&&!ids.includes(id))ids.push(id)});return ids}
 const _scEur=n=>{const v=parseFloat(n)||0;return v.toLocaleString('fr-FR')+' €'};
 const _scInit=n=>(n||'?').slice(0,2).toUpperCase();
@@ -318,7 +319,7 @@ function doLogin(){
 window.doLogin=doLogin;
 function closeGate(){document.getElementById('gate').classList.remove('show');document.getElementById('gate-pwd').value='';document.getElementById('gate-err').style.display='none'}
 window.closeGate=closeGate;
-function logout(){isAdmin=false;document.body.classList.remove('is-admin');document.getElementById('btn-mode').classList.remove('admin');document.getElementById('mode-label').textContent='Participants';document.getElementById('nav-locked').style.display='';nav('bord',document.querySelector('[data-page="bord"]'));renderAll()}
+function logout(){isAdmin=false;document.body.classList.remove('is-admin');document.getElementById('btn-mode').classList.remove('admin');document.getElementById('mode-label').textContent='Participants';document.getElementById('nav-locked').style.display='';nav(CFG.homePage,document.querySelector('[data-page="'+CFG.homePage+'"]'));renderAll()}
 window.logout=logout;
 
 // ── IDENTITY ──
@@ -326,7 +327,7 @@ function openIdModal(){const me=getCurrentUser();document.querySelectorAll('.id-
 window.openIdModal=openIdModal;
 function closeIdModal(){document.getElementById('id-modal-bg').classList.remove('open');_pendingJoin=null}
 window.closeIdModal=closeIdModal;
-function pickIdentity(name){localStorage.setItem(K_USER,name);closeIdModal();updateIdentityBtn();if(_pendingJoin){_doToggleMember(_pendingJoin,name);_pendingJoin=null}renderProjects()}
+function pickIdentity(name){localStorage.setItem(K_USER,name);closeIdModal();updateIdentityBtn();if(_pendingJoin){_doToggleMember(_pendingJoin,name);_pendingJoin=null}renderProjects();initDMPage()}
 window.pickIdentity=pickIdentity;
 function pickCustomIdentity(){const name=document.getElementById('id-custom-name').value.trim();if(!name)return;pickIdentity(name);document.getElementById('id-custom-name').value=''}
 window.pickCustomIdentity=pickCustomIdentity;
@@ -823,9 +824,9 @@ function deleteReunion(i){
 window.deleteReunion=deleteReunion;
 function exportGcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(r.title)}&dates=${ds}T${hs}00/${ds}T${he}00&location=${encodeURIComponent(r.lieu||'')}`),'_blank'}
 window.exportGcal=exportGcal;
-function exportIcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);const ic=['BEGIN:VCALENDAR','VERSION:2.0',`PRODID:-//${CFG.code.toUpperCase()} Lestiac//FR`,'BEGIN:VEVENT',`UID:${CFG.code}-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission ${CFG.label}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ic],{type:'text/calendar'}));a.download=r.title.replace(/\s+/g,'_')+'.ics';a.click()}
+function exportIcal(r){if(!r.date)return;const d=new Date(r.date),fmt=n=>String(n).padStart(2,'0'),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);const ic=['BEGIN:VCALENDAR','VERSION:2.0',`PRODID:-//${CFG.logPrefix} Lestiac//FR`,'BEGIN:VEVENT',`UID:${CFG.code}-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission ${CFG.label}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ic],{type:'text/calendar'}));a.download=r.title.replace(/\s+/g,'_')+'.ics';a.click()}
 window.exportIcal=exportIcal;
-function exportAllIcal(){const arr=getReunions().filter(r=>r.date&&r.date.trim());if(!arr.length){alert('Aucune réunion avec date.');return}const fmt=n=>String(n).padStart(2,'0');let lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//'+CFG.code.toUpperCase()+' Lestiac//FR'];arr.forEach((r,i)=>{const d=new Date(r.date),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);lines.push('BEGIN:VEVENT',`UID:${CFG.code}-${i}-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission ${CFG.label}`,'END:VEVENT')});lines.push('END:VCALENDAR');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'}));a.download='Reunions-'+CFG.slug+'.ics';a.click()}
+function exportAllIcal(){const arr=getReunions().filter(r=>r.date&&r.date.trim());if(!arr.length){alert('Aucune réunion avec date.');return}const fmt=n=>String(n).padStart(2,'0');let lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//'+CFG.logPrefix+' Lestiac//FR'];arr.forEach((r,i)=>{const d=new Date(r.date),ds=`${d.getFullYear()}${fmt(d.getMonth()+1)}${fmt(d.getDate())}`,hs=(r.heure||'18:30').replace(':',''),he=String(parseInt(hs.slice(0,2))+2).padStart(2,'0')+hs.slice(2);lines.push('BEGIN:VEVENT',`UID:${CFG.code}-${i}-${Date.now()}@lestiac`,`SUMMARY:${r.title}`,`DTSTART:${ds}T${hs}00`,`DTEND:${ds}T${he}00`,`LOCATION:${r.lieu||'Mairie'}`,`DESCRIPTION:Commission ${CFG.label}`,'END:VEVENT')});lines.push('END:VCALENDAR');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'}));a.download='Reunions-'+CFG.slug+'.ics';a.click()}
 window.exportAllIcal=exportAllIcal;
 
 // ── COMPTES RENDUS ──
@@ -908,11 +909,10 @@ function renderTasks(){
     const cont=document.getElementById('tasks-'+h);if(!cont)return;cont.innerHTML='';
     (tasks[h]||[]).forEach((t,i)=>{
       const div=document.createElement('div');div.className='task-item'+(t.done?' done':'');div.onclick=()=>toggleTask(h,i);
-      const tagIco={tt_env:'🌿',tt_vie:'🎭',tt_gouv:'🗳'}[(t.tag||'tt-env').replace('-','_')]||'🌿';
+      const tagIco=CFG.taskTags.icons[(t.tag||CFG.taskTags.default).replace('-','_')]||CFG.taskTags.icons[CFG.taskTags.default.replace('-','_')];
       div.innerHTML=`<input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask('${h}',${i})"><span class="task-label">${escapeHtml(t.text||"")}</span><span class="task-tag ${t.tag||'tt-hab'}">${tagIco}</span><button class="btn-icon" onclick="event.stopPropagation();editTask('${h}',${i})" title="Modifier" style="font-size:13px;color:rgba(0,0,0,.25)" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='rgba(0,0,0,.25)'">✏️</button><button class="btn-icon" onclick="event.stopPropagation();deleteTask('${h}',${i})" title="Supprimer" style="font-size:13px;color:rgba(0,0,0,.25)" onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='rgba(0,0,0,.25)'">🗑</button>`;
       cont.appendChild(div);
     });
-    // Bouton "Supprimer les cochées" — super-admin uniquement
     if((isAdmin||isSuperAdmin())&&(tasks[h]||[]).some(t=>t.done)){
       const doneCount=(tasks[h]||[]).filter(t=>t.done).length;
       const btnWrap=document.createElement('div');
@@ -978,18 +978,18 @@ function saveEmailJS(){
     // Écrire dans Firebase — partagé entre tous les membres ET persistant après chaque push/deploy
     fbSet(COMMISSION+'/config/emailjs',cfg)
       .then(()=>{
-        if(statusEl){statusEl.textContent='✅ Configuration EmailJS enregistrée dans Firebase (persistante).';setTimeout(()=>statusEl.textContent='',4000);}
+        if(statusEl){statusEl.textContent='\u2705 Configuration EmailJS enregistrée dans Firebase (persistante).';setTimeout(()=>statusEl.textContent='',4000);}
         logAction('Config EmailJS enregistrée','partagée Firebase');
       })
       .catch(e=>{
-        if(statusEl)statusEl.textContent='❌ Échec d\'écriture Firebase : '+(e&&e.message?e.message:'permission ?');
-        alert('❌ La configuration EmailJS n\'a PAS pu être enregistrée durablement dans Firebase.\n\nMessage : '+(e&&e.message?e.message:'permission refusée ?')+'\n\nVérifiez que les règles Firebase autorisent l\'écriture sur la branche « config ». Tant que ce n\'est pas réglé, la configuration sera perdue au prochain rechargement.');
+        if(statusEl)statusEl.textContent='\u274c Échec d\'écriture Firebase : '+(e&&e.message?e.message:'permission ?');
+        alert('\u274c La configuration EmailJS n\'a PAS pu être enregistrée durablement dans Firebase.\n\nMessage : '+(e&&e.message?e.message:'permission refusée ?')+'\n\nVérifiez que les règles Firebase autorisent l\'écriture sur la branche « config ». Tant que ce n\'est pas réglé, la configuration sera perdue au prochain rechargement.');
       });
   } else {
     // Firebase pas connecté : la config ne vivra QUE dans ce navigateur et sera perdue au push
     localStorage.setItem(K_EJS,JSON.stringify(cfg));
-    if(statusEl)statusEl.textContent='⚠ Enregistré localement uniquement (Firebase non connecté) — sera perdu au prochain déploiement.';
-    alert('⚠️ Firebase n\'est pas connecté pour le moment.\n\nLa configuration a été gardée seulement dans CE navigateur — elle sera perdue au prochain push/déploiement, et les autres membres ne la verront pas.\n\nRechargez la page (pour rétablir la connexion Firebase), puis ré-enregistrez la configuration.');
+    if(statusEl)statusEl.textContent='\u26a0 Enregistré localement uniquement (Firebase non connecté) — sera perdu au prochain déploiement.';
+    alert('\u26a0\ufe0f Firebase n\'est pas connecté pour le moment.\n\nLa configuration a été gardée seulement dans CE navigateur — elle sera perdue au prochain push/déploiement, et les autres membres ne la verront pas.\n\nRechargez la page (pour rétablir la connexion Firebase), puis ré-enregistrez la configuration.');
   }
 }
 window.saveEmailJS=saveEmailJS;
@@ -1006,7 +1006,31 @@ function applyEmailJSConfig(cfg){
 window.applyEmailJSConfig=applyEmailJSConfig;
 function changePwd(){const p1=document.getElementById('new-pwd').value,p2=document.getElementById('new-pwd2').value;if(!p1||p1!==p2){alert('Mots de passe incorrects.');return}localStorage.setItem(K_PWD,p1);alert('Mot de passe mis à jour.');document.getElementById('new-pwd').value='';document.getElementById('new-pwd2').value=''}
 window.changePwd=changePwd;
-function exportJSON(){const blob=new Blob([JSON.stringify({projects:getProjects(),tasks:getTasks(),reunions:getReunions()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CadreDeVie_backup.json';a.click()}
+async function exportJSON(){
+  // Inclut désormais l'intégralité de l'historique de messagerie (DM + groupes, partagés
+  // entre les 3 commissions) — mémorisation garantie et exportable, indépendamment de Firebase.
+  let dmData = null, groupsData = null;
+  if (fbDb) {
+    try {
+      const [dmSnap, groupsSnap] = await Promise.all([get(ref(fbDb, 'dm')), get(ref(fbDb, 'groups'))]);
+      dmData = dmSnap.val();
+      groupsData = groupsSnap.val();
+    } catch (e) {
+      console.error(LOGP+'Backup — lecture de la messagerie échouée :', e);
+    }
+  }
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    exportedBy: getCurrentUser() || 'inconnu',
+    projects: getProjects(),
+    tasks: getTasks(),
+    reunions: getReunions(),
+    comptesRendus: getCRs(),
+    messagerie: { dm: dmData, groupes: groupsData }
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Sauvegarde-'+CFG.slug+'.json';a.click();
+}
 window.exportJSON=exportJSON;
 function makeEditable(el){if(!isAdmin)return;el.contentEditable='true';el.style.background='#fffde7';el.focus();el.onblur=()=>{el.contentEditable='false';el.style.background=''}}
 window.makeEditable=makeEditable;
@@ -1196,7 +1220,16 @@ function notifySophie(projTitle, commissionLabel) {
   emailjs.send(ejs.service, ejs.template, {
     to_email: sophieEmail,
     subject: `📣 [${comm}] Projet à communiquer — ${projTitle}`,
-    message: `Bonjour Sophie,\n\n${me} te sollicite pour préparer une communication sur le projet :\n\n« ${projTitle} »\nCommission : ${comm}\n\nMerci de te rapprocher de l'équipe.\n\n— AGORA · Mairie de Lestiac`,
+    message: `Bonjour Sophie,
+
+${me} te sollicite pour préparer une communication sur le projet :
+
+« ${projTitle} »
+Commission : ${comm}
+
+Merci de te rapprocher de l'équipe.
+
+— AGORA · Mairie de Lestiac`,
     from_name: 'AGORA · ' + comm,
     date: new Date().toLocaleDateString('fr-FR')
   }).then(() => showToast('✅ Sophie notifiée par mail'))
@@ -1215,29 +1248,29 @@ function _elodiePayload(p){
 function _sendToElodie(subject,message,comm){
   const ejs=getEjsConfig();
   if(!ejs||!ejs.pubkey||!ejs.service||!ejs.template){
-    alert('⚠️ EmailJS n\'est pas configuré.\n\nLe mail à Élodie ne peut pas partir tant que les identifiants EmailJS ne sont pas renseignés.\n\n→ Allez dans ⚙️ Paramètres › section « EmailJS » et remplissez la clé publique, le service et le template.');
-    showToast('⚠ EmailJS non configuré — voir Paramètres','warn');
+    alert('\u26a0\ufe0f EmailJS n\'est pas configur\u00e9.\n\nLe mail \u00e0 \u00c9lodie ne peut pas partir tant que les identifiants EmailJS ne sont pas renseign\u00e9s.\n\n\u2192 Allez dans \u2699\ufe0f Param\u00e8tres \u203a section \u00ab EmailJS \u00bb et remplissez la cl\u00e9 publique, le service et le template.');
+    showToast('\u26a0 EmailJS non configur\u00e9 — voir Param\u00e8tres','warn');
     return false;
   }
   if(typeof emailjs==='undefined'){
-    alert('⚠️ La librairie EmailJS n\'a pas pu se charger (problème de connexion internet ou bloqueur de publicités ?). Réessayez après avoir rechargé la page.');
-    showToast('⚠ Librairie EmailJS indisponible','warn');
+    alert('\u26a0\ufe0f La librairie EmailJS n\'a pas pu se charger (probl\u00e8me de connexion internet ou bloqueur de publicit\u00e9s ?). R\u00e9essayez apr\u00e8s avoir recharg\u00e9 la page.');
+    showToast('\u26a0 Librairie EmailJS indisponible','warn');
     return false;
   }
   try{
     emailjs.init(ejs.pubkey);
     emailjs.send(ejs.service,ejs.template,{to_email:ELODIE_EMAIL,subject,message,from_name:'AGORA · '+comm,date:new Date().toLocaleDateString('fr-FR')})
-      .then(()=>showToast('✅ Mail envoyé à Élodie (secrétariat mairie)'))
+      .then(()=>showToast('\u2705 Mail envoy\u00e9 \u00e0 \u00c9lodie (secr\u00e9tariat mairie)'))
       .catch(err=>{
         const detail=(err&&(err.text||err.message))?(err.text||err.message):'cause inconnue';
-        console.error('[Élodie] EmailJS send error:',err);
-        alert('❌ L\'envoi du mail à Élodie a échoué.\n\nMessage d\'EmailJS : '+detail+'\n\nVérifiez dans ⚙️ Paramètres que la clé publique, le service et le template sont corrects, et que le template contient bien les variables {{to_email}}, {{subject}} et {{message}}.');
-        showToast('❌ Envoi à Élodie échoué : '+detail,'warn');
+        console.error('[\u00c9lodie] EmailJS send error:',err);
+        alert('\u274c L\'envoi du mail \u00e0 \u00c9lodie a \u00e9chou\u00e9.\n\nMessage d\'EmailJS : '+detail+'\n\nV\u00e9rifiez dans \u2699\ufe0f Param\u00e8tres que la cl\u00e9 publique, le service et le template sont corrects, et que le template contient bien les variables {{to_email}}, {{subject}} et {{message}}.');
+        showToast('\u274c Envoi \u00e0 \u00c9lodie \u00e9chou\u00e9 : '+detail,'warn');
       });
     return true;
   }catch(e){
-    console.error('[Élodie] EmailJS init error:',e);
-    showToast('⚠ Envoi à Élodie échoué : '+(e&&e.message?e.message:'erreur'),'warn');
+    console.error('[\u00c9lodie] EmailJS init error:',e);
+    showToast('\u26a0 Envoi \u00e0 \u00c9lodie \u00e9chou\u00e9 : '+(e&&e.message?e.message:'erreur'),'warn');
     return false;
   }
 }
@@ -2025,7 +2058,13 @@ function refreshActivePresenceUI() {
 function renderDMContacts() {
   const me = getCurrentUser();
   const cont = document.getElementById('dm-contacts');
-  if (!cont || !me) return;
+  if (!cont) return;
+  if (!me) {
+    cont.innerHTML = `<div style="padding:24px 18px;text-align:center;color:var(--softer);font-size:12.5px;line-height:1.6">
+      👋 Bienvenue !<br>Cliquez sur <strong>« M'identifier »</strong> en haut de l'écran pour accéder à vos messages.
+    </div>`;
+    return;
+  }
   cont.innerHTML = '';
 
   // -- Moi (confirmation visuelle que ma présence est bien diffusée) --
@@ -2678,7 +2717,12 @@ function updateNotifBtn() {
 
 function pushBrowserNotif(title, body, onClick) {
   if (notifPermissionState() !== 'granted') return;
-  if (document.hasFocus()) return; // déjà en train de regarder l'app au premier plan — le ding + le badge suffisent
+  // Correctif 22/07/2026 : l'ancienne condition `if (document.hasFocus()) return;` bloquait la
+  // notification dès que l'onglet avait le focus — donc quasiment toujours en usage normal
+  // (l'utilisateur a le navigateur ouvert devant lui, juste pas forcément sur la bonne conversation).
+  // Le fait de ne pas notifier quand la conversation exacte est déjà ouverte est déjà géré par
+  // l'appelant (trackUnread/trackGroupUnread, condition _dmWith/_activeGroupId) — pas besoin
+  // d'une condition supplémentaire ici.
   try {
     const n = new Notification(title, { body: (body || '').substring(0, 140) });
     n.onclick = () => { window.focus(); if (onClick) onClick(); n.close(); };
@@ -2959,9 +3003,7 @@ function openProjInlineEdit() {
   // Peupler le select axe
   const sel = document.getElementById('pie-axe');
   sel.innerHTML = '<option value="">— Aucune —</option>';
-        sel.innerHTML += `<option value='env'>Environnement</option>`;
-        sel.innerHTML += `<option value='vie'>Vie du village</option>`;
-        sel.innerHTML += `<option value='gouv'>Gouvernance</option>`;
+  CFG.axeOptions.forEach(([v,l]) => { sel.innerHTML += `<option value='${v}'>${l}</option>`; });
 
   sel.value = p.axe || '';
 
@@ -3046,6 +3088,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderAll();
   renderQuickTasks();
   updateDashShortcuts();
+  initDMPage(); // présence et messagerie initialisées dès le chargement, quelle que soit la page d'accueil (idempotent)
   if(document.getElementById('ptask-add-form'))
     document.getElementById('ptask-add-form').style.display='none';
 });
@@ -3163,7 +3206,7 @@ async function sendJefferson(){
 }
 window.sendJefferson=sendJefferson;
 
-/* ── Manifest PWA généré à la volée (repris de l'ancien script inline) ── */
+/* ── Manifest PWA généré à la volée ── */
 (function(){
   const manifest = {
     name: 'Commission ' + CFG.label + ' — Lestiac',

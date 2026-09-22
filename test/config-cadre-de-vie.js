@@ -6,13 +6,16 @@
 window.AGORA_CONFIG = {
 
   /* ── Identité ── */
-  branch:    'cdv',            // branche Firebase (cdv / scolaire / admin)
-  code:      'cdv',            // code interne sous-commissions (cdv / sco / adm)
+  branch:    'cdv',
+  code:      'cdv',
   label:     'Cadre de Vie',
-  slug:      'Cadre-de-Vie',   // noms de fichiers exportés
+  slug:      'Cadre-de-Vie',
   logPrefix: 'CDV',
   startUrl:  'https://commissions-lestiac.fr/cadre-de-vie.html',
   iconSvg:   'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2220%22%20fill%3D%22%231A5C6B%22%2F%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2280%22%20x%3D%2210%22%3E%F0%9F%8C%BF%3C%2Ftext%3E%3C%2Fsvg%3E',
+
+  /* ── Page ouverte au démarrage et après déconnexion (doit correspondre au HTML) ── */
+  homePage:  'bord',
 
   /* ── Clés localStorage, préfixées par commission ── */
   keys: {
@@ -28,8 +31,12 @@ window.AGORA_CONFIG = {
   driveUrl: 'https://drive.google.com/drive/u/0/folders/1lDN-UMwFqsMlyirWKXE-5NjDjCKzvi2m',
 
   /* ── Axes ── */
-  axeLabels:  {env:'🌿 Environnement', vie:'🎭 Vie du village', gouv:'🗳 Gouvernance'},
-  axeClasses: {env:'cat-hab', vie:'cat-com', gouv:'cat-rh'},
+  axeLabels:  {env:'🌿 Environnement',vie:'🎭 Vie du village',gouv:'🗳 Gouvernance'},
+  axeClasses: {env:'cat-hab',vie:'cat-com',gouv:'cat-rh'},
+  axeOptions: [['env','Environnement'], ['vie','Vie du village'], ['gouv','Gouvernance']],
+
+  /* ── Étiquettes des tâches du quotidien ── */
+  taskTags: { default: 'tt-env', icons: {tt_env:'🌿', tt_vie:'🎭', tt_gouv:'🗳'} },
 
   /* ── Amorces de sous-commissions (ids stables, noms renommables) ── */
   subcomDefaults: {
